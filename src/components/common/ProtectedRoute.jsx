@@ -1,17 +1,18 @@
 import { Navigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export const ProtectedRoute = ({ children, allowAdminOnly = false}) => {
 
-    const isAuthenticated = true;
+    const { isAuthenticated, user, loading } = useAuth();
     const isApproved = true;
-    const isAdmin = true;
+    const isAdmin = user?.email?.endsWith('@admin.com') || false;
 
     if (!isAuthenticated) {
-        return <Navigate to="/" replace />
+        return <Navigate to="/" replace/>;
     }
-    
+
     if (!isApproved && !isAdmin) {
-        return <Navigate to="/pending" replace />
+        return <Navigate to="/pending" replace/>
     }
 
     if (allowAdminOnly && !isAdmin) {
@@ -19,4 +20,5 @@ export const ProtectedRoute = ({ children, allowAdminOnly = false}) => {
     }
 
     return children;
+
 }
