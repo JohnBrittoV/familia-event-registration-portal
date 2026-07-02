@@ -1,17 +1,17 @@
-import React, { Children, createContext, useContext, useEffect, useState } from 'react';
-import { loginWithGoogleService, logoutUserService, subscribeToAuthservice } from '../services/AuthService';
-import { Spinner } from '../components/common/Spinner';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { loginWithGoogleService, logoutUserService, subscribeToAuthService } from '../services/AuthService';
+import { Spinner } from '../components/ui/Spinner';
 
 const AuthContext = createContext(null);
 
-export const AuthProvider = ({ Children }) => {
+export const AuthProvider = ({ children }) => {
     
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         
-        const unsubscribe = subscribeToAuthservice((firebaseUser) => {
+        const unsubscribe = subscribeToAuthService((firebaseUser) => {
             if (firebaseUser) {
                 setUser({
                     uid: firebaseUser.uid,
@@ -68,7 +68,7 @@ export const AuthProvider = ({ Children }) => {
                     <Spinner size='lg'/>
                 </div>
             ) : (
-                Children
+                children
             )}
         </AuthContext.Provider>
     );
