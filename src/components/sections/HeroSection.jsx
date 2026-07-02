@@ -2,15 +2,28 @@ import React, { useState } from 'react';
 import { Calendar, MapPin, ArrowRight } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { FeatureCard } from '../ui/FeatureCard';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router';
 import  HeroImage from '../../assets/images/Hero_img1.png';
 
 export const HeroSection = () => {
     
+    const { login } = useAuth();
     const [isRegistering, setIsRegistering] = useState(false);
-    
-    const handleGetStarted = () => {
+    const navigate = useNavigate();
+
+    const handleGetStarted = async () => {
         setIsRegistering(true);
-        setTimeout(() => setIsRegistering(false), 2000);
+
+        try {
+            await login();
+            navigate('/dashboard');
+        } catch (error) {
+            console.error('User cancelled the login or an error occurred:', error);
+        }
+        finally {
+            setIsRegistering(false);
+        }
     }
 
     const features = [

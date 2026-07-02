@@ -1,17 +1,21 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { loginWithGoogleService, logoutUserService, subscribeToAuthService } from '../services/AuthService';
 import { Spinner } from '../components/ui/Spinner';
+import { loginWithGoogleService, 
+         logoutUserService, 
+         subscribeToAuthService, 
+         checkAndCreateUserDocument} from '../services/AuthService';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     
     const [user, setUser] = useState(null);
+    const [dbUser, setDbUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         
-        const unsubscribe = subscribeToAuthService((firebaseUser) => {
+        const unsubscribe = subscribeToAuthService(async (firebaseUser) => {
             if (firebaseUser) {
                 setUser({
                     uid: firebaseUser.uid,
@@ -19,9 +23,17 @@ export const AuthProvider = ({ children }) => {
                     email: firebaseUser.email,
                     photoURL: firebaseUser.photoURL,
                 });
+
+                try {
+                    const databaseProfile = await checkAndCreateUserDocument(firebaseUser);
+                    setDbUser(databaseProfile);
+                } catch (error) {
+                    console.error("Failed to fetch user permissions", error);
+                }
             } 
             else {
                 setUser(null);
+                setDbUser(null);
             }
                 setLoading(false);
         });
@@ -55,6 +67,7 @@ export const AuthProvider = ({ children }) => {
 
     const contextValue = {
         user,
+        dbUser,
         loading,
         isAuthenticated: !!user,
         login,

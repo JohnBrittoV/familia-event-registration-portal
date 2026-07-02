@@ -1,15 +1,21 @@
+import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 export const ProtectedRoute = ({ children, allowAdminOnly = false}) => {
 
-    const { isAuthenticated, user, loading } = useAuth();
-    const isApproved = true;
-    const isAdmin = user?.email?.endsWith('@admin.com') || false;
+    const { isAuthenticated, user, dbUser, loading } = useAuth();
+    
+    if (loading) {
+        return null;
+    }
 
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !user) {
         return <Navigate to="/" replace/>;
     }
+
+    const isApproved = dbUser?.isApproved === true;
+    const isAdmin = dbUser?.role === 'admin';
 
     if (!isApproved && !isAdmin) {
         return <Navigate to="/pending" replace/>
