@@ -15,7 +15,6 @@ export const AdminDashboard = () => {
     return(
         
         <>
-        <AdminHeader/>
             <AdminLayout>
 
                 <div className='max-w-7xl mx-auto 
