@@ -6,18 +6,24 @@ export const fetchUsers = async () => {
     const userRef = collection(db, 'users');
     const snapshot = await getDocs(userRef);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data()}))
-}
+};
 
 // Approval users
 export const toggleApproval = async (userId, currentStatus) => {
     const userRef = doc(db, 'users', userId);
     await updateDoc(userRef, { isApproved: !currentStatus });
     return !currentStatus;
-}
+};
 
 // Delete users
 export const deleteUserWithSecret = async (userId) => {
     const userRef = doc(db, 'users', userId);
     await deleteDoc(userRef);
-}
+};
 
+// Update user roles
+export const updateUserRole = async (userId, newRole) => {
+    const userRef = doc(db, 'users', userId);
+    await updateDoc(userRef, {role: newRole });
+    return newRole;
+};

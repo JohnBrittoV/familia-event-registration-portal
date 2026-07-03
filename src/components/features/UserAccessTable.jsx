@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const UserAccessTable = ({ users, onToggleAccess, onDelete }) => {
+export const UserAccessTable = ({ users, onToggleAccess, onToggleRole, onDelete }) => {
     return (
         
         <div className="bg-white dark:bg-slate-800 rounded-2xl 
@@ -31,8 +31,9 @@ export const UserAccessTable = ({ users, onToggleAccess, onDelete }) => {
                                         text-slate-500 dark:text-slate-400 font-medium">
                         <tr>
                             <th className="px-6 py-4">User</th>
-                            <th className="px-6 py-4">Status</th>
-                            <th className="px-6 py-4 text-right">Actions</th>
+                            <th className="px-6 py-4">Role</th>
+                            <th className="px-6 py-4 text-center">Status</th>
+                            <th className="px-6 py-4 text-center">Actions</th>
                         </tr>
                     </thead>
 
@@ -45,6 +46,7 @@ export const UserAccessTable = ({ users, onToggleAccess, onDelete }) => {
                                            dark:hover:bg-slate-800/50 
                                             transition-colors">
 
+                                {/* User infor column */}
                                 <td className="px-6 py-4">
                                     <div className="font-semibold text-slate-900 
                                                     dark:text-slate-100">
@@ -55,10 +57,17 @@ export const UserAccessTable = ({ users, onToggleAccess, onDelete }) => {
                                         {u.email}
                                     </div>
                                 </td>
-                                
-                                <td className="px-6 py-4">
-                                    <span className={`px-3 py-1 text-xs 
-                                                      font-bold rounded-full ${
+
+                                {/* User role column */}
+                                <td className="px-6 py-4 text-slate-600
+                                             dark:text-slate-400 capitalize">
+                                    {u.role?.replace('_', ' ')}
+                                </td>
+
+                                 {/* Status column  */}
+                                <td className="px-6 py-4 text-center">
+                                    <span className={`w-24 inline-block px-3 py-1 text-xs 
+                                                      font-bold rounded-full text-center ${
                                         u.isApproved 
                                         ? 'bg-emerald-100 text-emerald-700' 
                                         : 'bg-amber-100 text-amber-700'
@@ -67,12 +76,15 @@ export const UserAccessTable = ({ users, onToggleAccess, onDelete }) => {
                                     </span>
                                 </td>
                                 
-                                <td className="px-6 py-4 text-right space-x-2">
-                                    {u.role !== 'admin' && (
+                               {/* Action Buttons column */}
+                                <td className="px-6 py-4">
+                                    <div className='flex items-center justify-center gap-2'>
+                                    {u.role !== 'owner' && (
                                         <>
+                                            {/* Approve/Revoke column */}
                                             <button 
                                                 onClick={() => onToggleAccess(u.id, u.isApproved)}
-                                                className={`px-3 py-1.5 rounded-lg 
+                                                className={`w-24 text-center px-3 py-1.5 rounded-lg 
                                                             font-semibold text-xs 
                                                             transition-colors ${
                                                     u.isApproved 
@@ -83,9 +95,23 @@ export const UserAccessTable = ({ users, onToggleAccess, onDelete }) => {
                                                 {u.isApproved ? 'Revoke' : 'Approve'}
                                             </button>
 
+                                            {/* Promotion/Demotion Column */}
+                                            <button
+                                                onClick={() => onToggleRole(u.id, u.role)}
+                                                 className={`w-32 text-center px-3 py-1.5 rounded-lg 
+                                                             font-semibold text-xs 
+                                                             transition-colors ${
+                                                    u.role === 'admin'
+                                                    ? 'bg-orange-50 text-orange-600 hover:bg-orange-100 dark:bg-orange-900/30 dark:text-orange-400'
+                                                    : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400'
+                                                }`}
+                                                >
+                                                    {u.role === 'admin' ? 'Dismiss Admin' : 'Make Admin'}
+                                            </button>
+
                                             <button 
                                                 onClick={() => onDelete(u.id)}
-                                                className="px-3 py-1.5 rounded-lg 
+                                                className="w-20 text-center px-3 py-1.5 rounded-lg 
                                                            font-semibold text-xs bg-red-50 
                                                            text-red-600 hover:bg-red-100 
                                                            transition-colors">
@@ -93,6 +119,7 @@ export const UserAccessTable = ({ users, onToggleAccess, onDelete }) => {
                                             </button>
                                         </>
                                     )}
+                                    </div>
                                 </td>
                             </tr>
                         ))}

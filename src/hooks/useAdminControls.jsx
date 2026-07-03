@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { fetchUsers, toggleApproval, deleteUserWithSecret } from '../services/adminService';
+import { fetchUsers, toggleApproval, 
+         deleteUserWithSecret, updateUserRole 
+        } from '../services/adminService';
 
 export const useAdminControls = () => {
     const [users, setUsers] = useState([]);
@@ -26,6 +28,20 @@ export const useAdminControls = () => {
         await toggleApproval(userId, currentStatus);
     };
 
+    // Handle User Role
+    const handleToggleRole = async (userId, currentRole) => {
+        const newRole = currentRole === 'admin' ? 'responsible_person' : 'admin';
+        setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
+        
+        try {
+            await updateUserRole(userId, newRole);
+        } catch (error) {
+            console.error("Failed to update role", error);
+            setUsers(prev => prev.map(u => u.id === userId ? {...u, role: currentRole} : u));
+            alert('Failed to update user role');
+        }
+    }
+
     // Handle Delete User
     const handleDeleteUser = async (userId) => {
         const secretCode = window.prompt('Enter Secret Code to delete this user:');
@@ -39,6 +55,6 @@ export const useAdminControls = () => {
         }
     };
 
-    return {users, loading, handleToggleAccess, handleDeleteUser};
+    return {users, loading, handleToggleAccess, handleToggleRole, handleDeleteUser};
 };
 

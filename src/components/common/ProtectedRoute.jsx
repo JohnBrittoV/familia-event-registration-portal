@@ -15,17 +15,17 @@ export const ProtectedRoute = ({ children, allowAdminOnly = false}) => {
     }
 
     const isApproved = dbUser?.isApproved === true;
-    const isAdmin = dbUser?.role === 'admin';
+    const hasAdminPrivileges = ['admin', 'owner'].includes(dbUser?.role);
 
-    if (!isApproved && !isAdmin) {
+    if (!isApproved && !hasAdminPrivileges) {
         return <Navigate to="/pending" replace/>
     }
 
-    if (allowAdminOnly && !isAdmin) {
+    if (allowAdminOnly && !hasAdminPrivileges) {
         return <Navigate to="/dashboard" replace />
     }
 
-     if (!allowAdminOnly && isAdmin) {
+     if (!allowAdminOnly && hasAdminPrivileges) {
         return <Navigate to="/admin" replace />
     }
 
