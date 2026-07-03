@@ -25,6 +25,10 @@ export const ProtectedRoute = ({ children, allowAdminOnly = false}) => {
         return <Navigate to="/dashboard" replace />
     }
 
+     if (!allowAdminOnly && isAdmin) {
+        return <Navigate to="/admin" replace />
+    }
+
     return children;
 
 }

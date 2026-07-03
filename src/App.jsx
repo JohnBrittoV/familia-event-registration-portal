@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
-import { PendingAccess } from "./pages/PendingAccess";
-import { Dashboard } from "./pages/Dashboard";
-import { AdminPanel } from "./pages/AdminPanel";
 import { Welcome } from "./pages/Welcome";
+import { PendingAccess } from "./pages/PendingAccess";
+import { UserDashboard } from "./pages/UserDashboard";
+import { AdminDashboard } from "./pages/AdminDashboard";
 import { db } from "./config/firebase.config"
 
 console.log("Firebase initialized successfully:", db.app.name);
@@ -24,7 +24,7 @@ export const App = () => {
           path="/dashboard" 
           element={
                   <ProtectedRoute>
-                    <Dashboard/>
+                    <UserDashboard/>
                   </ProtectedRoute>
                 }
         />
@@ -33,7 +33,7 @@ export const App = () => {
           path="/admin"
           element={
             <ProtectedRoute allowAdminOnly={true}>
-              <AdminPanel/>
+              <AdminDashboard/>
             </ProtectedRoute>
           }
         />

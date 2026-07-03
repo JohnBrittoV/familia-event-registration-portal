@@ -3,7 +3,8 @@ import { Spinner } from '../components/ui/Spinner';
 import { loginWithGoogleService, 
          logoutUserService, 
          subscribeToAuthService, 
-         checkAndCreateUserDocument} from '../services/AuthService';
+         subscribeToUserProfile,
+        } from '../services/AuthService';
 
 const AuthContext = createContext(null);
 
@@ -15,7 +16,9 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         
-        const unsubscribe = subscribeToAuthService(async (firebaseUser) => {
+        let profileUnsubscribe = null;
+
+        const authUnsubscribe = subscribeToAuthService(async (firebaseUser) => {
             if (firebaseUser) {
                 setUser({
                     uid: firebaseUser.uid,
@@ -24,22 +27,24 @@ export const AuthProvider = ({ children }) => {
                     photoURL: firebaseUser.photoURL,
                 });
 
-                try {
-                    const databaseProfile = await checkAndCreateUserDocument(firebaseUser);
+                profileUnsubscribe = await subscribeToUserProfile(firebaseUser, (databaseProfile) => {
                     setDbUser(databaseProfile);
-                } catch (error) {
-                    console.error("Failed to fetch user permissions", error);
-                }
+                    setLoading(false);
+                })
             } 
             else {
                 setUser(null);
                 setDbUser(null);
-            }
+                if (profileUnsubscribe) profileUnsubscribe();
                 setLoading(false);
+            }
+                
         });
         
-        return () => unsubscribe();
-       
+        return () => {
+            authUnsubscribe();
+            if (profileUnsubscribe) profileUnsubscribe();
+        };       
     }, []);
 
     const login = async () => {

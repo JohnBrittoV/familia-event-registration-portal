@@ -1,6 +1,7 @@
 import { auth, db, googleProvider } from '../config/firebase.config';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc, serverTimestamp, collection, updateDoc, getDocs } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp, 
+         collection, updateDoc, getDocs, onSnapshot } from 'firebase/firestore';
 
 // Login user
 export const loginWithGoogleService = async () => {
@@ -29,7 +30,7 @@ export const subscribeToAuthService = (callback) => {
 };
 
 // Check user exist
-export const checkAndCreateUserDocument = async (user) => {
+export const subscribeToUserProfile = async (user, callback) => {
     if(!user) return null;
 
     const userRef = doc(db, 'users', user.uid);
@@ -46,46 +47,16 @@ export const checkAndCreateUserDocument = async (user) => {
             createdAt: serverTimestamp(),
         };
 
-        try {
-            await setDoc(userRef, newUserProfile);
-            return newUserProfile;
-        } catch (error) {
-            console.error('Error creating user document:', error);
-            throw error;
-        }
+        await setDoc(userRef, newUserProfile);
+
     }
 
-    return userSnap.data();
+    const unsubscribe = onSnapshot(userRef, (docSnapshot) => {
+        callback(docSnapshot.data());
+    });    
+
+    return unsubscribe;
 
 }
 
-// Fetch all users
-export const fetchAllUsers = async () => {
-    try {
-        const userRef = collection(db, 'users');
-        const snapshot = await getDocs(userRef);
-
-        return snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-    } catch (error) {
-        console.error("Error fetching users:", error);
-        throw error;
-    }
-};
-
-// User approval
-export const toggleUserApproval = async (userId, currentStatus) => {
-    try {
-        const userRef = doc(db, 'users', userId);
-        await updateDoc(userRef, {
-            isApproved: !currentStatus
-        });
-        return !currentStatus;
-    } catch (error) {
-        console.error("Error updating user status:", error);
-        throw error;
-    }
-}
 

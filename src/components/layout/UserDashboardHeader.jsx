@@ -1,7 +1,7 @@
 import React from 'react';
 import { LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../ui/Button';
 import logo from '../../assets/icons/blue.png';
 
 export const DashboardHeader = () => {
