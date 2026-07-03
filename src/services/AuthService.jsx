@@ -1,6 +1,6 @@
 import { auth, db, googleProvider } from '../config/firebase.config';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp, collection, updateDoc, getDocs } from 'firebase/firestore';
 
 // Login user
 export const loginWithGoogleService = async () => {
@@ -58,3 +58,34 @@ export const checkAndCreateUserDocument = async (user) => {
     return userSnap.data();
 
 }
+
+// Fetch all users
+export const fetchAllUsers = async () => {
+    try {
+        const userRef = collection(db, 'users');
+        const snapshot = await getDocs(userRef);
+
+        return snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        throw error;
+    }
+};
+
+// User approval
+export const toggleUserApproval = async (userId, currentStatus) => {
+    try {
+        const userRef = doc(db, 'users', userId);
+        await updateDoc(userRef, {
+            isApproved: !currentStatus
+        });
+        return !currentStatus;
+    } catch (error) {
+        console.error("Error updating user status:", error);
+        throw error;
+    }
+}
+
