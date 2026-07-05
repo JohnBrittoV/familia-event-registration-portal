@@ -1,12 +1,12 @@
 import React from "react";
-import { DashboardHeader } from '../components/layout/UserDashboardHeader';
-import { Greeting } from "../components/features/Greeting";
 import { useAuth } from "../context/AuthContext";
-import { StatCard } from '../components/ui/StatCard';
 import { Users, FileCheck, IndianRupee } from "lucide-react";
+import { DashboardHeader } from '../components/layout/UserDashboardHeader';
+import { StatCard } from '../components/ui/StatCard';
+import { Greeting } from "../components/features/Greeting";
+import { RegistrationWizard } from "../components/features/RegistrationWizard";
 
 export const UserDashboard = () => {
-    
     const { user } = useAuth();
 
     return(
@@ -45,6 +45,8 @@ export const UserDashboard = () => {
 
                     />
                 </div>
+
+                <RegistrationWizard/>
 
             </main>
 
