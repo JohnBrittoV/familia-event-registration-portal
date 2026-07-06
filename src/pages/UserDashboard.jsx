@@ -4,7 +4,7 @@ import { Users, FileCheck, IndianRupee } from "lucide-react";
 import { DashboardHeader } from '../components/layout/UserDashboardHeader';
 import { StatCard } from '../components/ui/StatCard';
 import { Greeting } from "../components/features/Greeting";
-import { RegistrationWizard } from "../components/features/RegistrationWizard";
+import { RegistrationWizard } from "../components/features/Registration/components/RegistrationWizard";
 
 export const UserDashboard = () => {
     const { user } = useAuth();

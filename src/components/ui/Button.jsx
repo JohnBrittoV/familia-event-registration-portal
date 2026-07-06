@@ -2,7 +2,8 @@ import React from "react";
 import { Spinner} from './Spinner';
 
 export const Button = ({children, onClick, variant = 'primary', 
-                        isLoading = false, icon: Icon }) => {
+                        isLoading = false, icon: Icon, type = 'button',
+                        disabled = false, className = '' }) => {
     
     const baseStyles = 'inline-flex items-center justify-center gap-2 font-semibold py-3 px-8 rounded-full shadow-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 active:scale-95 disabled:opacity-60 disabled:pointer-events-none';
     const variants = {
@@ -13,6 +14,7 @@ export const Button = ({children, onClick, variant = 'primary',
 
     return (
         <button
+            type={type}
             onClick={onClick}
             disabled={isLoading}
             className={`${baseStyles} ${variants[variant]}`}
