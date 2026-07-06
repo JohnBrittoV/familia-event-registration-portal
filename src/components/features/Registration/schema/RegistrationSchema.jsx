@@ -28,17 +28,23 @@ export const validationRules = {
         required: "This field is required"
     },
 
+    childName: {
+        required: "Child's name is required",
+        pattern: {
+            value: /^[A-Za-z\s]+$/,
+            message: "Only letters and spaces are allowed"
+        }
+    },
     childAge: {
-        required: 'Age is required',
-         validate: (value) => {
-        if (!value) return "Age is required";
-
-        const age = Number(value);
-
-        if (age < 1) return "Age must be at least 1";
-        if (age > 17) return "Child age must be below 18";
-
-        return true;
+        required: "Age is required",
+        min: {
+            value: 0,
+            message: "Age cannot be negative"
+        },
+        max: {
+            value: 20, // A reasonable safeguard
+            message: "Please enter a valid age"
+        }
     },
 
     requiredDate: {
@@ -110,7 +116,11 @@ export const validationRules = {
             today.setHours(0, 0, 0, 0);
             return selectedDate <= today || 'Date cannot be in the future';
         }
+    },
+
+    address: {
+        required: 'Address is required'
     }
 
-}
+
 }

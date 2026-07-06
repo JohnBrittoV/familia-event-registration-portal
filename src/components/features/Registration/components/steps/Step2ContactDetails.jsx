@@ -24,11 +24,11 @@ export const Step2ContactDetails = () => {
                 description="How can we reach the participant?"
             >
                 {/* Textarea for Address */}
-                <FloatingTextarea name="address" label="Full Address *" rows={3} validation={validationRules.requiredText}/>
+                <FloatingTextarea name="address" label="Full Address *" rows={3} validation={validationRules.address}/>
                 
                 <FormRow>
-                    <FloatingInput name="phone1" type="tel" label="Phone Number 1 *" validation={validationRules.requiredText}/>
-                    <FloatingInput name="phone2" type="tel" label="Phone Number 2 (Optional)" />
+                    <FloatingInput name="phone1" type="tel" label="Phone Number 1 *" validation={validationRules.phone}/>
+                    <FloatingInput name="phone2" type="tel" label="Phone Number 2 (Optional)" validation={validationRules.optionalPhone}/>
                 </FormRow>
             </FormSection>
 

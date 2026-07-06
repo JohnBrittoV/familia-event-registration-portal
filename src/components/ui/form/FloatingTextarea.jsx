@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
 
-export const FloatingTextarea = ({ name, label, rows = 3, ...props }) => {
+export const FloatingTextarea = ({ name, label, rows = 3, validation, ...props }) => {
     const { register, formState: { errors } } = useFormContext();
     const error = errors[name];
 
@@ -25,7 +25,7 @@ export const FloatingTextarea = ({ name, label, rows = 3, ...props }) => {
                     }
                     transition-colors duration-200
                 `}
-                {...register(name)}
+                {...register(name, validation)}
                 {...props}
             ></textarea>
             

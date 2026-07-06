@@ -66,7 +66,7 @@ export const Step1PersonalInfo = () => {
                                         dark:border-slate-700" >
 
                             <div className="flex-1 w-full">
-                                <FloatingInput name={`children.${index}.name`} label={`Child ${index + 1} Name *`} validation={validationRules.name}/>
+                                <FloatingInput name={`children.${index}.name`} label={`Child ${index + 1} Name *`} validation={validationRules.childName}/>
                             </div>
 
                             <div className="w-full sm:w-32">

@@ -44,7 +44,7 @@ export const RegistrationWizard = () => {
         let fieldsToValidate = [];
         
         if (currentStep === 1) {
-            fieldsToValidate = ['fullName', 'dob', 'spouseName', 'houseName', 'weddingAnniversary'];
+            fieldsToValidate = ['fullName', 'dob', 'spouseName', 'houseName', 'weddingAnniversary', 'children'];
         }
         else if (currentStep === 2) {
             fieldsToValidate = ['parish', 'homeTown', 'address', 'phone1'];

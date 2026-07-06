@@ -16,8 +16,8 @@ export const Button = ({children, onClick, variant = 'primary',
         <button
             type={type}
             onClick={onClick}
-            disabled={isLoading}
-            className={`${baseStyles} ${variants[variant]}`}
+            disabled={isLoading || disabled}
+            className={`${baseStyles} ${variants[variant]} ${className}`}
             aria-busy={isLoading}>
             
             {isLoading ? (
