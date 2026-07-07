@@ -39,7 +39,9 @@ export const RegistrationWizard = () => {
 
     const { trigger, handleSubmit, formState: { isValid }} = methods;
 
-    const handleNext = async () => {
+    const handleNext = async (e) => {
+
+        e.preventDefault();
         
         let fieldsToValidate = [];
         
