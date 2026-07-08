@@ -27,3 +27,19 @@ export const updateUserRole = async (userId, newRole) => {
     await updateDoc(userRef, {role: newRole });
     return newRole;
 };
+
+// Registration Access
+export const toggleRegistrationAccess = async (targetId, type, currentStatus) => {
+    const docPath = type === 'global' ? 'global_stats' : `rep_stats_${targetId}`;
+    const statsRef = doc(db, 'statistics', docPath);
+
+    try {
+        await updateDoc(statsRef, {
+            isOpen: !currentStatus
+        });
+        return true;
+    } catch (error) {
+        console.error("Failed to toggle access:", error);
+        throw error;
+    }
+}

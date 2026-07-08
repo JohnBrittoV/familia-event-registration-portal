@@ -5,10 +5,13 @@ import { RegistrationNavigation } from "./RegistrationNavigation";
 import { Step1PersonalInfo } from "./steps/Step1PersonalInfo";
 import { Step2ContactDetails } from "./steps/Step2ContactDetails";
 import { Step3Participation } from "./steps/Step3Participation";
+import { useRegistrationSubmit } from "../hooks/useRegistrationSubmit";
 
 export const RegistrationWizard = () => {
 
     const [currentStep, setCurrentStep] = useState(1);
+    const { submitForm, isSubmitting, error } = useRegistrationSubmit();
+
     const methods = useForm({
         mode: 'onChange',
         defaultValues: {
@@ -60,9 +63,20 @@ export const RegistrationWizard = () => {
 
     const handlePrev = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
-    const onSubmit = (data) => {
-        console.log('Submitting to Firebase Transaction:', data);
-        alert('Check the console to see the data in JSON format');
+    const onSubmit = async (data) => {
+        console.log('Submitting:', data);
+        try {
+            const success = await submitForm(data);
+            if (success) {
+                alert('Registration successfully saved to Firebase!');
+            }
+            else {
+                alert('Submission failed. Check console.');
+            }
+        } catch (error) {
+            console.error('Final catch block:', error);
+        }
+        
     };
 
     return (

@@ -37,23 +37,30 @@ export const subscribeToUserProfile = async (user, callback) => {
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists()) {
-        const newUserProfile = {
-            uid: user.uid,
-            name: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL,
-            role: 'responsible_person',
-            isApproved: false,
-            createdAt: serverTimestamp(),
-        };
-
-        await setDoc(userRef, newUserProfile);
-
+        
+        try {
+            await setDoc(userRef, {
+                uid: user.uid,
+                name: user.displayName,
+                email: user.email,
+                photoURL: user.photoURL,
+                role: 'responsible_person',
+                isApproved: false,
+                createdAt: serverTimestamp(),
+            });
+        } catch (error) {
+            console.error('Error creating user profile:', error);
+            return null;
+        }
     }
 
     const unsubscribe = onSnapshot(userRef, (docSnapshot) => {
-        callback(docSnapshot.data());
-    });    
+        if (docSnapshot.exists()) {
+            callback(docSnapshot.data());
+        }
+    }, (error) => {
+        console.error('Snapshot subscription error:', error);
+});    
 
     return unsubscribe;
 
