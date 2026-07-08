@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { FormSection } from '../../../../layout/FormSection';
-
 import { FloatingTextarea } from '../../../../ui/form/FloatingTextarea';
 import { StatCard } from '../../../../ui/StatCard';
 import { Users, User, Baby } from 'lucide-react';
@@ -39,7 +38,7 @@ export const Step3Participation = () => {
         });
 
         return { adults, kids, total: adults + kids, ageGroups };
-    }, [attendees, spouseName, children]);
+    }, [JSON.stringify(attendees), spouseName, children]);
 
     // 3. Save the calculated stats into the form payload for Firebase
     useEffect(() => {
@@ -52,15 +51,14 @@ export const Step3Participation = () => {
                           bg-slate-50 dark:bg-slate-800/50 border 
                           border-slate-200 dark:border-slate-700 
                           rounded-xl cursor-pointer hover:bg-slate-100 
-                          dark:hover:bg-slate-800 transition-colors mb-3">
+                          dark:hover:bg-slate-800 transition-colors mb-3"
+                          
+                key={id}>
 
             <div className="flex items-center gap-4">
                 <input
                     type="checkbox"
-                    // Check if this specific person is toggled
-                    checked={!!attendees[id]}
-                    // Toggle their state in the master form
-                    onChange={() => setValue(`attendees.${id}`, !attendees[id], { shouldValidate: true })}
+                    {...register(`attendees.${id}`)}
                     className="w-5 h-5 text-blue-600 rounded 
                                border-slate-300 focus:ring-blue-500 
                                cursor-pointer"
