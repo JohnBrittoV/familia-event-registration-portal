@@ -70,11 +70,11 @@ export const RegistrationWizard = () => {
             if (success) {
                 alert('Registration successfully saved to Firebase!');
             }
-            else {
-                alert('Submission failed. Check console.');
-            }
         } catch (error) {
-            console.error('Final catch block:', error);
+            // This will print the exact reason to your console
+            console.error("FIREBASE ERROR CODE:", error.code);
+            console.error("FIREBASE ERROR MESSAGE:", error.message);
+            alert(`Failed to save: ${error.code} - ${error.message}`);
         }
         
     };

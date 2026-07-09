@@ -1,14 +1,14 @@
-import { doc, collection, runTransaction, serverTimestamp } from "firebase/firestore";
+import { doc, collection, runTransaction, serverTimestamp, addDoc } from "firebase/firestore";
 import { db } from '../../../../config/firebase.config';
 
 export const submitRegistrationData = async (payload, repUid) => {
+
     const globalStatusRef = doc(db, 'statistics', 'global_stats');
     const repStatusRef = doc(db, 'statistics', `rep_stats_${repUid}`);
     const newRegRef = doc(collection(db, 'registrations'));
 
     try {
         await runTransaction(db, async (transaction) => {
-
             console.log('Starting Firestore transaction...');
 
             // Read all necessary documents first 
@@ -25,25 +25,32 @@ export const submitRegistrationData = async (payload, repUid) => {
             }
 
             // Extract calculated totals from the wizard payloads
-            const { adults = 0, kids = 0, total = 0 } = payload.calculatedStats || {};
+            const stats = payload.calculatedStats || {};
+            const adults = Number(stats.adults || 0);
+            const kids = Number(stats.kids || 0);
 
             // Calculate new global totals
-            const currentGlobal = globalDoc.exists() ? globalDoc.data() : { totalAdults: 0, totalKids: 0, totalRegistrations: 0 };
-            const newGlobalStats = {
-                totalAdults: currentGlobal.totalAdults + adults,
-                totalKids: currentGlobal.totalKids + kids,
-                totalRegistrations: currentGlobal.totalRegistrations + 1,
-                isOpen: currentGlobal.isOpen !== undefined ? currentGlobal.isOpen : true
-            };
+            const currentGlobal = globalDoc.exists() ? globalDoc.data() : { 
+                    totalAdults: 0, totalKids: 0, totalRegistrations: 0, isOpen: true 
+                };
 
-            // Caculate new representative totals
-            const currentRep = repDoc.exists() ? repDoc.data() : { totalAdults: 0, totalKids: 0, totalRegistrations: 0 };
-            const newRepStats = {
-                totalAdults: currentRep.totalAdults + adults,
-                totalKids: currentRep.totalKids + kids,
-                totalRegistrations: currentRep.totalRegistrations + 1,
-                isOpen: currentRep.isOpen !== undefined ? currentRep.isOpen : true
-            };
+            const currentRep = repDoc.exists() ? repDoc.data() : {
+                totalAdults: 0, totalKids: 0, totalRegistrations: 0, isOpen: true
+            }
+
+           transaction.set(globalStatusRef, {
+            totalAdults: (currentGlobal.totalAdults || 0) + adults,
+            totalKids: (currentGlobal.totalKids || 0) + kids,
+            totalRegistrations: (currentGlobal.totalRegistrations || 0) + 1,
+            isOpen: true
+           }, {merge: true});
+
+           transaction.set(repStatusRef, {
+            totalAdults: (currentRep.totalAdults || 0) + adults,
+            totalKids: (currentRep.totalKids || 0) + kids,
+            totalRegistrations: (currentRep.totalRegistrations || 0) + 1,
+            isOpen: true
+           }, {merge: true});
 
             // Executes all writes atomically
             transaction.set(newRegRef, {
@@ -52,8 +59,6 @@ export const submitRegistrationData = async (payload, repUid) => {
                 createdAt: serverTimestamp()
             });
 
-            transaction.set(globalStatsRef, newGlobalStats, { merge: true });
-            transaction.set(repStatsRef, newRepStats, { merge: true });
         });
 
         return { success: true};

@@ -5,19 +5,24 @@ import { useAuth } from '../../../../context/AuthContext';
 export const useRegistrationSubmit = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
-    const { currentUser } = useAuth();
+    const { user } = useAuth();
 
     const submitForm = async (wizardData) => {
-        if (!currentUser) {
+        if (!user) {
             setError("You must be logged in to submit a registration.");
             return false;
         }
+
+        console.log("submittingdfsafsaflj");
 
         setIsSubmitting(true);
         setError(null);
 
         try {
-            await submitRegistrationData(wizardData, currentUser.uid);
+            await submitRegistrationData(wizardData, user.uid);
+            console.log(wizardData);
+            console.log(user.uid);
+
             setIsSubmitting(false);
             return true;
         } catch (error) {

@@ -83,7 +83,7 @@ export const Step3Participation = () => {
             >
                 <div className="mb-6">
                     {/* Render Husband/Wife */}
-                    {fullName && <CheckboxRow id="self" label={fullName} subtitle="Primary Registrant" />}
+                    {fullName && <CheckboxRow id="self" label={fullName} subtitle="Head of the Family" />}
                     {spouseName && <CheckboxRow id="spouse" label={spouseName} subtitle="Spouse" />}
                     
                     {/* Render Children Dynamically */}
