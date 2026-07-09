@@ -1,6 +1,19 @@
 <!doctype html>
 <html lang="en">
   <head>
+
+    <script>
+      (function() {
+        const theme = localStorage.getItem('theme');
+        // If theme is 'dark', or if there is no theme saved but the OS is in dark mode
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

@@ -6,6 +6,7 @@ import { useTheme } from '../../hooks/useTheme';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import logo from '../../assets/icons/blue.png';
 
 export const Header = () => {
     
@@ -68,14 +69,16 @@ export const Header = () => {
                     {/* Logo section */}
                     <div className='flex items-center gap-2 sm:gap-3'>
                     
-                        <div className='flex items-center justify-center 
+                        <div className='flex items-center justify-center p-1
                                         w-7 h-7 sm:w-9 sm:h-9 lg:w-10 lg:h-10 
-                                        rounded-lg bg-[#3B6AB0] dark:bg-blue-600 
-                                        text-white shadow-sm shrink-0'>
+                                        rounded-lg bg-[#d3e1f6] dark:bg-blue-900 
+                                        shadow-sm shrink-0 overflow-hidden'>
 
-                            <Church className="w-4 h-4 sm:w-5 
-                                               sm:h-5 lg:w-6 lg:h-6" 
-                                    strokeWidth={2.5} />
+                            <img src={logo} 
+                                 alt="Jesus Youth Logo" 
+                                 className="w-full h-full object-contain"
+                            />
+
                         </div>
 
                         <span className="text-sm sm:text-lg lg:text-2xl 
@@ -136,10 +139,10 @@ export const Header = () => {
 
                         {/* OTP MODAL - Available across all screen sizes */}
                         {isOtpModalOpen && createPortal(
-                        <div className="fixed inset-0 z-[999] flex min-h-screen items-center justify-center bg-black/50 backdrop-blur-sm px-4 transition-opacity">
+                        <div className="fixed inset-0 z-999 flex min-h-screen items-center justify-center bg-black/50 backdrop-blur-sm px-4 transition-opacity">
                             
                             {/* Your existing Modal Content Wrapper */}
-                            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-[400px] p-6 sm:p-8 relative animate-in fade-in zoom-in-95 duration-200">
+                            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-100 p-6 sm:p-8 relative animate-in fade-in zoom-in-95 duration-200">
                                 
                                 {/* Close Icon */}
                                 <button 
