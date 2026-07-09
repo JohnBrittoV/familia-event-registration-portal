@@ -1,14 +1,43 @@
-import React from "react";
+import React, { useState, useRef, useEffect} from "react";
 import { LayoutDashboard, Users, FileText, LogOut, X } from "lucide-react";
 import { useAuth } from '../../context/AuthContext';
+import { Spinner } from "../ui/Spinner";
+import { useNavigate } from "react-router-dom";
 import logo from '../../assets/icons/blue.png';
 
 export const AdminSidebar = ({ isOpen, setIsOpen }) => {
 
     const { logout, user } = useAuth();
+    const navigate = useNavigate();
+    const timeoutRef = useRef(null);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        };
+    }, []);
+
+    const handleLogout = () => {
+        setIsLoggingOut(true);
+        timeoutRef.current = setTimeout(() => {
+            logout();
+            navigate('/');
+        }, 1500);
+    }
 
     return (
         <>
+            {isLoggingOut && (
+                <div className="fixed inset-0 z-60 flex min-h-screen 
+                                items-center justify-center bg-white/90 
+                                dark:bg-slate-900/90 backdrop-blur-sm 
+                                transition-opacity">
+
+                    <Spinner size="lg" centered={true} />
+                </div>
+            )}
+
             {/* Mobile overlay background */}
             {isOpen && (
                 <div className="fixed inset-0 bg-slate-900/50 
@@ -101,7 +130,7 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
 
                     </div>
 
-                    <button onClick={logout} 
+                    <button onClick={handleLogout} 
                             className="flex items-center gap-3 
                                        w-full px-4 py-2 text-slate-600 
                                        dark:text-slate-400 hover:text-red-600 

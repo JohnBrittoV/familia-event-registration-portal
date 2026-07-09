@@ -1,14 +1,47 @@
 import React from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../ui/Button';
+import { Spinner } from '../ui/Spinner';
 import logo from '../../assets/icons/blue.png';
 
 export const DashboardHeader = () => {
     
     const { user, logout } = useAuth();
+    const navigate = useNavigate();
+    const timeoutRef = useRef(null);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        }
+    }, []);
+
+    const handleLogout = () => {
+        setIsLoggingOut(true);
+        timeoutRef.current = setTimeout(() => {
+            logout();
+            navigate('/');
+        }, 1500)
+    };
 
     return(
+
+        <>
+
+        {isLoggingOut && (
+                <div className="fixed inset-0 z-50 flex 
+                                min-h-screen items-center 
+                                justify-center bg-white/90 
+                                dark:bg-slate-900/90 backdrop-blur-sm 
+                                transition-opacity">
+                    <Spinner size="lg" centered={true} />
+                </div>
+            )}
+        
         <header className="bg-white dark:bg-slate-800 border-b 
                            border-slate-200 dark:border-slate-700 
                            sticky top-0 z-30">
@@ -26,7 +59,7 @@ export const DashboardHeader = () => {
                     <span className="text-lg font-bold tracking-tight 
                                     text-slate-900 dark:text-slate-100 
                                      hidden sm:block">
-                        Familia 26
+                        Familia'26
                     </span>
                 </div>
 
@@ -69,11 +102,9 @@ export const DashboardHeader = () => {
 
                         </div>
 
-                        
-
                     </div>
 
-                    <Button variant="iconOnly" onClick={logout} aria-label="Sign out">
+                    <Button variant="iconOnly" onClick={handleLogout} aria-label="Sign out">
                         <LogOut size={18} className="text-slate-600 dark:text-slate-300" />
                     </Button>
 
@@ -82,6 +113,8 @@ export const DashboardHeader = () => {
             </div>
 
         </header>
+
+        </>
 
     )
 }

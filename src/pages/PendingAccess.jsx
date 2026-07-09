@@ -1,14 +1,17 @@
 import React from "react";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../components/ui/Button";
+import { Spinner } from "../components/ui/Spinner";
 import { LogOut, ShieldAlert } from "lucide-react";
 
 export const PendingAccess = () => {
 
     const { user, logout, dbUser, isAuthenticated, loading } = useAuth();
     const navigate = useNavigate();
+    const timeoutRef = useRef(null);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     useEffect(() => {
         
@@ -27,9 +30,37 @@ export const PendingAccess = () => {
 
     }, [isAuthenticated, dbUser, loading, navigate]);
 
+     useEffect(() => {
+        return () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        };
+    }, []);
+
+    const handleLogout = () => {
+        setIsLoggingOut(true);
+        timeoutRef.current = setTimeout(() => {
+            logout();
+            navigate('/');
+        }, 1500);
+    };
+
     if (loading) return null;
 
     return(
+
+        <>
+
+        {isLoggingOut && (
+                <div className="fixed inset-0 z-50 flex 
+                                min-h-screen items-center 
+                                justify-center bg-white/90 
+                                dark:bg-slate-900/90 backdrop-blur-sm 
+                                transition-opacity">
+
+                    <Spinner size="lg" centered={true} />
+                </div>
+        )}
+
         <div className="min-h-screen bg-slate-50 dark:bg-slate-900 
                         flex flex-col items-center justify-center p-6">
 
@@ -65,11 +96,13 @@ export const PendingAccess = () => {
                     Please contact the system administrator to verify your identity and grant access permissions.
                 </div>
 
-                <Button variant="secondary" onClick={logout} className="w-full">
+                <Button variant="secondary" onClick={handleLogout} className="w-full">
                     <LogOut size={18} /> Sign Out for Now
                 </Button>
 
             </div>
         </div>
+
+        </>
     )
 }
