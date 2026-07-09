@@ -3,6 +3,11 @@ import { submitRegistrationData } from "../service/registrationService";
 import { useAuth } from '../../../../context/AuthContext';
 
 export const useRegistrationSubmit = () => {
+
+    const [submissionState, setSubmissionState] = useState({
+        status: 'idle',
+        message: ''
+    })
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const { user } = useAuth();
@@ -12,8 +17,6 @@ export const useRegistrationSubmit = () => {
             setError("You must be logged in to submit a registration.");
             return false;
         }
-
-        console.log("submittingdfsafsaflj");
 
         setIsSubmitting(true);
         setError(null);
