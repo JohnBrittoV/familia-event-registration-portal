@@ -1,6 +1,7 @@
 import React from "react";
 import { Header } from '../components/layout/Header';
 import { HeroSection } from "../components/sections/HeroSection";
+import { Footer } from "../components/sections/Footer";
 
 export const Welcome = () => {
     return(
@@ -11,6 +12,7 @@ export const Welcome = () => {
             <main className="page-container">
                 <HeroSection/>
             </main>
+            <Footer/>
         </div>
     )
 }

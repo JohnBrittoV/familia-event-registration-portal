@@ -1,19 +1,17 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+@layer base {
+    body {
+        @apply bg-[#F4F7FB] text-slate-800 antialiased;
+        @apply dark:bg-slate-900 dark:text-white;
+    }
+}
+
 @layer components {
     
     .page-container {
         @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
     }
 
-    .section-wrapper {
-        @apply py-4 sm:py-6 md:py-8 lg:py-10 grid grid-cols-1 lg:grid-cols-2 
-               gap-8 sm:gap-12 lg:gap-16 items-center;
-    }
-
-    .text-heading {
-        @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold 
-               text-slate-900 dark:text-white leading-[1.15] tracking-tight;
-    }
 }

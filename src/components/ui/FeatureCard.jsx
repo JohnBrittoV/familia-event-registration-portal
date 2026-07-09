@@ -1,19 +1,18 @@
 import React from 'react';
 
-export const FeatureCard = ({ icon, text }) => {
+export const FeatureCard = ({ icon: Icon, text }) => {
     return (
-        <div className='flex items-center gap-2.5 px-4 py-2.5 
-                      bg-amber-50 dark:bg-amber-900/20 
-                        rounded-full border border-amber-200 
-                        dark:border-amber-800/30'>
+        <div className='flex items-center gap-3 p-3 sm:p-4 
+                        bg-white dark:bg-slate-800 rounded-xl 
+                        shadow-sm border border-slate-100/50 
+                        dark:border-slate-700 hover:shadow-md 
+                        transition-shadow duration-200 w-full h-full'>
             
-            <span className='text-amber-600 dark:text-amber-400 
-                               text-sm sm:text-base'>
-                {icon} 
-            </span>
+            <Icon size={20} className="text-[#3B6AB0] dark:text-blue-400 
+                                        shrink-0" />
 
-            <span className="text-sm sm:text-base font-medium
-                           text-slate-700 dark:text-slate-300">
+            <span className="text-sm sm:text-base font-semibold 
+                            text-slate-700 dark:text-slate-200">
                 {text}
             </span>
 
