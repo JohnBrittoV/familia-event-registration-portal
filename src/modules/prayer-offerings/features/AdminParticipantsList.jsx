@@ -45,11 +45,12 @@ export const AdminParticipantsList = () => {
                 <table className="table">
                     <thead className="table-thead">
                         <tr>
-                            <th className="table-th">Full Name</th>
+                            <th className="table-th">Participant Name</th>
+                            <th className="table-th">Spouse Name</th>
                             <th className="table-th">Adults</th>
-                            <th className="table-th">Kids</th>
-                            <th className="table-th">Registered By</th>
-                            <th className="table-th">Date</th>
+                             <th className="table-th">Kids</th>
+                            <th className="table-th">Responsible Person</th>
+                            <th className="table-th">Date & time</th>
                         </tr>
                     </thead>
                     <tbody className="table-tbody">
@@ -57,7 +58,12 @@ export const AdminParticipantsList = () => {
                             <tr key={reg.id} className="table-tr">
                                 <td className="table-td">
                                     <div className="table-user-name">
-                                        {reg.firstName} {reg.lastName}
+                                        {reg.fullName}
+                                    </div>
+                                </td>
+                                <td className="table-td">
+                                    <div className="table-user-name">
+                                        {reg.spouseName}
                                     </div>
                                 </td>
                                 <td className="table-td text-slate-600 dark:text-slate-400">
@@ -67,7 +73,7 @@ export const AdminParticipantsList = () => {
                                     {reg.calculatedStats?.kids || 0}
                                 </td>
                                 <td className="table-td text-slate-500 dark:text-slate-400 text-xs">
-                                    {reg.registeredBy || 'N/A'}
+                                    {reg.ResponsiblePersonName || 'N/A'}
                                 </td>
                                 <td className="table-td text-slate-500 dark:text-slate-400 text-xs">
                                     {reg.createdAt ? format(new Date(reg.createdAt.seconds * 1000), 'PP p') : 'N/A'}

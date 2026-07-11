@@ -45,7 +45,7 @@ export const RecentParticipantsTable = () => {
                                 <th className="table-th">Adults</th>
                                 <th className="table-th">Kids</th>
                                 <th className="table-th">Responsible Person</th>
-                                <th className="table-th">Registered At</th>
+                                <th className="table-th">Date & time</th>
                             </tr>
                         </thead>
                         <tbody className="table-tbody">
