@@ -3,7 +3,8 @@ import React from 'react';
 export const UserAccessTable = ({ users, onToggleAccess, 
                                   onToggleRole, onDelete, 
                                   title = "Responsible Persons Access Management", 
-                                  subtitle = "Manage portal access for users."
+                                  subtitle = "Manage portal access for users.",
+                                  showApprovalButton = true
             }) => {
 
 
@@ -88,7 +89,8 @@ export const UserAccessTable = ({ users, onToggleAccess,
                                     {u.role !== 'owner' && (
                                         <>
                                             {/* Approve/Revoke column */}
-                                            <button 
+                                            {showApprovalButton && (
+                                                <button 
                                                 onClick={() => onToggleAccess(u.id, u.isApproved)}
                                                 className={`w-24 text-center px-3 py-1.5 rounded-lg 
                                                             font-semibold text-xs 
@@ -100,6 +102,8 @@ export const UserAccessTable = ({ users, onToggleAccess,
                                             >
                                                 {u.isApproved ? 'Revoke' : 'Approve'}
                                             </button>
+
+                                            )}
 
                                             {/* Promotion/Demotion Column */}
                                             <button
