@@ -12,7 +12,7 @@ export const UserAccessTable = ({ users, onToggleAccess, onToggleRole, onDelete 
 
                 <h2 className="font-bold text-lg 
                                text-slate-900 dark:text-white">
-                                User Access Management
+                                Responsible Persons Access Management
                 </h2>
 
                 <p className="text-sm text-slate-500 
@@ -123,6 +123,14 @@ export const UserAccessTable = ({ users, onToggleAccess, onToggleRole, onDelete 
                                 </td>
                             </tr>
                         ))}
+
+                        {users.length === 0 && (
+                            <tr>
+                                <td colSpan="4" className="px-6 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+                                    No active responsible person accounts found.
+                                </td>
+                            </tr>
+                        )}
 
                     </tbody>
 
