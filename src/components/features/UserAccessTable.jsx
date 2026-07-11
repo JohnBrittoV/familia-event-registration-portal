@@ -1,6 +1,12 @@
 import React from 'react';
 
-export const UserAccessTable = ({ users, onToggleAccess, onToggleRole, onDelete }) => {
+export const UserAccessTable = ({ users, onToggleAccess, 
+                                  onToggleRole, onDelete, 
+                                  title = "Responsible Persons Access Management", 
+                                  subtitle = "Manage portal access for users."
+            }) => {
+
+
     return (
         
         <div className="bg-white dark:bg-slate-800 rounded-2xl 
@@ -12,12 +18,12 @@ export const UserAccessTable = ({ users, onToggleAccess, onToggleRole, onDelete 
 
                 <h2 className="font-bold text-lg 
                                text-slate-900 dark:text-white">
-                                Responsible Persons Access Management
+                                {title}
                 </h2>
 
                 <p className="text-sm text-slate-500 
                               dark:text-slate-400">
-                                Manage portal access for responsible persons.
+                                {subtitle}
                 </p>
 
             </div>

@@ -71,7 +71,7 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
 
                         <span className="font-bold text-lg 
                                          text-slate-900 dark:text-white">
-                                Admin Panel</span>
+                                Femilia'26 Retreat</span>
                     </div>
 
                     {/* Mobile close button */}
