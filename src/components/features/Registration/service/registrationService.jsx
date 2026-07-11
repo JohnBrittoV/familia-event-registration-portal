@@ -1,7 +1,8 @@
 import { doc, collection, runTransaction, serverTimestamp, addDoc } from "firebase/firestore";
 import { db } from '../../../../config/firebase.config';
+import { ResponsiblePersons } from "../../../../pages/ResponsiblePersons";
 
-export const submitRegistrationData = async (payload, repUid) => {
+export const submitRegistrationData = async (payload, repUid, repName = 'Unknown User') => {
 
     const globalStatusRef = doc(db, 'statistics', 'global_stats');
     const repStatusRef = doc(db, 'statistics', `rep_stats_${repUid}`);
@@ -56,6 +57,7 @@ export const submitRegistrationData = async (payload, repUid) => {
             transaction.set(newRegRef, {
                 ...payload,
                 registeredBy: repUid,
+                ResponsiblePersonName: repName,
                 createdAt: serverTimestamp()
             });
 

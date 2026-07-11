@@ -4,6 +4,7 @@ import { format, isBefore, parseISO } from 'date-fns';
 import { Loader2, Download, ArrowRight, Filter, Calendar } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import { AdminLayout } from '../../../components/layout/AdminLayout';
+import { Greeting } from '../../../components/features/Greeting';
 
 export const PrayerAdminPage = () => {
     const [bookings, setBookings] = useState([]);
@@ -11,6 +12,8 @@ export const PrayerAdminPage = () => {
     const [filterType, setFilterType] = useState('All');
     const [filterDate, setFilterDate] = useState('');
 
+    const { user } = useAuth();
+            
     // 1. Fetch Bookings
     useEffect(() => {
         const load = async () => {
@@ -56,6 +59,12 @@ export const PrayerAdminPage = () => {
     return (
         <>
         <AdminLayout>
+
+            <Greeting 
+                name={user?.displayName} 
+                role="Admin" 
+                subtitle="Monitor portal activity and manage user access."/>
+
         <div className="p-6 space-y-6 max-w-6xl mx-auto">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Prayer Offerings Dashboard</h2>

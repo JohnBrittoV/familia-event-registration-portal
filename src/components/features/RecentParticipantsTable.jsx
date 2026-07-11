@@ -10,6 +10,16 @@ export const RecentParticipantsTable = () => {
     useEffect(() => {
         const loadData = async () => {
             const data = await fetchLatestRegistrations(5);
+
+            const sortedData = data.sort((a, b) => {
+                
+                if(a.createdAt && b.createdAt) {
+                    return b.createdAt.seconds - a.createdAt.seconds;
+                }
+
+                return 0;
+            })
+            
             setRegistrations(data);
             setLoading(false);
         };
@@ -19,7 +29,7 @@ export const RecentParticipantsTable = () => {
     return (
         <div className="card-table">
             <div className="card-header">
-                <h2 className="card-header-title">Recent Participants</h2>
+                <h2 className="card-header-title">Recent Registrations</h2>
                 <p className="card-header-subtitle">The latest 5 people registered for Familia'26.</p>
             </div>
 
@@ -30,9 +40,11 @@ export const RecentParticipantsTable = () => {
                     <table className="table">
                         <thead className="table-thead">
                             <tr>
-                                <th className="table-th">Full Name</th>
+                                <th className="table-th">Participant Name</th>
+                                <th className='table-th'>Spouse Name</th>
                                 <th className="table-th">Adults</th>
                                 <th className="table-th">Kids</th>
+                                <th className="table-th">Responsible Person</th>
                                 <th className="table-th">Registered At</th>
                             </tr>
                         </thead>
@@ -41,7 +53,12 @@ export const RecentParticipantsTable = () => {
                                 <tr key={reg.id} className="table-tr">
                                     <td className="table-td">
                                         <div className="table-user-name">
-                                            {reg.firstName} {reg.lastName}
+                                            {reg.fullName}
+                                        </div>
+                                    </td>
+                                     <td className="table-td">
+                                        <div className="table-user-name">
+                                            {reg.spouseName}
                                         </div>
                                     </td>
                                     <td className="table-td text-slate-600 dark:text-slate-400">
@@ -49,6 +66,9 @@ export const RecentParticipantsTable = () => {
                                     </td>
                                     <td className="table-td text-slate-600 dark:text-slate-400">
                                         {reg.calculatedStats?.kids || 0}
+                                    </td>
+                                    <td className="table-td text-slate-600 dark:text-slate-400">
+                                        {reg.ResponsiblePersonName}
                                     </td>
                                     <td className="table-td text-slate-500 dark:text-slate-400 text-xs">
                                         {reg.createdAt ? format(new Date(reg.createdAt.seconds * 1000), 'PP p') : 'Just now'}

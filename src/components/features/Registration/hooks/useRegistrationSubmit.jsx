@@ -22,9 +22,10 @@ export const useRegistrationSubmit = () => {
         setError(null);
 
         try {
-            await submitRegistrationData(wizardData, user.uid);
+            const userName = user.name || user.displayName;
+            await submitRegistrationData(wizardData, user.uid, userName);
             console.log(wizardData);
-            console.log(user.uid);
+            console.log(user.uid, userName);
 
             setIsSubmitting(false);
             return true;
