@@ -13,7 +13,7 @@ export const useAdminControls = () => {
                 const userData = await fetchUsers();
                 setUsers(userData);
             } catch (error) {
-                console.error('Failed to fetch users');
+                console.error('Failed to fetch users:', error);
             }
             finally {
                 setLoading(false);

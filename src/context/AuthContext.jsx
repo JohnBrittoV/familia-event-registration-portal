@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { Spinner } from '../components/ui/Spinner';
 import { loginWithGoogleService, 
          logoutUserService, 
@@ -13,6 +13,8 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [dbUser, setDbUser] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const pendingRoleRef = useRef('responsible_person')
 
     useEffect(() => {
         
@@ -30,7 +32,9 @@ export const AuthProvider = ({ children }) => {
                 profileUnsubscribe = await subscribeToUserProfile(firebaseUser, (databaseProfile) => {
                     setDbUser(databaseProfile);
                     setLoading(false);
-                })
+                },
+                    pendingRoleRef.current
+                );
             } 
             else {
                 setUser(null);
@@ -47,8 +51,9 @@ export const AuthProvider = ({ children }) => {
         };       
     }, []);
 
-    const login = async () => {
+    const login = async (roleType = 'responsible_person') => {
         setLoading(true);
+        pendingRoleRef.current = roleType;
         try {
             return await loginWithGoogleService();
         } catch (error) {
@@ -62,6 +67,7 @@ export const AuthProvider = ({ children }) => {
         try {
             await logoutUserService();
             setUser(null);
+            pendingRoleRef.current = 'responsible_person';
         } catch (error) {
             throw error;
         }

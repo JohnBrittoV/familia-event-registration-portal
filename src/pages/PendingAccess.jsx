@@ -23,6 +23,12 @@ export const PendingAccess = () => {
             return;
         }
 
+        // Send Prayer Partners directly to thier specific dashboard
+        if (dbUser?.role === 'prayer_partner') {
+            navigate('/prayer-dashboard', {replace: true});
+            return;
+        }
+
         // The Instant Redirect! If Admin approves them, move them to dashboard
         if (dbUser?.isApproved === true || dbUser?.role === 'admin') {
             navigate('/dashboard', {replace: true});

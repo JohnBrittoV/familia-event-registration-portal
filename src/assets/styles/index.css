@@ -15,3 +15,153 @@
     }
 
 }
+
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.animate-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 25s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* -----------------------------------------------------------------------------
+   REACT CALENDAR FORCED OVERRIDES (Light & Dark mode compatible)
+   ----------------------------------------------------------------------------- */
+.react-calendar {
+    background-color: #1e293b !important; /* bg-slate-800 */
+    color: #ffffff !important;            /* text-white */
+    border: none !important;
+    border-radius: 12px !important;       /* rounded-xl */
+    padding: 8px !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.react-calendar__navigation {
+    margin-bottom: 8px !important;
+}
+
+.react-calendar__navigation button {
+    color: #ffffff !important;
+    background: transparent !important;
+    border-radius: 9999px !important;
+    transition: background-color 0.2s !important;
+}
+
+.react-calendar__navigation button:hover {
+    background-color: #334155 !important; /* bg-slate-700 */
+}
+
+.react-calendar__navigation__label__labelText {
+    font-weight: bold !important;
+    color: #ffffff !important;
+}
+
+.react-calendar__month-view__weekdays {
+    color: #94a3b8 !important; /* text-slate-400 */
+    text-transform: uppercase !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    margin-bottom: 4px !important;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+    text-decoration: none !important;
+}
+
+.react-calendar__month-view__days__day {
+    aspect-ratio: 1 / 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 12px !important;
+    color: #cbd5e1 !important; /* text-slate-300 */
+    transition: all 0.2s ease-in-out !important;
+}
+
+.react-calendar__tile:hover {
+    background-color: #334155 !important; /* bg-slate-700 */
+}
+
+/* 
+   🚨 CRITICAL: Override the default RED color for weekends 
+*/
+.react-calendar__month-view__days__day--weekend {
+    color: #cbd5e1 !important; /* text-slate-300 - REMOVES THE RED! */
+}
+
+/* Selected date styling */
+.react-calendar__tile--active {
+    background-color: #3B6AB0 !important;
+    color: #ffffff !important;
+}
+
+.react-calendar__tile--active:hover {
+    background-color: #2E5591 !important;
+}
+
+/* --------------------------------------------------
+--------- Styles for table --------------------------
+----------------------------------------------------- */
+
+@layer components {
+  /* Reusable Table Card Structure */
+  .card-table {
+    @apply bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden;
+  }
+  .card-header {
+    @apply p-5 border-b border-slate-200 dark:border-slate-700;
+  }
+  .card-header-title {
+    @apply font-bold text-lg text-slate-900 dark:text-white;
+  }
+  .card-header-subtitle {
+    @apply text-sm text-slate-500 dark:text-slate-400;
+  }
+
+  /* Reusable Table Elements */
+  .table-wrapper {
+    @apply overflow-x-auto;
+  }
+  .table {
+    @apply w-full text-left text-sm whitespace-nowrap;
+  }
+  .table-thead {
+    @apply bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-medium;
+  }
+  .table-th {
+    @apply px-6 py-4;
+  }
+  .table-tbody {
+    @apply divide-y divide-slate-100 dark:divide-slate-700;
+  }
+  .table-tr {
+    @apply hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors;
+  }
+  .table-td {
+    @apply px-6 py-4;
+  }
+
+  /* Typography Utilities */
+  .table-user-name {
+    @apply font-semibold text-slate-900 dark:text-slate-100;
+  }
+  .table-user-sub {
+    @apply text-xs text-slate-500;
+  }
+  .table-user-role {
+    @apply text-slate-600 dark:text-slate-400 capitalize;
+  }
+
+  /* Badges & Buttons Foundation */
+  .badge-status {
+    @apply w-24 inline-block px-3 py-1 text-xs font-bold rounded-full text-center;
+  }
+  .btn-xs {
+    @apply px-3 py-1.5 rounded-lg font-semibold text-xs transition-colors;
+  }
+}

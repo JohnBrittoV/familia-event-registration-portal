@@ -1,13 +1,18 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { Spinner } from '../ui/Spinner';
 
 export const ProtectedRoute = ({ children, allowAdminOnly = false}) => {
 
     const { isAuthenticated, user, dbUser, loading } = useAuth();
     
     if (loading) {
-        return null;
+        return (
+            <div className="fixed inset-0 flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+                <Spinner size='lg' />
+            </div>
+        )
     }
 
     if (!isAuthenticated || !user) {

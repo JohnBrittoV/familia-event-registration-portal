@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect} from "react";
-import { LayoutDashboard, Users, FileText, LogOut, X } from "lucide-react";
 import { useAuth } from '../../context/AuthContext';
 import { Spinner } from "../ui/Spinner";
 import { useNavigate } from "react-router-dom";
+import { Link, useLocation } from 'react-router-dom';
+import { LayoutDashboard, Users, Cross, FileUser,
+         LogOut, X, ChartLine,  HandHelping,  Download} from "lucide-react";
 import logo from '../../assets/icons/blue.png';
 
 export const AdminSidebar = ({ isOpen, setIsOpen }) => {
@@ -11,6 +13,9 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
     const navigate = useNavigate();
     const timeoutRef = useRef(null);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+    const { pathname } = useLocation();
+    const isActive = (path => pathname === path);
 
     useEffect(() => {
         return () => {
@@ -80,29 +85,95 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
                 <nav className="flex-1 p-4 flex 
                                 flex-col gap-2">
 
-                    <a href="#" className="flex items-center gap-3 
-                                           px-4 py-3 bg-blue-50 dark:bg-blue-900/20 
-                                           text-blue-700 dark:text-blue-400 
-                                           rounded-xl font-medium">
+                    {/* Dashboard */}
+                    <Link 
+                        to="/admin"
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
+                            isActive('/admin') 
+                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' 
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        }`}>
+                            
+                        <LayoutDashboard size={20} /> Dashboard 
+                    </Link>
 
-                        <Users size={20} /> User Requests
-                    </a>
+                    {/* Responsible persons */}
+                    <Link 
+                        to="/admin/responsible-persons"
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
+                            isActive('/admin/responsible-persons') 
+                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' 
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        }`}
+                    >
+                        <FileUser size={20} /> Responsible Persons
+                    </Link>
+                    
+                    {/* Prayer Partners */}
+                    <Link 
+                        to="/admin/prayer-partners"
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
+                            isActive('/admin/prayer-partners') 
+                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' 
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        }`}
+                    >
+                        <Cross size={20} /> Prayer Partners
+                    </Link>
+                    
+                    {/* Participants List */}
+                    <Link 
+                        to="/admin/participants"
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
+                            isActive('/admin/participants') 
+                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' 
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        }`}
+                    >
+                        <Users size={20} /> Participants List
+                    </Link>
+                    
+                    {/* Statistics */}
+                    <Link 
+                        to="/admin/stats"
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
+                            isActive('/admin/stats') 
+                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' 
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        }`}
+                    >
+                        <ChartLine size={20} /> Global Statistics
+                    </Link>
 
-                    <a href="#" className="flex items-center gap-3 px-4 
-                                           py-3 text-slate-600 dark:text-slate-400 
-                                           hover:bg-slate-50 dark:hover:bg-slate-800 
-                                           rounded-xl font-medium transition-colors">
+                    {/* Prayer offerings */}
+                    <Link 
+                        to="/admin/prayer-bookings"
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
+                            isActive('/admin/prayer-bookings') 
+                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' 
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        }`}
+                    >
+                        <HandHelping size={20} /> Prayer Offerings
+                    </Link>
 
-                        <LayoutDashboard size={20} /> Global Stats
-                    </a>
-
-                    <a href="#" className="flex items-center gap-3 px-4 py-3
-                                           text-slate-600 dark:text-slate-400 
-                                           hover:bg-slate-50 dark:hover:bg-slate-800 
-                                           rounded-xl font-medium transition-colors">
-
-                        <FileText size={20} /> Participants
-                    </a>
+                    <Link 
+                        to="/admin/export"
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
+                            isActive('/admin/export') 
+                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' 
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        }`}
+                    >
+                        <Download size={20} /> Export Data
+                    </Link>
 
                 </nav>
 

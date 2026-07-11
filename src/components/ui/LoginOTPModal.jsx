@@ -49,7 +49,7 @@ export const LoginOTPModal = ({ isOpen, onClose, onSuccess }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[999] flex items-center 
+        <div className="fixed inset-0 z-999 flex items-center 
                         justify-center bg-black/50 backdrop-blur-sm 
                         p-4 animate-in fade-in duration-200">
                             
@@ -123,7 +123,7 @@ export const LoginOTPModal = ({ isOpen, onClose, onSuccess }) => {
                                        text-white rounded-xl py-3 font-bold shadow-md 
                                        hover:shadow-lg transition-all duration-200 
                                        flex items-center justify-center gap-2"
-                                       
+
                             isLoading={isLoading}
                             onClick={handleVerify}
                         >

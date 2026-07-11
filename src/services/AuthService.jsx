@@ -30,7 +30,7 @@ export const subscribeToAuthService = (callback) => {
 };
 
 // Check user exist
-export const subscribeToUserProfile = async (user, callback) => {
+export const subscribeToUserProfile = async (user, callback, defaultRole = 'responsible_person') => {
     if(!user) return null;
 
     const userRef = doc(db, 'users', user.uid);
@@ -39,13 +39,14 @@ export const subscribeToUserProfile = async (user, callback) => {
     if (!userSnap.exists()) {
         
         try {
+            const shouldApprove = defaultRole === 'prayer_partner';
             await setDoc(userRef, {
                 uid: user.uid,
                 name: user.displayName,
                 email: user.email,
                 photoURL: user.photoURL,
-                role: 'responsible_person',
-                isApproved: false,
+                role: defaultRole,
+                isApproved: shouldApprove,
                 createdAt: serverTimestamp(),
             });
         } catch (error) {

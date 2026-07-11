@@ -32,3 +32,19 @@ export const fetchPaginatedRegistrations = async (lastVisibleDoc = null, filterB
 
     return { result, lastDoc};
 }
+
+// ✅ NEW: Fetch just the latest 5 Registrations for the Home Dashboard
+export const fetchLatestRegistrations = async (count = 5) => {
+    try {
+        const q = query(
+            collection(db, 'registrations'),
+            orderBy('createdAt', 'desc'),
+            limit(count)
+        );
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error("Error fetching latest registrations:", error);
+        return [];
+    }
+};

@@ -12,21 +12,6 @@ export const HeroSection = () => {
     
     const { login } = useAuth();
     const navigate = useNavigate();
-
-    // const handleGetStarted = async () => {
-    //     setIsRegistering(true);
-
-    //     try {
-    //         await login();
-    //         navigate('/dashboard');
-    //     } catch (error) {
-    //         console.error('User cancelled the login or an error occurred:', error);
-    //     }
-    //     finally {
-    //         setIsRegistering(false);
-    //     }
-    // }
-
     const features = [
         { icon: Heart, text: 'Prayer & Adoration' },
         { icon: Music , text: 'Praise & Worship' },
@@ -76,7 +61,7 @@ export const HeroSection = () => {
                 </div>
 
                  {/* 3. Image with White Frame */}
-                <div className="w-full max-w-[280px] sm:max-w-sm 
+                <div className="w-full max-w-70 sm:max-w-sm 
                                 md:max-w-md lg:max-w-lg xl:max-w-xl 
                                 mt-8 mb-4 relative">
 
@@ -88,7 +73,7 @@ export const HeroSection = () => {
                             src={HeroImage} 
                             alt="Families gathering at church" 
                             className="w-full h-auto rounded-xl 
-                                       object-cover aspect-[4/3] 
+                                       object-cover aspect-4/3 
                                        transition-transform 
                                        duration-300 hover:scale-105"
                         />
@@ -107,7 +92,7 @@ export const HeroSection = () => {
                                dark:hover:bg-blue-400 dark:hover:text-slate-900 
                                transition-colors duration-200"
                                
-                    onClick={() => { /* Add your prayer sign-up logic or modal here */ }}
+                    onClick={() => navigate('/prayer-offerings')}
                 >
                     <HandHeart size={18} />
                     <span>Pray for Familia'26</span>
@@ -147,25 +132,6 @@ export const HeroSection = () => {
                     ))}
                     
                 </div>
-
-                {/* CTA Button
-
-                <div className="w-full sm:w-auto mt-2">
-
-                    <Button 
-                        className='"w-full sm:w-auto bg-[#3B6AB0] hover:bg-[#2E5591] text-white 
-                                   rounded-full px-8 py-3 sm:py-3.5 font-bold shadow-md 
-                                   hover:shadow-lg transition-all duration-200 flex items-center 
-                                   justify-center gap-2'
-
-                        variant="primary" 
-                        icon={ArrowRight} 
-                        isLoading={isRegistering}
-                        onClick={handleGetStarted}
-                    >
-                        Let's Pray for Familia26
-                    </Button>
-                </div> */}
 
             </div>
 
