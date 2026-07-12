@@ -12,6 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm install && npm run build
+      env: VITE_FIREBASE_API_KEY="AIzaSyAwClnDCS_tWY0C2siGl7YaD2UFNn2yWKk"
+            VITE_FIREBASE_AUTH_DOMAIN="familia-retreat-26.firebaseapp.com"
+            VITE_FIREBASE_PROJECT_ID="familia-retreat-26"
+            VITE_FIREBASE_STORAGE_BUCKET="familia-retreat-26.firebasestorage.app"
+            VITE_FIREBASE_MESSAGING_SENDER_ID="808728025708"
+            VITE_FIREBASE_APP_ID="1:808728025708:web:c9900547735fbcdf7f5649"
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
