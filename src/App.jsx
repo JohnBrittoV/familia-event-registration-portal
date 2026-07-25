@@ -4,13 +4,11 @@ import { Welcome } from "./pages/Welcome";
 import { PendingAccess } from "./pages/PendingAccess";
 import { UserDashboard } from "./pages/UserDashboard";
 import { AdminDashboard } from "./pages/AdminDashboard";
-import { PrayerHomePage } from "./modules/prayer-offerings/pages/PrayerHomePage";
 import { PrayerDashboard } from "./modules/prayer-offerings/pages/PrayerDashboard";
 import { PrayerAdminPage } from "./modules/prayer-offerings/pages/PrayerAdminPage";
 import { db } from "./config/firebase.config"
 import { AdminParticipants } from "./pages/AdminParticipantsPage";
 import { ResponsiblePersons } from "./pages/ResponsiblePersons";
-import { PrayerPartners } from "./pages/PrayerPartners";
 import { AdminStats } from "./pages/AdminStats";
 import { AdminExport } from "./pages/AdminExport";
 
@@ -25,14 +23,10 @@ export const App = () => {
 
         <Route path="/" element={<Welcome/>}/>
         <Route path="/pending" element={<PendingAccess/>}/>
-        <Route path="/prayer-offerings" element={<PrayerHomePage/>}/>
-
+        
         {/* Protected routes - prayer dashboard */}
         <Route path="/prayer-dashboard" 
-               element={
-                  <ProtectedRoute allowAdminOnly={false}>
-                    <PrayerDashboard/>
-                  </ProtectedRoute>
+               element={<PrayerDashboard/>                
               }/>
 
         {/* Protected routes - prayer bookings */}
@@ -82,17 +76,7 @@ export const App = () => {
           }
         />
 
-        {/* Protected routes - Admin prayer partners */}
-        <Route
-          path="/admin/prayer-partners"
-          element={
-            <ProtectedRoute allowAdminOnly={true}>
-              <PrayerPartners/>
-            </ProtectedRoute>
-          }
-        />
-        
-        {/* Protected routes - Admin statistics */}
+      {/* Protected routes - Admin statistics */}
         <Route
           path="/admin/stats"
           element={

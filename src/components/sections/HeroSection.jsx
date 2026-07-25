@@ -92,7 +92,7 @@ export const HeroSection = () => {
                                dark:hover:bg-blue-400 dark:hover:text-slate-900 
                                transition-colors duration-200"
                                
-                    onClick={() => navigate('/prayer-offerings')}
+                    onClick={() => navigate('/prayer-dashboard')}
                 >
                     <HandHeart size={18} />
                     <span>Pray for Familia'26</span>
