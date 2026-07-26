@@ -35,9 +35,9 @@ export const MobileEntryStep = ({ onSubmit, isLoading, error: serverError }) => 
 
         </div>
         <h1 className="text-2xl font-bold text-slate-900 
-                       dark:text-white mb-2">Zonal Oneday Intercession</h1>
+                       dark:text-white mb-2">Familia'26 Intercession</h1>
         <p className="text-slate-500 dark:text-slate-400 text-sm">
-            Enter your mobile to pray & climb the leaderboard
+            Enter your mobile to continue & pray
         </p>
       </div>
 
