@@ -1,22 +1,46 @@
 import React from "react";
 import { usePrayerHistory } from "../hooks/usePrayerHistory";
+import { usePrayerConfig } from "../hooks/usePrayerConfig";
+import { Church, Cross } from "lucide-react";
 
 export const PrayerHistoryTable = ({ currentUser }) => {
-  const { userBookings, isLoading } = usePrayerHistory(currentUser.mobile);
+  const { userBookings, isLoading: isHistoryLoading } = usePrayerHistory(currentUser.mobile);
+  const { isHistoryVisible, isLoadingConfig } = usePrayerConfig();
 
   // Helper to format the prayer names beautifully
   const formatPrayerName = (prayerId) => {
-    if (prayerId === 'holy_mass') return '⛪ Holy Mass';
-    if (prayerId === 'fasting') return '🙏 Fasting Prayer';
+    
+    if (prayerId === 'holy_mass') {
+      return (
+        <span className="flex items-center gap-1.5">
+          <Church className="w-4 h-4 text-slate-500 dark:text-slate-400" /> 
+          Holy Mass
+        </span>
+      );
+    }
+
+    if (prayerId === 'fasting') {
+      return (
+        <span className="flex items-center gap-1.5">
+          <Cross className="w-4 h-4 text-slate-500 dark:text-slate-400" /> 
+          Fasting Prayer
+        </span>
+      );
+    }
+
     return prayerId;
   };
 
-  if (isLoading) {
+  if (isHistoryLoading || isLoadingConfig) {
     return (
       <div className="card-table p-8 text-center text-slate-500">
         Loading your prayer offerings...
       </div>
     );
+  }
+
+  if (!isHistoryVisible) {
+    return null;
   }
 
   if (userBookings.length === 0) {
@@ -37,7 +61,7 @@ export const PrayerHistoryTable = ({ currentUser }) => {
           <thead className="table-thead">
             <tr>
               <th className="table-th">Date</th>
-              <th className="table-th">Dedication Name</th>
+              <th className="table-th">Commited By</th>
               <th className="table-th">Prayers Offered</th>
               <th className="table-th">Status</th>
             </tr>
@@ -53,7 +77,7 @@ export const PrayerHistoryTable = ({ currentUser }) => {
                 {/* Dedication Name */}
                 <td className="table-td">
                   <div className="table-user-name">{booking.name}</div>
-                  <div className="table-user-sub">Recorded by +91 {booking.mobile}</div>
+                  <div className="table-user-sub">Entered by +91 {booking.mobile}</div>
                 </td>
                 
                 {/* Prayers Array mapped nicely */}

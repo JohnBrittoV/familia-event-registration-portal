@@ -93,12 +93,7 @@ export const PrayerDashboard = () => {
 
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 
-                                p-6 rounded-2xl shadow-sm border 
-                                border-slate-100 dark:border-slate-700 
-                                text-center text-slate-500 dark:text-slate-400">
-                    <PrayerHistoryTable currentUser={currentUser}/>
-                </div>
+                <PrayerHistoryTable currentUser={currentUser}/>
                 
             </div>
 

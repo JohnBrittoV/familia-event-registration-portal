@@ -2,7 +2,7 @@ import React from 'react';
 import { usePrayerConfig } from '../hooks/usePrayerConfig';
 import { usePrayerBooking } from '../hooks/usePrayerBooking';
 import { Button } from '../../../components/ui/Button';
-import { Lock, Church, Flame, XCircle, CheckCircle2 } from 'lucide-react';
+import { Lock, Church, Cross, XCircle, CheckCircle2 } from 'lucide-react';
 
 export const PrayerBookingForm = ({ currentUser }) => {
     const { isBookingOpen, isLoadingConfig } = usePrayerConfig();
@@ -176,7 +176,7 @@ export const PrayerBookingForm = ({ currentUser }) => {
                 }`}
             >
               <div className="flex justify-center mb-2">
-                <Flame className="w-8 h-8" />
+                <Cross className="w-8 h-8" />
               </div>
               <div className="font-semibold">Fasting Prayer</div>
               <div className={`text-xs mt-1 font-medium ${isFastingBooked ? 'text-red-500 dark:text-red-400' : 'opacity-70'}`}>

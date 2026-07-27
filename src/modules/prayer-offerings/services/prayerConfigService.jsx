@@ -7,20 +7,20 @@ export const prayerConfigService = {
     subscribeToConfig: (callback) => {
         return onSnapshot(CONFIG_DOC, (docSnap) => {
             if (docSnap.exists()) {
-                callback(docSnap.data().isBookingOpen);
+                callback(docSnap.data());
             }
             else {
-                callback(false);
+                callback({ isBookingOpen: false, isHistoryVisible: true});
             }
         });
     },
 
     // Admin function to toggle the status
-    toggleBookingStatus: async (newStatus) => {
+    toggleFeature: async (featureKey, newStatus) => {
         try {
-            await setDoc(CONFIG_DOC, { isBookingOpen: newStatus }, { merge: true });
+            await setDoc(CONFIG_DOC, { [featureKey] : newStatus }, { merge: true });
         } catch (error) {
-            console.error('Error updating prayer config:', error);
+            console.error(`Error updating ${featureKey}:`, error);
             throw new Error('Failed to update booking status. Check admin permissions.');
         }
     }
