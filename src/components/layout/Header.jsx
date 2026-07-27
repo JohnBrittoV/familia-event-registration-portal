@@ -18,7 +18,7 @@ export const Header = () => {
     const [otpCode, setOtpCode] = useState('');
     const [otpError, setOtpError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const  [showPassword, setShowPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const ADMIN_SECRET = import.meta.env.VITE_ADMIN_OTP || "1235"; 
 
@@ -182,7 +182,7 @@ export const Header = () => {
                                             <button
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 
+                                                className="absolute right-3 top-1.5 translate-y-1/2 
                                                            text-slate-400 hover:text-slate-600 
                                                            dark:text-slate-500 dark:hover:text-slate-300 
                                                            transition-colors focus:outline-none"

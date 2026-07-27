@@ -53,7 +53,7 @@ export const MobileEntryStep = ({ onSubmit, isLoading, error: serverError }) => 
               <div className="bg-slate-50 dark:bg-slate-900 
                                 border-2 border-slate-200 
                                 dark:border-slate-700 text-slate-600 
-                                dark:text-slate-300 rounded-xl px-4 py-4 
+                                dark:text-slate-300 rounded-xl px-5 py-3 
                                 flex items-center justify-center font-medium 
                                 mt-px">
                 +91
