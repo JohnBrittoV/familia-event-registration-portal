@@ -1,4 +1,4 @@
-import { collection, addDoc, serverTimestamp, query, where, getDocs } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, where, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "../../../config/firebase.config";
 
 export const prayerBookingService = {
@@ -42,5 +42,28 @@ export const prayerBookingService = {
             console.error('Error fetching global availability:', error);
             return [];
         }
+    },
+
+    // Fetch Users booking history
+    subscribeToUserBookings: (mobile, callback) => {
+        
+        const q = query(
+            collection(db, 'PrayerBookings'),
+            where('mobile', '==', mobile)
+        );
+
+        // real-time listeners
+        return onSnapshot(q, (snapshot) => {
+            const bookings = [];
+            snapshot.forEach((doc) => {
+                bookings.push({ id: doc.id, ...doc.data() });
+            });
+
+            bookings.sort((a,b) => new Date(b.date) - new Date(a.date));
+            callback(bookings);
+        }, (error) => {
+            console.error('Error listening to user bookings:', error);
+            callback([]);
+        })
     }
 };

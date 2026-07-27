@@ -4,6 +4,7 @@ import { MobileEntryStep } from '../components/auth/MobileEntryStep';
 import { ProfileSetupStep } from '../components/auth/ProfileSetupStep';
 import { HailMaryCounter } from '../components/HailMaryCounter';
 import { PrayerBookingForm } from '../components/PrayerBookingForm';
+import { PrayerHistoryTable } from '../components/PrayerHistoryTable';
 import { Spinner } from '../../../components/ui/Spinner';
 
 export const PrayerDashboard = () => {
@@ -87,7 +88,18 @@ export const PrayerDashboard = () => {
                                 border-slate-100 dark:border-slate-700 
                                 text-center text-slate-500 dark:text-slate-400">
                     <PrayerBookingForm currentUser={currentUser}/>
+
+                    
+
                 </div>
+
+                <div className="bg-white dark:bg-slate-800 
+                                p-6 rounded-2xl shadow-sm border 
+                                border-slate-100 dark:border-slate-700 
+                                text-center text-slate-500 dark:text-slate-400">
+                    <PrayerHistoryTable currentUser={currentUser}/>
+                </div>
+                
             </div>
 
         </div>
