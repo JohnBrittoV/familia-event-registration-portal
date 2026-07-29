@@ -14,7 +14,7 @@
         @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
     }
 
-}
+  }
 
 @keyframes marquee {
   0% { transform: translateX(100%); }
@@ -28,6 +28,8 @@
 .animate-marquee:hover {
   animation-play-state: paused;
 }
+
+
 
 /* --------------------------------------------------
 --------- Styles for table --------------------------
@@ -86,7 +88,9 @@
   .badge-status {
     @apply w-24 inline-block px-3 py-1 text-xs font-bold rounded-full text-center;
   }
+ 
   .btn-xs {
-    @apply px-3 py-1.5 rounded-lg font-semibold text-xs transition-colors;
+      @apply px-3 py-2 md:py-1.5 rounded-lg font-semibold text-xs transition-colors shadow-sm;
   }
+
 }

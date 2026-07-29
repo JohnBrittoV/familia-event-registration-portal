@@ -12,7 +12,7 @@ import { fetchLatestResponsiblePersons } from '../services/userService';
 export const AdminDashboard = () => {
     
     const { user } = useAuth();
-    const { users, loading, handleToggleAccess, handleToggleRole, handleDeleteUser } = useAdminControls();
+    const { handleToggleAccess, handleToggleRole, handleDeleteUser } = useAdminControls();
 
     const [responsibleUsers, setResponsibleUsers] = useState([]);
     const [loadingRecentUsers, setLoadingRecentUsers] = useState(true);
@@ -59,24 +59,31 @@ export const AdminDashboard = () => {
                         subtitle="Monitor portal activity and manage user access." 
                     />
 
-                    <div className="grid grid-cols-1 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                        {/* Left Column: User Table */}
-
-                        {loadingRecentUsers ? (
-                            <div className="flex justify-center p-12"><Spinner /></div>
-                        ) : (
-                            <UserAccessTable 
-                                users={responsibleUsers} 
-                                onToggleAccess={handleToggleAccess}
-                                onToggleRole={handleToggleRole}
-                                onDelete={handleDeleteUser}
-                            />
-                        )}
+                        <div className='w-full'>
+    
+                            {loadingRecentUsers ? (
+                                <div className="flex justify-center p-12 bg-white 
+                                                dark:bg-slate-800 rounded-2xl border 
+                                                border-slate-200 dark:border-slate-700">
+                                    
+                                    <Spinner />
+                                </div>
+                            ) : (
+                                <UserAccessTable 
+                                    users={responsibleUsers} 
+                                    onToggleAccess={handleToggleAccess}
+                                    onToggleRole={handleToggleRole}
+                                    onDelete={handleDeleteUser}
+                                />
+                            )}
                         
-                        {/* Right Column: Placeholder */}
-
-                        <RecentParticipantsTable/>
+                        </div>
+                        
+                        <div className="w-full">
+                            <RecentParticipantsTable />
+                        </div>
                     </div>
 
                 </div>

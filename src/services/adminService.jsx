@@ -1,5 +1,7 @@
 import { db } from '../config/firebase.config';
-import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc,
+         query, where, limit, getDoc
+ } from 'firebase/firestore';
 
 // Fetch users
 export const fetchUsers = async () => {
@@ -43,3 +45,42 @@ export const toggleRegistrationAccess = async (targetId, type, currentStatus) =>
         throw error;
     }
 }
+
+// Fetch the aggregated global Stats
+export const getGlobalStats = async () => {
+    try {
+        const statsRef = doc(db, 'statistics', 'global_stats' );
+        const snapshot = await getDoc(statsRef);
+
+        if (snapshot.exists()) {
+            return snapshot.data();
+        }
+
+        return { totalFamilies: 0, totalParticipants: 0, targetProgress: 0, prayerOfferings: 0};
+
+    } catch (error) {
+        console.error('Error fetching global stats:', error);
+        throw new Error('Failed to load statistics');
+    }
+};
+
+// Fetch latest 3 Responsible persons
+export const getLastRPs = async () => {
+    try {
+        const q = query(
+            collection(db, 'users'),
+            where('role', '==', 'responsible_person'),
+            limit(3)
+        );
+
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()   
+        }))
+    } catch (error) {
+        console.error('Error fetching lastest RPs:', error);
+        throw new Error('Failed to fetch Responsible persons.');
+    }
+};
+

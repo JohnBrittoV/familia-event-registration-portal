@@ -23,7 +23,7 @@ export const App = () => {
 
         <Route path="/" element={<Welcome/>}/>
         <Route path="/pending" element={<PendingAccess/>}/>
-        
+                
         {/* Protected routes - prayer dashboard */}
         <Route path="/prayer-dashboard" 
                element={<PrayerDashboard/>                
