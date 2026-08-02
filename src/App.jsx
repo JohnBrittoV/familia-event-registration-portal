@@ -12,6 +12,7 @@ import { AdminParticipants } from "./pages/AdminParticipantsPage";
 import { ResponsiblePersons } from "./pages/ResponsiblePersons";
 import { AdminStats } from "./pages/AdminStats";
 import { AdminExport } from "./pages/AdminExport";
+import { RPNewParticipant } from "./pages/RPNewParticipant";
 
 console.log("Firebase initialized successfully:", db.app.name);
 
@@ -51,11 +52,8 @@ export const App = () => {
                 <DashboardLayout/>
             </ProtectedRoute>
         }>
-
-          <Route path="/dashboard" element={<UserDashboard />}/>
-          
-          <Route path="/rp/dashboard" element={<UserDashboard />} />
-            <Route path="/rp/new-participant" element={<UserDashboard />} />
+            <Route path="/rp/dashboard" element={<UserDashboard />} />
+            <Route path="/rp/new-participant" element={<RPNewParticipant />} />
             <Route path="/rp/my-registrations" element={<UserDashboard />} />
             <Route path="/rp/participants-list" element={<UserDashboard />} />
             <Route path="/rp/export" element={<UserDashboard />} />
