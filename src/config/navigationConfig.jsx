@@ -90,7 +90,7 @@ export const navItems = [
     {
         id: 'rp-participants-list',
         label: 'Global Roster',
-        path: '/rp/participants-list',
+        path: '/rp/global-participants',
         icon: Users,
         allowedRoles: ['responsible_person'],
     },
@@ -106,7 +106,7 @@ export const navItems = [
     {
         id: 'rp-export',
         label: 'Report',
-        path: '/rp/export',
+        path: '/rp/reports',
         icon: Download,
         allowedRoles: ['responsible_person'],
     },
