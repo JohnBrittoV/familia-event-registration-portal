@@ -1,7 +1,6 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { Users, FileCheck, IndianRupee } from "lucide-react";
-import { DashboardHeader } from '../components/layout/UserDashboardHeader';
 import { StatCard } from '../components/ui/StatCard';
 import { Greeting } from "../components/features/Greeting";
 import { RegistrationWizard } from "../components/features/Registration/components/RegistrationWizard";
@@ -10,13 +9,8 @@ export const UserDashboard = () => {
     const { user } = useAuth();
 
     return(
-        <div className="min-h-screen bg-slate-50 duration-300
-                        dark:bg-slate-900 transition-colors ">
-            
-            <DashboardHeader />
-
-            <main className="max-w-7xl mx-auto px-4 
-                             sm:px-6 lg:px-8 py-8 space-y-8">
+                  
+            <div className="max-w-7xl mx-auto space-y-8">
                 
                 <Greeting 
                     name={user?.displayName} 
@@ -48,9 +42,7 @@ export const UserDashboard = () => {
 
                 <RegistrationWizard/>
 
-            </main>
-
-        </div>
+            </div>
 
     )
 }

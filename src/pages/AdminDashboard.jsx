@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { AdminLayout } from '../components/layout/AdminLayout';
 import { AdminHeader } from '../components/layout/AdminDashboardHeader';
 import { Greeting } from '../components/features/Greeting';
 import { UserAccessTable } from '../components/features/UserAccessTable';
@@ -48,8 +47,6 @@ export const AdminDashboard = () => {
     return(
         
         <>
-            <AdminLayout>
-
                 <div className='max-w-7xl mx-auto 
                                 space-y-6'>
 
@@ -88,7 +85,6 @@ export const AdminDashboard = () => {
 
                 </div>
 
-            </AdminLayout>
         </>
     )
 }

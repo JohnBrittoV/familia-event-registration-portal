@@ -1,6 +1,5 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
-import { AdminLayout } from "../components/layout/AdminLayout";
 import { Greeting } from "../components/features/Greeting";
 
 export const AdminStats = () => {
@@ -9,12 +8,10 @@ export const AdminStats = () => {
         
     return(
         <>
-            <AdminLayout>
-                <Greeting 
+            <Greeting 
                     name={user?.displayName} 
                     role="Admin" 
                     subtitle="Monitor portal activity and manage user access."/>
-            </AdminLayout>
         </>
     )
 }

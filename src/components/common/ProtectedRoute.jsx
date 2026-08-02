@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Spinner } from '../ui/Spinner';
 
-export const ProtectedRoute = ({ children, allowAdminOnly = false}) => {
+export const ProtectedRoute = ({ children, allowedRoles }) => {
 
     const { isAuthenticated, user, dbUser, loading } = useAuth();
     
@@ -20,19 +20,25 @@ export const ProtectedRoute = ({ children, allowAdminOnly = false}) => {
     }
 
     const isApproved = dbUser?.isApproved === true;
-    const hasAdminPrivileges = ['admin', 'owner'].includes(dbUser?.role);
+    const userRole = dbUser?.role;
 
-    if (!isApproved && !hasAdminPrivileges) {
+    if (!isApproved && !['admin', 'owner'].includes(userRole)) {
         return <Navigate to="/pending" replace/>
     }
 
-    if (allowAdminOnly && !hasAdminPrivileges) {
-        return <Navigate to="/dashboard" replace />
+    if (!isApproved && !allowedRoles.includes(userRole)) {
+        return ['admin', 'owner'].includes(userRole) 
+            ? <Navigate to="/admin" replace /> 
+            : <Navigate to="/dashboard" replace />;
     }
 
-     if (!allowAdminOnly && hasAdminPrivileges) {
-        return <Navigate to="/admin" replace />
-    }
+    // if (allowAdminOnly && !hasAdminPrivileges) {
+    //     return <Navigate to="/dashboard" replace />
+    // }
+
+    //  if (!allowAdminOnly && hasAdminPrivileges) {
+    //     return <Navigate to="/admin" replace />
+    // }
 
     return children;
 

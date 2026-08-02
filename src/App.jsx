@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
+import { DashboardLayout } from "./components/layout/DashboardLayout";
 import { Welcome } from "./pages/Welcome";
 import { PendingAccess } from "./pages/PendingAccess";
 import { UserDashboard } from "./pages/UserDashboard";
@@ -19,82 +20,48 @@ export const App = () => {
     <Router>
       <Routes>
 
-        {/* Public routes */}
+        {/* Public Routes */}
+        {/* ------------- */}
 
         <Route path="/" element={<Welcome/>}/>
         <Route path="/pending" element={<PendingAccess/>}/>
-                
-        {/* Protected routes - prayer dashboard */}
-        <Route path="/prayer-dashboard" 
-               element={<PrayerDashboard/>                
-              }/>
-
-        {/* Protected routes - prayer bookings */}
-        <Route path="/admin/prayer-bookings" element={
-          <ProtectedRoute allowAdminOnly={true}>
-              <PrayerAdminPage />
-          </ProtectedRoute>
-        }/>
+        <Route path="/prayer-dashboard" element={<PrayerDashboard />} />
         
-        {/* Protected routes - User Dashboard */}
-        <Route 
-          path="/dashboard" 
-          element={
-                  <ProtectedRoute>
-                    <UserDashboard/>
-                  </ProtectedRoute>
-                }
-        />
-
-        {/* Protected routes - Admin Dashboard */}
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute allowAdminOnly={true}>
-              <AdminDashboard/>
+        {/* Admin / Owner Routes  */}
+        {/* --------------------- */}
+        <Route element={
+            <ProtectedRoute allowedRoles={['admin', 'owner']}>
+                <DashboardLayout />
             </ProtectedRoute>
-          }
-        />
 
-        {/* Protected routes - Admin participants */}
-        <Route
-          path="/admin/participants"
-          element={
-            <ProtectedRoute allowAdminOnly={true}>
-              <AdminParticipants/>
-            </ProtectedRoute>
-          }
-        />
+        }> 
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/participants" element={<AdminParticipants/>}/>
+            <Route path="/admin/responsible-persons" element={<ResponsiblePersons/>}/>
+            <Route path="/admin/stats" element={<AdminStats/>}/>
+            <Route path="/admin/export" element={<AdminExport/>}/>
+            <Route path="/admin/prayer-bookings" element={<PrayerAdminPage/>}/>
+        </Route> 
 
-        {/* Protected routes - Admin responsible persons */}
-        <Route
-          path="/admin/responsible-persons"
-          element={
-            <ProtectedRoute allowAdminOnly={true}>
-              <ResponsiblePersons/>
-            </ProtectedRoute>
-          }
-        />
+        {/* Responsible persons & Standard user Routes  */}
+        {/* ------------------------------------------- */}
 
-      {/* Protected routes - Admin statistics */}
-        <Route
-          path="/admin/stats"
-          element={
-            <ProtectedRoute allowAdminOnly={true}>
-              <AdminStats/>
+        <Route element={
+            <ProtectedRoute allowedRoles={['admin', 'owner', 'responsible_person', 'standard']}>
+                <DashboardLayout/>
             </ProtectedRoute>
-          }
-        />
+        }>
 
-        {/* Protected routes - Admin Export */}
-        <Route
-          path="/admin/export"
-          element={
-            <ProtectedRoute allowAdminOnly={true}>
-              <AdminExport/>
-            </ProtectedRoute>
-          }
-        />      
+          <Route path="/dashboard" element={<UserDashboard />}/>
+          
+          <Route path="/rp/dashboard" element={<UserDashboard />} />
+            <Route path="/rp/new-participant" element={<UserDashboard />} />
+            <Route path="/rp/my-registrations" element={<UserDashboard />} />
+            <Route path="/rp/participants-list" element={<UserDashboard />} />
+            <Route path="/rp/export" element={<UserDashboard />} />
+            <Route path="/rp/tech-support" element={<UserDashboard />} />
+
+        </Route>
         
       </Routes>
     </Router>

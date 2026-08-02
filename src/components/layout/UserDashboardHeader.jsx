@@ -1,13 +1,12 @@
-import React from 'react';
-import { useState, useRef, useEffect } from 'react';
-import { LogOut } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { LogOut, Menu } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../ui/Button';
 import { Spinner } from '../ui/Spinner';
 import logo from '../../assets/icons/blue.png';
 
-export const DashboardHeader = () => {
+export const UserDashboardHeader = ({ toggleSidebar }) => {
     
     const { user, logout } = useAuth();
     const navigate = useNavigate();
@@ -42,7 +41,7 @@ export const DashboardHeader = () => {
                 </div>
             )}
         
-        <header className="bg-white dark:bg-slate-800 border-b 
+        <header className="md:hidden bg-white dark:bg-slate-800 border-b 
                            border-slate-200 dark:border-slate-700 
                            sticky top-0 z-30">
 
@@ -52,6 +51,17 @@ export const DashboardHeader = () => {
 
                 {/* Left Branding */}
                 <div className='flex items-center gap-3'>
+
+                    <button 
+                            onClick={toggleSidebar} 
+                            className="p-1 -ml-1 text-slate-500 
+                                       hover:text-slate-700 
+                                       dark:text-slate-400 
+                                       dark:hover:text-slate-200"
+                            aria-label="Open menu"
+                        >
+                            <Menu size={24} />
+                        </button>
 
                     <img src={logo} alt="Jesus Youth Logo" 
                          className="w-8 h-8 object-contain shrink-0" />
@@ -64,45 +74,7 @@ export const DashboardHeader = () => {
                 </div>
 
                 {/* Right: User Profile & Actions */}
-                <div className='flex items-center gap-4'>
-
-                    <div className='flex items-center gap-3 pr-4 
-                                    border-r border-slate-200 
-                                    dark:border-slate-700'>
-
-                        {/* Profile Picture */}
-
-                        {user?.photoURL ? (
-
-                           <img src={user.photoURL} alt="Profile" 
-                           className="w-9 h-9 rounded-full border border-slate-200 
-                                      dark:border-slate-600" /> 
-                        ) : (
-                            <div className='className="w-9 h-9 rounded-full 
-                                          bg-blue-100 text-blue-600 flex 
-                                            items-center justify-center font-bold'>
-                                {user?.displayName?.charAt(0) || 'JY'}
-                            </div>
-                        )}
-
-                        {/* Profile Name & Role */}
-
-                        <div className='hidden md:flex md:flex-col
-                                        justify-start'>
-
-                            <span className="text-sm font-bold text-slate-900 mx-2 
-                                             dark:text-slate-100 leading-tight">
-                                {user?.displayName}
-                            </span>
-
-                            <span className="text-xs font-medium text-slate-500 
-                                             dark:text-slate-400">
-                                Responsible Person
-                            </span>
-
-                        </div>
-
-                    </div>
+                <div className='flex items-center'>
 
                     <Button variant="iconOnly" onClick={handleLogout} aria-label="Sign out">
                         <LogOut size={18} className="text-slate-600 dark:text-slate-300" />

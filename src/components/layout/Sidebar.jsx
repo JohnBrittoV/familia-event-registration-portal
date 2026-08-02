@@ -3,10 +3,10 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LogOut, X} from "lucide-react";
 import { useAuth } from '../../context/AuthContext';
 import { Spinner } from "../ui/Spinner";
-import { adminNavItems } from "../../config/navigationConfig";
+import { navItems } from "../../config/navigationConfig";
 import logo from '../../assets/icons/blue.png';
 
-export const AdminSidebar = ({ isOpen, setIsOpen }) => {
+export const Sidebar = ({ isOpen, setIsOpen }) => {
 
     const { logout, user, dbUser } = useAuth();
     const navigate = useNavigate();
@@ -17,7 +17,7 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
     const currentRole = dbUser?.role || '';
 
     // Filter tabs based on the user's role 
-    const visibleNavItems = adminNavItems.filter(items => items.allowedRoles.includes(currentRole));
+    const visibleNavItems = navItems.filter(items => items.allowedRoles.includes(currentRole));
 
     useEffect(() => {
         return () => {
@@ -65,7 +65,7 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
                     <div className="flex items-center gap-3">
                         <img src={logo} alt="Logo" className="w-8 h-8 object-contain shrink-0" />
                         <span className="font-bold text-lg text-slate-900 
-                                         dark:text-white">Femilia'26 Retreat</span>
+                                         dark:text-white">Familia'26</span>
                     </div>
 
                     <button onClick={() => setIsOpen(false)} 

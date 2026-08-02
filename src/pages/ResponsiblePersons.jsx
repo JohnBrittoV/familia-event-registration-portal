@@ -1,7 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { AdminLayout } from "../components/layout/AdminLayout";
 import { Greeting } from "../components/features/Greeting";
 import { fetchPaginatedUsersByRole } from "../services/userService"; 
 import { toggleApproval, updateUserRole, deleteUserWithSecret } from "../services/adminService";
@@ -71,7 +70,7 @@ export const ResponsiblePersons = () => {
 
     return(
         <>
-            <AdminLayout>
+            
                  <Greeting 
                     name={user?.displayName} 
                     role="Admin" 
@@ -101,7 +100,7 @@ export const ResponsiblePersons = () => {
                     </div>
                 )}
             </div>
-            </AdminLayout>
+            
         </>
     )
 
