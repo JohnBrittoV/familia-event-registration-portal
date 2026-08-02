@@ -33,6 +33,17 @@ export const Header = () => {
     }; 
     },[isOtpModalOpen]);
 
+    const handleInitialLoginClick = () => {
+        const isDeviceVerified = localStorage.getItem('familia_device_verified');
+
+        if (isDeviceVerified === 'true') {
+            login();
+        }
+        else {
+            setIsOTPModalOpen(true);
+        }
+    }
+
     const handleOtpSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -40,8 +51,10 @@ export const Header = () => {
 
         if (otpCode === ADMIN_SECRET) {
             try {
-                await login();        // Triggers your existing Google Auth flow
-                navigate('/dashboard'); // Navigates to dashboard
+
+                localStorage.setItem('familia_device_verified', 'true');
+                await login();        
+               
                 setIsOTPModalOpen(false);
                 setOtpCode('');
                 setShowPassword(false);
@@ -115,7 +128,7 @@ export const Header = () => {
                         </Button>
 
                         <Button 
-                                onClick={() => setIsOTPModalOpen(true)}
+                                onClick={handleInitialLoginClick}
                                 className="flex items-center gap-1.5 sm:gap-2 px-2 
                                            py-1.5 sm:px-4 sm:py-2 lg:px-5 lg:py-2.5 
                                            rounded-full bg-white dark:bg-slate-800 

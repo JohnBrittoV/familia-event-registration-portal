@@ -23,22 +23,14 @@ export const ProtectedRoute = ({ children, allowedRoles }) => {
     const userRole = dbUser?.role;
 
     if (!isApproved && !['admin', 'owner'].includes(userRole)) {
-        return <Navigate to="/pending" replace/>
+        return <Navigate to="/pending" replace/>;
     }
 
-    if (!isApproved && !allowedRoles.includes(userRole)) {
+    if (allowedRoles && !allowedRoles.includes(userRole)) {
         return ['admin', 'owner'].includes(userRole) 
             ? <Navigate to="/admin" replace /> 
-            : <Navigate to="/dashboard" replace />;
+            : <Navigate to="/rp/dashboard" replace />;
     }
-
-    // if (allowAdminOnly && !hasAdminPrivileges) {
-    //     return <Navigate to="/dashboard" replace />
-    // }
-
-    //  if (!allowAdminOnly && hasAdminPrivileges) {
-    //     return <Navigate to="/admin" replace />
-    // }
 
     return children;
 

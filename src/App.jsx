@@ -15,6 +15,7 @@ import { AdminExport } from "./pages/AdminExport";
 import { RPNewParticipant } from "./pages/RPNewParticipant";
 import { RPMySubmissions } from "./pages/RPMySubmissions";
 import { RPGlobalRoster } from "./pages/RPGlobalRoaster";
+import { RPExport } from "./pages/RPExport";
 
 console.log("Firebase initialized successfully:", db.app.name);
 
