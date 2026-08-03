@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { doc, getDoc, updateDoc, runTransaction, increment } from 'firebase/firestore';
 import { updateParticipantRegistration } from '../components/features/Registration/service/registrationService';
 import { db } from '../config/firebase.config';
-import { ArrowLeft, User, MapPin, CheckSquare, Plus, Trash2, Save } from 'lucide-react';
+import { ArrowLeft, User, MapPin, CheckSquare, Plus, Trash2, Save, TriangleAlertIcon, Info } from 'lucide-react';
 import { Spinner } from '../components/ui/Spinner';
+import { useAuth } from '../context/AuthContext';
 
 export const RPParticipantProfile = () => {
     const { id } = useParams();
+    const { user, dbUser } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,6 +79,14 @@ export const RPParticipantProfile = () => {
         if (id) loadProfile();
     }, [id, reset]);
 
+    const loggedInUserId = user?.uid;
+    const profileOwnerId = originalData?.registeredBy;
+
+    const isAdmin = dbUser?.role === 'admin' || dbUser?.role === 'owner';
+    const isCreator = loggedInUserId && profileOwnerId && loggedInUserId === profileOwnerId;
+    
+    const isReadOnly = !isAdmin && !isCreator;
+
     const watchedChildren = useWatch({
         control,
         name: "children"
@@ -112,6 +123,7 @@ export const RPParticipantProfile = () => {
 
     // Handle Form Update Submission
     const onSubmit = async (formData) => {
+        if (isReadOnly) return;
         setIsSubmitting(true);
         try {
             // Call our transactional service which handles deltas automatically
@@ -173,6 +185,22 @@ export const RPParticipantProfile = () => {
                 </div>
             </div>
 
+            {isReadOnly ? (
+                <div className="p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-2xl flex items-center gap-3 text-amber-800 dark:text-amber-300 text-sm font-medium">
+                    <TriangleAlertIcon className="shrink-0 w-5 h-5"/>
+                    <p>
+                        <span className='font-bold'>Read-Only Mode :</span> <span className='font-normal'>You can view this participant's details from the Global Event Directory, but you cannot edit them because this family was registered by another Responsible Person.</span>
+                    </p>
+                </div>
+            ) : (
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-2xl flex items-center gap-3 text-blue-800 dark:text-blue-300 text-sm font-medium">
+                    <Info className='shrink-0 w-5 h-5'/>
+                    <p>
+                        <span className='font-bold'>Editable Profile :</span> <span className='font-normal'>Because you originally registered this participant (or hold administrator privileges), you have full access to update or correct these details.</span>
+                    </p>
+                </div>
+            )}
+
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 
                 {/* STEP 1: PERSONAL INFO BIODATA */}
@@ -184,41 +212,45 @@ export const RPParticipantProfile = () => {
                     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Full Name</label>
-                            <input {...register("fullName")} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+                            <input {...register("fullName")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
                         </div>
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Date of Birth</label>
-                            <input type="date" {...register("dob")} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+                            <input type="date" {...register("dob")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
                         </div>
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Spouse Name</label>
-                            <input {...register("spouseName")} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+                            <input {...register("spouseName")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
                         </div>
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Spouse DOB</label>
-                            <input type="date" {...register("spouseDob")} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+                            <input type="date" {...register("spouseDob")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
                         </div>
                         <div className="md:col-span-2">
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Wedding Anniversary</label>
-                            <input type="date" {...register("weddingAnniversary")} className="w-full md:w-1/2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+                            <input type="date" {...register("weddingAnniversary")} disabled={isReadOnly} className="w-full md:w-1/2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
                         </div>
 
                         {/* Dynamic Children Section */}
                         <div className="md:col-span-2 pt-4 border-t border-slate-100 dark:border-slate-700">
                             <div className="flex items-center justify-between mb-4">
                                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Children Details</label>
-                                <button type="button" onClick={() => append({ name: '', age: '', isAttending: true })} className="flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
-                                    <Plus size={14}/> Add Child
-                                </button>
+                                {!isReadOnly && (
+                                    <button type="button" onClick={() => append({ name: '', age: '', isAttending: '' })} className="flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
+                                        <Plus size={14}/> Add Child
+                                    </button>
+                                )}
                             </div>
                             <div className="space-y-3">
                                 {childFields.map((field, index) => (
                                     <div key={field.id} className="flex items-center gap-3">
-                                        <input {...register(`children.${index}.name`)} placeholder="Child's Name" className="flex-1 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
-                                        <input type="number" {...register(`children.${index}.age`)} placeholder="Age" className="w-40 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
-                                        <button type="button" onClick={() => remove(index)} className="p-2.5 text-red-500 bg-red-50 dark:bg-red-900/30 rounded-lg hover:bg-red-100 transition-colors">
-                                            <Trash2 size={18} />
-                                        </button>
+                                        <input {...register(`children.${index}.name`)} disabled={isReadOnly} placeholder="Child's Name" className="flex-1 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                                        <input type="number" {...register(`children.${index}.age`)} disabled={isReadOnly} placeholder="Age" className="w-40 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                                        {!isReadOnly && (
+                                            <button type="button" onClick={() => remove(index)} className="p-2.5 text-red-500 bg-red-50 dark:bg-red-900/30 rounded-lg hover:bg-red-100 transition-colors">
+                                                <Trash2 size={18} />
+                                            </button>
+                                        )}
                                     </div>
                                 ))}
                                 {childFields.length === 0 && <p className="text-sm text-slate-400 italic">No children added.</p>}
@@ -236,27 +268,27 @@ export const RPParticipantProfile = () => {
                     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">House Name</label>
-                            <input {...register("houseName")} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                            <input {...register("houseName")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
                         </div>
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Place / Hometown</label>
-                            <input {...register("homeTown")} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                            <input {...register("homeTown")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
                         </div>
                         <div className="md:col-span-2">
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Parish</label>
-                            <input {...register("parish")} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                            <input {...register("parish")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
                         </div>
                         <div className="md:col-span-2">
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Full Address</label>
-                            <textarea {...register("address")} rows="2" className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                            <textarea {...register("address")} disabled={isReadOnly} rows="2" className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
                         </div>
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Primary Phone</label>
-                            <input {...register("phone1")} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                            <input {...register("phone1")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
                         </div>
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">WhatsApp / Alt Phone</label>
-                            <input {...register("phone2")} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                            <input {...register("phone2")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
                         </div>
                     </div>
                 </div>
@@ -291,7 +323,7 @@ export const RPParticipantProfile = () => {
                         <div className="space-y-3 mb-6">
                             {/* Participant Card */}
                             <label className={`flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${watchedSelf ? 'border-blue-500 bg-blue-50/50 dark:bg-slate-800 dark:border-blue-500' : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'}`}>
-                                <input type="checkbox" {...register("attendees.self")} className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 mr-4 cursor-pointer" />
+                                <input type="checkbox" {...register("attendees.self")} disabled={isReadOnly} className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 mr-4 cursor-pointer" />
                                 <div>
                                     <p className="font-bold text-slate-900 dark:text-white text-sm">{fullName || 'Primary Participant'}</p>
                                     <p className="text-xs text-slate-500">Participant</p>
@@ -301,7 +333,7 @@ export const RPParticipantProfile = () => {
                             {/* Spouse Card */}
                             {spouseName?.trim() && (
                                 <label className={`flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${watchedSpouse ? 'border-blue-500 bg-blue-50/50 dark:bg-slate-800 dark:border-blue-500' : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'}`}>
-                                    <input type="checkbox" {...register("attendees.spouse")} className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 mr-4 cursor-pointer" />
+                                    <input type="checkbox" {...register("attendees.spouse")} disabled={isReadOnly} className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 mr-4 cursor-pointer" />
                                     <div>
                                         <p className="font-bold text-slate-900 dark:text-white text-sm">{spouseName}</p>
                                         <p className="text-xs text-slate-500">Spouse</p>
@@ -312,7 +344,7 @@ export const RPParticipantProfile = () => {
                             {/* Children Cards */}
                             {childFields.map((field, index) => (
                                 <label key={field.id} className={`flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${watch(`children.${index}.isAttending`) ? 'border-blue-500 bg-blue-50/50 dark:bg-slate-800 dark:border-blue-500' : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'}`}>
-                                    <input type="checkbox" {...register(`children.${index}.isAttending`)} className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 mr-4 cursor-pointer" />
+                                    <input type="checkbox" {...register(`children.${index}.isAttending`)} disabled={isReadOnly} className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 mr-4 cursor-pointer" />
                                     <div>
                                         <p className="font-bold text-slate-900 dark:text-white text-sm">{watch(`children.${index}.name`) || `Child ${index + 1}`}</p>
                                         <p className="text-xs text-slate-500">Child</p>
@@ -323,13 +355,14 @@ export const RPParticipantProfile = () => {
 
                         <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-2">Special Prayer Requests</label>
-                            <textarea {...register("prayerRequest")} rows="3" className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-100" />
+                            <textarea {...register("prayerRequest")} disabled={isReadOnly} rows="3" className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-100" />
                         </div>
                     </div>
                 </div>
 
                 {/* STICKY ACTION BAR - ONLY SHOWS WHEN 'isDirty' IS TRUE */}
-                <div className={`fixed bottom-0 left-0 md:left-64 right-0 p-4 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-transform duration-300 z-40 ${isDirty ? 'translate-y-0' : 'translate-y-full'}`}>
+                { !isReadOnly && (
+                    <div className={`fixed bottom-0 left-0 md:left-64 right-0 p-4 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-transform duration-300 z-40 ${isDirty ? 'translate-y-0' : 'translate-y-full'}`}>
                     <div className="max-w-4xl mx-auto flex items-center justify-between">
                         <p className="text-sm font-medium text-amber-600 dark:text-amber-400">Unsaved changes detected</p>
                         <div className="flex gap-3">
@@ -342,6 +375,7 @@ export const RPParticipantProfile = () => {
                         </div>
                     </div>
                 </div>
+                )}
 
             </form>
         </div>

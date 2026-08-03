@@ -171,7 +171,7 @@ export const RPGlobalRoster = () => {
                                     <td className="table-td text-xs text-slate-500">{formatDate(p.createdAt)}</td>
                                     <td className="table-td text-right">
                                         <button 
-                                            onClick={() => navigate(`/rp/participant/${p.id}`)}
+                                            onClick={() => navigate(`/rp/participant/${p.id}`, { state: { fromGlobalRoster: true } })}
                                             className="btn-xs bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/30 dark:hover:text-blue-400 text-slate-700 dark:text-slate-300 inline-flex items-center gap-1.5">
                                             <Eye size={14} />
                                             <span>View</span>
