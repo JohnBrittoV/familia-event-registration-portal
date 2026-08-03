@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { doc, getDoc, updateDoc, runTransaction, increment } from 'firebase/firestore';
+import { updateParticipantRegistration } from '../components/features/Registration/service/registrationService';
 import { db } from '../config/firebase.config';
 import { ArrowLeft, User, MapPin, CheckSquare, Plus, Trash2, Save } from 'lucide-react';
 import { Spinner } from '../components/ui/Spinner';
@@ -113,19 +114,21 @@ export const RPParticipantProfile = () => {
     const onSubmit = async (formData) => {
         setIsSubmitting(true);
         try {
-            const docRef = doc(db, "registrations", id);
+            // Call our transactional service which handles deltas automatically
+            await updateParticipantRegistration(id, formData, calculatedStats, originalData);
             
             // Attach the newly calculated stats to the payload
-            const updatedPayload = {
+            const updatedFullData = {
+                ...originalData,
                 ...formData,
                 calculatedStats,
                 updatedAt: new Date()
             };
 
-            await updateDoc(docRef, updatedPayload);
-            
+            setOriginalData(updatedFullData);
+
             // Reset form dirty state with new data to hide sticky bar
-            reset(updatedPayload);
+            reset(updatedFullData);
             alert("Participant profile updated successfully!");
         } catch (err) {
             console.error("Error updating document:", err);

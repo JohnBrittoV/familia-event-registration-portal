@@ -3,7 +3,9 @@ import { doc, getDoc, updateDoc, collection,
          runTransaction, serverTimestamp, increment 
     } from "firebase/firestore";
 
-// Submit Registration Data
+// --------------------------------------- 
+// ------- Submit Registration Data ------------------------------------------------------
+// ----------------------------------------
 export const submitRegistrationData = async (payload, repUid, repName = 'Unknown User') => {
 
     const globalStatusRef = doc(db, 'statistics', 'global_stats');
@@ -71,8 +73,9 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
         throw error;
     }
 };
-
-// Delete Participant Data
+// -----------------------------------------------
+// ---------------------- Delete Participant Data ---------------------
+// ------------------------------------------------ 
 export const deleteParticipantRegistration = async (participantId) => {
     const participantRef = doc(db, "registrations", participantId);
     const globalStatsRef = doc(db, "statistics", "global_stats");
@@ -123,7 +126,9 @@ export const deleteParticipantRegistration = async (participantId) => {
     });
 };
 
-// Fetch single Participant Profile
+// --------------------------------------- 
+// Fetch single Participant Profile----------------
+// --------------------------------------- 
 export const fetchParticipantById = async (id) => {
     const docRef = doc(db, "registrations", id);
     const docSnap = await getDoc(docRef);
@@ -134,3 +139,63 @@ export const fetchParticipantById = async (id) => {
     }
 };
 
+// ----------------------------------------------------------
+// -- Update participants count when counts changed ------------------------------
+// --------------------------------------------------------------------
+export const updateParticipantRegistration = async (participantId, formData, calculatedStats, originalData) => {
+    const participantRef = doc(db, "registrations", participantId);
+    const globalStatsRef = doc(db, "statistics", "global_stats");
+    
+    const repUid = originalData.registeredBy;
+    const repStatsRef = repUid ? doc(db, "statistics", `rep_stats_${repUid}`) : null;
+
+    // 1. Extract previous counts safely
+    const oldStats = originalData.calculatedStats || {};
+    const oldAdults = Number(oldStats.adults || 0);
+    const oldKids = Number(oldStats.kids || 0);
+
+    // 2. Extract new counts safely
+    const newAdults = Number(calculatedStats.adults || 0);
+    const newKids = Number(calculatedStats.kids || 0);
+
+    // 3. Compute the deltas (differences)
+    const adultDelta = newAdults - oldAdults;
+    const kidDelta = newKids - oldKids;
+    const hasCountChanged = adultDelta !== 0 || kidDelta !== 0;
+
+    await runTransaction(db, async (transaction) => {
+        // If counts changed, ensure RP stats doc is read first (Firestore transaction rule: reads before writes)
+        let repDoc = null;
+        if (hasCountChanged && repStatsRef) {
+            repDoc = await transaction.get(repStatsRef);
+        }
+
+        // Prepare updated payload
+        const updatedPayload = {
+            ...formData,
+            calculatedStats,
+            updatedAt: serverTimestamp()
+        };
+
+        // Perform the participant document update
+        transaction.set(participantRef, updatedPayload, { merge: true });
+
+        // Update Global Statistics only if counts changed
+        if (hasCountChanged) {
+            transaction.update(globalStatsRef, {
+                totalAdults: increment(adultDelta),
+                totalKids: increment(kidDelta),
+            });
+
+            // Update RP Statistics if it exists
+            if (repStatsRef && repDoc && repDoc.exists()) {
+                transaction.update(repStatsRef, {
+                    totalAdults: increment(adultDelta),
+                    totalKids: increment(kidDelta),
+                });
+            }
+        }
+    });
+
+    return { success: true };
+};
