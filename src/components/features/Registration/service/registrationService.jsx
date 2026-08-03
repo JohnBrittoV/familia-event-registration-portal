@@ -1,6 +1,5 @@
-import { doc, collection, runTransaction, serverTimestamp, addDoc } from "firebase/firestore";
+import { doc, collection, runTransaction, serverTimestamp, increment } from "firebase/firestore";
 import { db } from '../../../../config/firebase.config';
-import { ResponsiblePersons } from "../../../../pages/ResponsiblePersons";
 
 export const submitRegistrationData = async (payload, repUid, repName = 'Unknown User') => {
 
@@ -37,7 +36,7 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
 
             const currentRep = repDoc.exists() ? repDoc.data() : {
                 totalAdults: 0, totalKids: 0, totalRegistrations: 0, isOpen: true
-            }
+            };
 
            transaction.set(globalStatusRef, {
             totalAdults: (currentGlobal.totalAdults || 0) + adults,
@@ -63,10 +62,59 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
 
         });
 
-        return { success: true};
+        return { success: true };
     } catch (error) {
         console.error("Transaction failed:", error);
         throw error;
     }
 };
 
+export const deleteParticipantRegistration = async (participantId) => {
+    const participantRef = doc(db, "registrations", participantId);
+    const globalStatsRef = doc(db, "statistics", "global_stats");
+
+    await runTransaction(db, async (transaction) => {
+        // 1. ALL READS MUST HAPPEN FIRST
+        const participantDoc = await transaction.get(participantRef);
+        if (!participantDoc.exists()) {
+            throw new Error("Registration record not found.");
+        }
+
+        const data = participantDoc.data();
+        const repUid = data.registeredBy;
+
+        // If there is an RP, read their stats document right here (before any writes)
+        let repStatsRef = null;
+        let repDoc = null;
+        if (repUid) {
+            repStatsRef = doc(db, "statistics", `rep_stats_${repUid}`);
+            repDoc = await transaction.get(repStatsRef);
+        }
+
+        // Extract counts safely matching how they are calculated during submission
+        const stats = data.calculatedStats || {};
+        const adultsCount = Number(stats.adults || data.adultsCount || data.totalAdults || 1);
+        const kidsCount = Number(stats.kids || (Array.isArray(data.children) ? data.children.length : data.kidsCount || 0));
+
+        // 2. ALL WRITES HAPPEN AFTER ALL READS ARE COMPLETE
+        
+        // Delete the participant document
+        transaction.delete(participantRef);
+
+        // Decrement global statistics
+        transaction.update(globalStatsRef, {
+            totalRegistrations: increment(-1),
+            totalAdults: increment(-adultsCount),
+            totalKids: increment(-kidsCount),
+        });
+
+        // Decrement the specific Responsible Person's statistics if it exists
+        if (repUid && repStatsRef && repDoc && repDoc.exists()) {
+            transaction.update(repStatsRef, {
+                totalRegistrations: increment(-1),
+                totalAdults: increment(-adultsCount),
+                totalKids: increment(-kidsCount),
+            });
+        }
+    });
+};

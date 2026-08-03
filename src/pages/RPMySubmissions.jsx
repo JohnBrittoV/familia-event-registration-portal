@@ -2,6 +2,7 @@ import React, { useState, useEffect} from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Greeting } from '../components/features/Greeting';
 import { fetchSubmissionsByUser } from '../components/features/Registration/service/registrationQueryService';
+import { deleteParticipantRegistration } from '../components/features/Registration/service/registrationService';
 import { Spinner } from '../components/ui/Spinner';
 import { Eye, FileText, Trash2, AlertTriangle, CheckCircle2, X } from 'lucide-react';
 import { doc, deleteDoc } from 'firebase/firestore';
@@ -48,7 +49,7 @@ export const RPMySubmissions = () => {
         setIsDeleteModalOpen(true);
     };
 
-    // Handle execution of deletion from Firestore
+    // Handle execution of deletion using the transaction service
     const handleDeleteConfirm = async (e) => {
         e.preventDefault();
         if (!targetSubmission) return;
@@ -63,8 +64,8 @@ export const RPMySubmissions = () => {
 
         setIsDeleting(true);
         try {
-            // Delete document from Firestore 'registrations' collection
-            await deleteDoc(doc(db, "registrations", targetSubmission.id));
+            // Call the transaction service to delete record AND decrement stats
+            await deleteParticipantRegistration(targetSubmission.id);
             
             setDeleteSuccessMessage("Participant registration successfully deleted from database.");
 
