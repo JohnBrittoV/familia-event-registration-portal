@@ -6,7 +6,7 @@ import { Step1PersonalInfo } from "./steps/Step1PersonalInfo";
 import { Step2ContactDetails } from "./steps/Step2ContactDetails";
 import { Step3Participation } from "./steps/Step3Participation";
 import { useRegistrationSubmit } from "../hooks/useRegistrationSubmit";
-import { CardMessage } from "../../../ui/CardMessage";
+import { CheckCircle2, AlertTriangle, X } from "lucide-react";
 
 export const RegistrationWizard = () => {
 
@@ -105,29 +105,34 @@ export const RegistrationWizard = () => {
         }
     };
 
-    const renderActionButton = () => {
+    const renderActionContent = () => {
         if (submissionStatus === 'success') {
             return (
-                <button onClick={resetToIdle}
-                        className="mt-3 px-6 py-2 bg-blue-600 
-                                   text-white rounded-full 
-                                   font-semibold hover:bg-blue-700 
-                                   transition-colors">
-                    Submit Another
-                </button>
-            )
+                <div className="flex flex-col items-center justify-center py-10 space-y-4 text-center animate-in fade-in zoom-in duration-300">
+                    <CheckCircle2 className="text-emerald-500 w-16 h-16 animate-bounce" />
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">Registration Successful</h3>
+                    <p className="text-emerald-700 dark:text-emerald-300 font-medium max-w-sm">{feedback.message}</p>
+                    <button onClick={resetToIdle}
+                            className="mt-4 px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-sm transition-colors text-sm">
+                        Submit Another Participant
+                    </button>
+                </div>
+            );
         }
+
         if (submissionStatus === 'error') {
             return(
-                <button
-                        onClick={resetToIdle}
-                        className="mt-3 px-6 py-2 bg-red-600 
-                                   text-white rounded-full font-semibold 
-                                   hover:bg-red-700 transition-colors"
-                        >
-                    Try Again
-                </button>
-
+                <div className="flex flex-col items-center justify-center py-10 space-y-4 text-center animate-in fade-in zoom-in duration-300">
+                    <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-full text-red-600 dark:text-red-400">
+                        <AlertTriangle size={32} />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">Submission Failed</h3>
+                    <p className="text-red-600 dark:text-red-400 font-medium max-w-sm">{feedback.message}</p>
+                    <button onClick={resetToIdle}
+                            className="mt-4 px-8 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold shadow-sm transition-colors text-sm">
+                        Try Again
+                    </button>
+                </div>
             );
         }
         return null;
@@ -140,45 +145,37 @@ export const RegistrationWizard = () => {
                        border-slate-200 dark:border-slate-700 
                        p-6 md:p-8">
 
-                {(submissionStatus === "success" || submissionStatus === "error") && (
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <CardMessage
-                        type={feedback.type}
-                        message={feedback.message}
-                        onDismiss={null} // optional, but we keep the card until user clicks the action button
-                    />
-                    <div className="flex justify-center mt-2">{renderActionButton()}</div>
-                    </div>
+                {(submissionStatus === "success" || submissionStatus === "error") ? (
+                    renderActionContent()
+                ) : (
+                    <>
+                        <RegistrationProgress currentStep={currentStep} />
+
+                            <FormProvider {...methods}>
+
+                                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                                    
+                                    {/* STEP RENDERER (Placeholders for now) */}
+                                    <div className="min-h-75">
+                                        {currentStep === 1 && <Step1PersonalInfo/>}
+
+                                        {currentStep === 2 && <Step2ContactDetails/>}
+
+                                        {currentStep === 3 && <Step3Participation/>}
+                                    
+                                    </div>
+
+                                    <RegistrationNavigation 
+                                        currentStep={currentStep} 
+                                        onPrev={handlePrev} 
+                                        onNext={handleNext} 
+                                        isValid={isValid} 
+                                        isSubmitting={isSubmitting}
+                                    />
+                                </form>
+                            </FormProvider>
+                    </>
                 )}
-
-        {submissionStatus === 'idle' || submissionStatus === 'submitting' ? (
-            <>
-                <RegistrationProgress currentStep={currentStep} />
-
-                    <FormProvider {...methods}>
-
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                            
-                            {/* STEP RENDERER (Placeholders for now) */}
-                            <div className="min-h-[300px]">
-                                {currentStep === 1 && <Step1PersonalInfo/>}
-
-                                {currentStep === 2 && <Step2ContactDetails/>}
-
-                                {currentStep === 3 && <Step3Participation/>}
-                            
-                            </div>
-
-                            <RegistrationNavigation 
-                                currentStep={currentStep} 
-                                onPrev={handlePrev} 
-                                onNext={handleNext} 
-                                isValid={isValid} 
-                            />
-                        </form>
-                    </FormProvider>
-            </>
-        )   : null }
 
     </div>
 
