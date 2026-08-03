@@ -74,7 +74,7 @@ export const RPTechSupport = () => {
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <p className="text-sm font-medium text-slate-900 dark:text-slate-100">Phone & WhatsApp</p>
-                                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 break-words">
+                                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 wrap-break-word">
                                         +91 97442 85166
                                     </p>
                                 </div>

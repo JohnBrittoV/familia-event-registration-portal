@@ -85,19 +85,11 @@ export const RegistrationWizard = () => {
     const handlePrev = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
     const onSubmit = async (data) => {
-
-        const upperCaseData = Object.fromEntries(
-            Object.entries(data).map(([Key, value]) => [
-                Key,
-                typeof value === "string" ? value.toUpperCase() : value
-            ])
-        );
-
-        console.log(upperCaseData)
+        console.log(data);
 
         setSubmissionStatus('submitting');
         try {
-            const success = await submitForm(upperCaseData);
+            const success = await submitForm(data);
             if (success) {
                 setFeedback({ type: 'success', message: 'Registration successfully saved!'});
                 setSubmissionStatus('success');
