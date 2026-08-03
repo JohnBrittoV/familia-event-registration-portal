@@ -48,3 +48,22 @@ export const fetchLatestRegistrations = async (count = 5) => {
         return [];
     }
 };
+
+// Fetch submissions created by a specific Responsible person
+export const fetchSubmissionsByUser = async (userId) => {
+    try {
+        const q = query(
+            collection(db, "registrations"),
+            where("registeredBy", "==", userId),
+            orderBy("createdAt", "desc")
+        );
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+    } catch (error) {
+        console.error("Error fetching user submissions:", error);
+        throw error;
+    }
+};
