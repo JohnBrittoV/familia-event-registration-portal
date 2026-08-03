@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { Greeting } from '../components/features/Greeting';
 import { fetchSubmissionsByUser } from '../components/features/Registration/service/registrationQueryService';
 import { deleteParticipantRegistration } from '../components/features/Registration/service/registrationService';
@@ -11,6 +12,7 @@ import { db } from '../config/firebase.config';
 export const RPMySubmissions = () => {
 
     const { user } = useAuth();
+    const navigate = useNavigate();
     const [submissions, setSubmissions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -185,10 +187,7 @@ export const RPMySubmissions = () => {
                                         </td>
                                         <td className="table-td text-right space-x-5">
                                             <button 
-                                                onClick={() => {
-                                                    // Placeholder for viewing details modal or profile view route
-                                                    console.log("View profile for ID:", sub.id);
-                                                }}
+                                                onClick={() => navigate(`/rp/participant/${sub.id}`)}
                                                 className="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm transition-colors"
                                             >
                                                 <Eye size={16} />

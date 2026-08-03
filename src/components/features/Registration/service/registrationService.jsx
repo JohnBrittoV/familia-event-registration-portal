@@ -1,6 +1,9 @@
-import { doc, collection, runTransaction, serverTimestamp, increment } from "firebase/firestore";
 import { db } from '../../../../config/firebase.config';
+import { doc, getDoc, updateDoc, collection, 
+         runTransaction, serverTimestamp, increment 
+    } from "firebase/firestore";
 
+// Submit Registration Data
 export const submitRegistrationData = async (payload, repUid, repName = 'Unknown User') => {
 
     const globalStatusRef = doc(db, 'statistics', 'global_stats');
@@ -69,6 +72,7 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
     }
 };
 
+// Delete Participant Data
 export const deleteParticipantRegistration = async (participantId) => {
     const participantRef = doc(db, "registrations", participantId);
     const globalStatsRef = doc(db, "statistics", "global_stats");
@@ -118,3 +122,15 @@ export const deleteParticipantRegistration = async (participantId) => {
         }
     });
 };
+
+// Fetch single Participant Profile
+export const fetchParticipantById = async (id) => {
+    const docRef = doc(db, "registrations", id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() };
+    } else {
+        throw new Error("Participant profile not found.");
+    }
+};
+
