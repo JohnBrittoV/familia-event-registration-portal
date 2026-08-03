@@ -127,6 +127,7 @@ export const RPParticipantProfile = () => {
         setIsSubmitting(true);
         try {
             // Call our transactional service which handles deltas automatically
+            
             await updateParticipantRegistration(id, formData, calculatedStats, originalData);
             
             // Attach the newly calculated stats to the payload

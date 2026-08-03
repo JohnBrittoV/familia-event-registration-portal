@@ -2,7 +2,7 @@ import { useState } from "react";
 import { submitRegistrationData } from "../service/registrationService";
 import { useAuth } from '../../../../context/AuthContext';
 
-const sanitizeDataToUppercase = (data) => {
+export const sanitizeDataToUppercase = (data) => {
     if (typeof data === "string") {
         return data.toUpperCase();
     }
@@ -41,11 +41,7 @@ export const useRegistrationSubmit = () => {
             const sanitizeData = sanitizeDataToUppercase(wizardData);
             const userName = user.name || user.displayName;
 
-            await submitRegistrationData(wizardData, user.uid, userName);
-            
-            console.log(wizardData);
-            console.log(user.uid, userName);
-
+            await submitRegistrationData(sanitizeData, user.uid, userName);
             setIsSubmitting(false);
             return true;
         } catch (error) {
