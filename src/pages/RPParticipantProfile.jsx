@@ -3,8 +3,9 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { doc, getDoc, updateDoc, runTransaction, increment } from 'firebase/firestore';
 import { updateParticipantRegistration } from '../components/features/Registration/service/registrationService';
+import { validationRules } from '../components/features/Registration/schema/RegistrationSchema';
 import { db } from '../config/firebase.config';
-import { ArrowLeft, User, MapPin, CheckSquare, Plus, Trash2, Save, TriangleAlertIcon, Info } from 'lucide-react';
+import { ArrowLeft, User, MapPin, CheckSquare, Plus, Trash2, Save, TriangleAlertIcon, Info, AlertCircle } from 'lucide-react';
 import { Spinner } from '../components/ui/Spinner';
 import { useAuth } from '../context/AuthContext';
 
@@ -58,7 +59,7 @@ export const RPParticipantProfile = () => {
                     if (data.children && Array.isArray(data.children)) {
                         data.children = data.children.map(child => ({
                             ...child,
-                            isAttending: true 
+                            isAttending: child.isAttending ?? true
                         }));
                     }
 
@@ -213,23 +214,47 @@ export const RPParticipantProfile = () => {
                     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Full Name</label>
-                            <input {...register("fullName")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+                            <input {...register("fullName", validationRules.name)} disabled={isReadOnly} autoCapitalize='characters' className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+
+                            {errors.fullName && (
+                                <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><AlertCircle size={12}/>{errors.fullName.message}</p>
+                            )}
                         </div>
+
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Date of Birth</label>
-                            <input type="date" {...register("dob")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+                            <input type="date" {...register("dob", validationRules.dob)} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+                            
+                            {errors.dob && (
+                                <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><AlertCircle size={12}/>{errors.dob.message}</p>
+                            )}
                         </div>
+
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Spouse Name</label>
-                            <input {...register("spouseName")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+                            <input {...register("spouseName", validationRules.name)} autoCapitalize='characters' disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+                            
+                            {errors.spouseName && (
+                                <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><AlertCircle size={12}/>{errors.spouseName.message}</p>
+                            )}
                         </div>
+
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Spouse DOB</label>
-                            <input type="date" {...register("spouseDob")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+                            <input type="date" {...register("spouseDob", validationRules.optionalDate)} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+                        
+                            {errors.spouseDob && (
+                                <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><AlertCircle size={12}/>{errors.spouseDob.message}</p>
+                            )}
                         </div>
+
                         <div className="md:col-span-2">
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Wedding Anniversary</label>
-                            <input type="date" {...register("weddingAnniversary")} disabled={isReadOnly} className="w-full md:w-1/2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+                            <input type="date" {...register("weddingAnniversary", validationRules.weddingDate)} disabled={isReadOnly} className="w-full md:w-1/2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-slate-100" />
+                        
+                            {errors.weddingAnniversary && (
+                                    <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><AlertCircle size={12}/>{errors.weddingAnniversary.message}</p>
+                            )}
                         </div>
 
                         {/* Dynamic Children Section */}
@@ -245,8 +270,17 @@ export const RPParticipantProfile = () => {
                             <div className="space-y-3">
                                 {childFields.map((field, index) => (
                                     <div key={field.id} className="flex items-center gap-3">
-                                        <input {...register(`children.${index}.name`)} disabled={isReadOnly} placeholder="Child's Name" className="flex-1 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
-                                        <input type="number" {...register(`children.${index}.age`)} disabled={isReadOnly} placeholder="Age" className="w-40 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                                        <input {...register(`children.${index}.name`, validationRules.childName)} autoCapitalize='characters'  disabled={isReadOnly} placeholder="Child's Name" className="flex-1 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                                        
+                                        {errors.children?.[index]?.name && (
+                                            <p className="text-xs text-red-500 mt-1">{errors.children[index].name.message}</p>
+                                        )}
+
+                                        <input type="number" {...register(`children.${index}.age`, validationRules.childAge)} disabled={isReadOnly} placeholder="Age" className="w-40 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                                        
+                                        {errors.children?.[index]?.age && (
+                                            <p className="text-xs text-red-500 mt-1">{errors.children[index].age.message}</p>
+                                        )}
                                         {!isReadOnly && (
                                             <button type="button" onClick={() => remove(index)} className="p-2.5 text-red-500 bg-red-50 dark:bg-red-900/30 rounded-lg hover:bg-red-100 transition-colors">
                                                 <Trash2 size={18} />
@@ -269,27 +303,44 @@ export const RPParticipantProfile = () => {
                     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">House Name</label>
-                            <input {...register("houseName")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                            <input {...register("houseName", validationRules.requiredText)} autoCapitalize='characters' disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+
+                            {errors.houseName && <p className="text-xs text-red-500 mt-1">{errors.houseName.message}</p>}
                         </div>
+                        
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Place / Hometown</label>
-                            <input {...register("homeTown")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                            <input {...register("homeTown", validationRules.requiredText)} autoCapitalize='characters' disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                            
+                            {errors.homeTown && <p className="text-xs text-red-500 mt-1">{errors.homeTown.message}</p>}
                         </div>
+
                         <div className="md:col-span-2">
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Parish</label>
-                            <input {...register("parish")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                            <input {...register("parish", validationRules.requiredText)} autoCapitalize='characters' disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                            
+                            {errors.parish && <p className="text-xs text-red-500 mt-1">{errors.parish.message}</p>}
                         </div>
+
                         <div className="md:col-span-2">
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Full Address</label>
-                            <textarea {...register("address")} disabled={isReadOnly} rows="2" className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                            <textarea {...register("address", validationRules.address)} autoCapitalize='characters' disabled={isReadOnly} rows="2" className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                        
+                            {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address.message}</p>}
                         </div>
+                        
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Primary Phone</label>
-                            <input {...register("phone1")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                            <input {...register("phone1", validationRules.phone)} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+
+                            {errors.phone1 && <p className="text-xs text-red-500 mt-1">{errors.phone1.message}</p>}
                         </div>
+                        
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">WhatsApp / Alt Phone</label>
-                            <input {...register("phone2")} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                            <input {...register("phone2", validationRules.optionalPhone)} disabled={isReadOnly} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
+                        
+                            {errors.phone2 && <p className="text-xs text-red-500 mt-1">{errors.phone2.message}</p>}
                         </div>
                     </div>
                 </div>
@@ -356,7 +407,7 @@ export const RPParticipantProfile = () => {
 
                         <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-2">Special Prayer Requests</label>
-                            <textarea {...register("prayerRequest")} disabled={isReadOnly} rows="3" className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-100" />
+                            <textarea {...register("prayerRequest")} autoCapitalize='characters' disabled={isReadOnly} rows="3" className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-100" />
                         </div>
                     </div>
                 </div>
