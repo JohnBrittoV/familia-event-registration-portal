@@ -1,62 +1,9 @@
 import React from 'react';
-
-    const themes = {
-        blue: {
-            card: `
-                bg-gradient-to-br
-                from-blue-50 via-white to-sky-100
-                dark:from-slate-800 dark:via-slate-800 dark:to-blue-950/70
-            `,
-            icon: `
-                bg-blue-100 text-blue-600
-                dark:bg-blue-500/15 dark:text-blue-400
-            `,
-            glow: "group-hover:shadow-blue-500/20",
-        },
-
-        purple: {
-            card: `
-                bg-gradient-to-br
-                from-violet-50 via-white to-fuchsia-100
-                dark:from-slate-800 dark:via-slate-800 dark:to-violet-950/70
-            `,
-            icon: `
-                bg-violet-100 text-violet-600
-                dark:bg-violet-500/15 dark:text-violet-400
-            `,
-            glow: "group-hover:shadow-violet-500/20",
-        },
-
-        emerald: {
-            card: `
-                bg-gradient-to-br
-                from-emerald-50 via-white to-green-100
-                dark:from-slate-800 dark:via-slate-800 dark:to-emerald-950/70
-            `,
-            icon: `
-                bg-emerald-100 text-emerald-600
-                dark:bg-emerald-500/15 dark:text-emerald-400
-            `,
-            glow: "group-hover:shadow-emerald-500/20",
-        },
-
-        amber: {
-            card: `
-                bg-gradient-to-br
-                from-amber-50 via-white to-orange-100
-                dark:from-slate-800 dark:via-slate-800 dark:to-amber-950/70
-            `,
-            icon: `
-                bg-amber-100 text-amber-600
-                dark:bg-amber-500/15 dark:text-amber-400
-            `,
-            glow: "group-hover:shadow-amber-500/20",
-        },
-    };
+import { cardThemes } from '../../assets/styles/cardThemes';
 
     export const StatCard = ({ title, value, icon: Icon, trend, theme = 'blue'}) => {   
-           const colors = themes[theme];
-           
+           const colors = cardThemes[theme] || cardThemes.blue;
+
         return(
             <div className={`${colors.card} group relative overflow-hidden
                               rounded-2xl border border-slate-200/70
@@ -65,7 +12,7 @@ import React from 'react';
                               hover:shadow-2xl ${colors.glow} `} >
 
                             {/* Decorative circle */}
-            <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/20 dark:bg-white/[0.04]" />
+            <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/20 dark:bg-white/4" />
 
             <div className="relative flex items-start justify-between">
                 <div>
