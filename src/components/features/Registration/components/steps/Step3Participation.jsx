@@ -23,8 +23,8 @@ export const Step3Participation = () => {
         if (attendees['self']) adults++;
         if (spouseName && attendees['spouse']) adults++;
 
-        children.forEach((child, index) => {
-            if (attendees[`child_${index}`]) {
+        children.forEach((child) => {
+            if (child?.isAttending) {
                 kids++;
                 const age = parseInt(child.age, 10);
                 if (!isNaN(age)) {
@@ -38,7 +38,7 @@ export const Step3Participation = () => {
         });
 
         return { adults, kids, total: adults + kids, ageGroups };
-    }, [JSON.stringify(attendees), spouseName, children]);
+    }, [JSON.stringify(attendees), spouseName, JSON.stringify(children)]);
 
     // 3. Save the calculated stats into the form payload for Firebase
     useEffect(() => {
@@ -46,19 +46,17 @@ export const Step3Participation = () => {
     }, [stats, setValue]);
 
     // Custom reusable Checkbox Row for family members
-    const CheckboxRow = ({ id, label, subtitle }) => (
+    const CheckboxRow = ({ fieldName, label, subtitle }) => (
         <label className="flex items-center justify-between p-4 
                           bg-slate-50 dark:bg-slate-800/50 border 
                           border-slate-200 dark:border-slate-700 
                           rounded-xl cursor-pointer hover:bg-slate-100 
-                          dark:hover:bg-slate-800 transition-colors mb-3"
-                          
-                key={id}>
+                          dark:hover:bg-slate-800 transition-colors mb-3">
 
             <div className="flex items-center gap-4">
                 <input
                     type="checkbox"
-                    {...register(`attendees.${id}`)}
+                    {...register(fieldName)}
                     className="w-5 h-5 text-blue-600 rounded 
                                border-slate-300 focus:ring-blue-500 
                                cursor-pointer"
@@ -83,15 +81,15 @@ export const Step3Participation = () => {
             >
                 <div className="mb-6">
                     {/* Render Husband/Wife */}
-                    {fullName && <CheckboxRow id="self" label={fullName} subtitle="Participant" />}
-                    {spouseName && <CheckboxRow id="spouse" label={spouseName} subtitle="Spouse" />}
+                    {fullName && <CheckboxRow fieldName="attendees.self" label={fullName} subtitle="Participant" />}
+                    {spouseName && <CheckboxRow fieldName="attendees.spouse" label={spouseName} subtitle="Spouse" />}
                     
                     {/* Render Children Dynamically */}
                     {children.map((child, index) => (
                         child.name && child.age ? (
                             <CheckboxRow 
                                 key={index} 
-                                id={`child_${index}`} 
+                                fieldName={`children.${index}.isAttending`} 
                                 label={child.name} 
                                 subtitle={`Child (Age: ${child.age})`} 
                             />

@@ -42,7 +42,7 @@ export const Step1PersonalInfo = () => {
                 <div className="flex justify-end mb-4">
                     <button 
                         type="button"
-                        onClick={() => append({ name: '', age: ''})}
+                        onClick={() => append({ name: '', age: '', isAttending: false})}
                         className="flex items-center px-4 py-2 
                                  bg-blue-50 text-blue-600 
                                  hover:bg-blue-100 dark:bg-blue-900/30 

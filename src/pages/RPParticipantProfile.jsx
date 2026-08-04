@@ -55,16 +55,7 @@ export const RPParticipantProfile = () => {
                 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-
-                    if (data.children && Array.isArray(data.children)) {
-                        data.children = data.children.map(child => ({
-                            ...child,
-                            isAttending: child.isAttending ?? true
-                        }));
-                    }
-
                     setOriginalData(data);
-                    // Reset form fields with fetched data
                     reset(data);
                 } else {
                     setFetchError("Participant record could not be found.");
@@ -262,7 +253,7 @@ export const RPParticipantProfile = () => {
                             <div className="flex items-center justify-between mb-4">
                                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Children Details</label>
                                 {!isReadOnly && (
-                                    <button type="button" onClick={() => append({ name: '', age: '', isAttending: '' })} className="flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
+                                    <button type="button" onClick={() => append({ name: '', age: '', isAttending: false })} className="flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
                                         <Plus size={14}/> Add Child
                                     </button>
                                 )}
