@@ -36,7 +36,9 @@ export const RPParticipantProfile = () => {
             phone1: '',
             phone2: '',
             attendees: { self: true, spouse: false },
-            prayerRequest: ''
+            prayerRequest: '',
+            advancePaid: false,
+            advanceAmount: ''
         }
     });
 
@@ -89,6 +91,7 @@ export const RPParticipantProfile = () => {
     const watchedSpouse = watch("attendees.spouse");
     const spouseName = watch("spouseName");
     const fullName = watch("fullName");
+    const isAdvancePaid = watch("advancePaid");
 
     // Real-time calculation of attending adults and kids
     const calculatedStats = React.useMemo(() => {
@@ -396,7 +399,51 @@ export const RPParticipantProfile = () => {
                             ))}
                         </div>
 
-                        <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                        {/* --- ADVANCE PAYMENT SECTION --- */}
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden p-6 space-y-4">
+                           <label className="block text-xs font-semibold text-slate-500 uppercase mb-2">Advance Payment details</label>
+
+                            {/* Checkbox Card */}
+                            <label className={`flex items-center gap-3 p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800/50 transition-colors ${isReadOnly ? 'cursor-not-allowed opacity-75' : 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                                <input 
+                                    type="checkbox" 
+                                    {...register("advancePaid")} 
+                                    disabled={isReadOnly}
+                                    className="w-5 h-5 text-emerald-500 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer disabled:cursor-not-allowed" 
+                                />
+                                <span className="font-semibold text-slate-900 dark:text-white">Advance Payment Collected</span>
+                            </label>
+
+                            {/* Conditionally Rendered Amount Input with Smooth Reveal */}
+                            {isAdvancePaid && (
+                                <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">
+                                        Advance Amount Collected *
+                                    </label>
+                                    <div className="relative">
+                                        <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-semibold text-sm">
+                                            ₹
+                                        </span>
+                                        <input 
+                                            type="number"
+                                            step="0.01"
+                                            disabled={isReadOnly}
+                                            placeholder="Enter amount"
+                                            {...register("advanceAmount", { 
+                                                required: isAdvancePaid ? "Advance amount is required" : false,
+                                                min: { value: 1, message: "Amount must be greater than 0" }
+                                            })}
+                                            className="w-full pl-8 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800 dark:text-slate-100 text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+                                        />
+                                    </div>
+                                    {errors.advanceAmount && (
+                                        <p className="text-xs text-red-500 mt-1">{errors.advanceAmount.message}</p>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="pt-4 border rounded-2xl border-slate-200 dark:border-slate-700 mt-5 p-6 space-y-4">
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-2">Special Prayer Requests</label>
                             <textarea {...register("prayerRequest")} autoCapitalize='characters' disabled={isReadOnly} rows="3" className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-100" />
                         </div>
