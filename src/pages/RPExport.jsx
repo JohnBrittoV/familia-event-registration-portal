@@ -1,13 +1,78 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Greeting } from '../components/features/Greeting';
-import { FileSpreadsheet, Calendar, Download } from 'lucide-react';
+import { ExportBanner } from '../components/features/Reports/ExportBanner';
+import { FieldSelector } from '../components/features/Reports/FieldSelector';
+import { downloadCSV } from '../services/exportService';
+import { FileSpreadsheet, Download, Loader2 } from 'lucide-react';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../config/firebase.config';
 
 export const RPExport = () => {
-    const { user } = useAuth();
+    const { user, dbUser } = useAuth();
+    const [userSubmissions, setUserSubmissions] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // Field selection including new details
+    const [selectedFields, setSelectedFields] = useState({
+        fullName: true,
+        spouseName: true,
+        houseName: true,
+        homeTown: true,
+        parish: true,
+        phone1: true,
+        totalMembers: true,
+        advanceAmount: false,
+        weddingAnniversary: false,
+        createdAt: true
+    });
+
+    useEffect(() => {
+        const fetchUserRegistrations = async () => {
+            if (!user?.uid) {
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const q = query(
+                    collection(db, "registrations"),
+                    where("registeredBy", "==", user.uid)
+                );
+                const querySnapshot = await getDocs(q);
+                const docs = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                setUserSubmissions(docs);
+            } catch (err) {
+                console.error("Error fetching user submissions for export:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserRegistrations();
+    }, [user?.uid]);
+
+    const handleExport = () => {
+        if (userSubmissions.length === 0) return;
+
+        // Resolve the Responsible Person's name from user data
+        const responsiblePersonName = dbUser?.fullName || user?.displayName || 'Responsible Person';
+
+        downloadCSV(
+            userSubmissions, 
+            selectedFields, 
+            responsiblePersonName, 
+            `familia26_submissions_${user?.uid || 'export'}.csv`
+        );
+    };
+
+    const hasSubmissions = userSubmissions.length > 0;
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8">
+        <div className="max-w-4xl mx-auto space-y-8 pb-24">
             
             <Greeting 
                 name={user?.displayName} 
@@ -22,37 +87,31 @@ export const RPExport = () => {
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white">Download Registration Data</h2>
                 </div>
                 
-                <p className="text-slate-500 dark:text-slate-400 mb-8 text-sm md:text-base">
-                    Generate and download a spreadsheet containing all the details of the participants you have submitted to Familia'26.
+                <p className="text-slate-500 dark:text-slate-400 mb-6 text-sm md:text-base">
+                    Download a spreadsheet of your submitted Familia'26 participants.
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    
-                    {/* Export Option 1 */}
-                    <button className="flex items-center gap-4 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all text-left group">
-                        <div className="p-3 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                            <FileSpreadsheet size={24} />
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-slate-900 dark:text-white">Full Export (CSV)</h3>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Download all your historical records</p>
-                        </div>
-                    </button>
+                {loading ? (
+                    <div className="flex items-center justify-center py-8 text-slate-500 gap-2">
+                        <Loader2 className="animate-spin" size={20} />
+                        <span className="text-sm">Loading your submissions...</span>
+                    </div>
+                ) : (
+                    <>
+                        <ExportBanner hasSubmissions={hasSubmissions} count={userSubmissions.length} />
+                        <FieldSelector selectedFields={selectedFields} onChange={setSelectedFields} />
 
-                    {/* Export Option 2 */}
-                    <button className="flex items-center gap-4 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all text-left group">
-                        <div className="p-3 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 rounded-lg group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                            <Calendar size={24} />
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-slate-900 dark:text-white">Recent (Excel)</h3>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Registrations from the last 30 days</p>
-                        </div>
-                    </button>
+                        <button 
+                            onClick={handleExport}
+                            disabled={!hasSubmissions}
+                            className="flex items-center justify-center gap-2.5 w-full sm:w-auto px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold text-sm transition-colors shadow-sm">
+                            <FileSpreadsheet size={18} /> Download Selected CSV Report
+                        </button>
+                    </>
+                )}
 
-                </div>
             </div>
 
         </div>
     );
-};
+}
