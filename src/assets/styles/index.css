@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --font-malayalam: "Anek Malayalam", sans-serif;
+}
+
 @layer base {
     body {
         @apply bg-[#F4F7FB] text-slate-800 antialiased;
