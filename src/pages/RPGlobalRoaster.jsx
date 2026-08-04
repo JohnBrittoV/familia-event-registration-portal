@@ -87,29 +87,18 @@ export const RPGlobalRoster = () => {
             />
 
             {/* Summary Stat Cards with Different Colorful Icon Themes */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                
-                {/* Stat 1: Total Families (Blue Theme) */}
-                <div className="[&_div.p-2\.5]:bg-blue-50 [&_div.p-2\.5]:dark:bg-blue-900/20 [&_div.p-2\.5]:text-blue-600 [&_div.p-2\.5]:dark:text-blue-400">
-                    <StatCard title="Total Families" value={stats.totalFamilies} icon={Users} />
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+               
+                <StatCard title="Total Families" value={stats.totalFamilies} icon={Users} theme='blue'/>
 
-                {/* Stat 2: Total Adults (Purple Theme) */}
-                <div className="[&_div.p-2\.5]:bg-purple-50 [&_div.p-2\.5]:dark:bg-purple-900/20 [&_div.p-2\.5]:text-purple-600 [&_div.p-2\.5]:dark:text-purple-400">
-                    <StatCard title="Total Adults" value={stats.totalAdults} icon={UserCheck} />
-                </div>
+                <StatCard title="Total Adults" value={stats.totalAdults} icon={UserCheck} theme='purple'/>
 
-                {/* Stat 3: Total Kids (Emerald Theme) */}
-                <div className="[&_div.p-2\.5]:bg-emerald-50 [&_div.p-2\.5]:dark:bg-emerald-900/20 [&_div.p-2\.5]:text-emerald-600 [&_div.p-2\.5]:dark:text-emerald-400">
-                    <StatCard title="Total Kids" value={stats.totalKids} icon={Users} />
-                </div>
+                <StatCard title="Total Kids" value={stats.totalKids} icon={Users} theme='emerald'/>
 
-                {/* Stat 4: Total Attendees (Amber Theme) */}
-                <div className="[&_div.p-2\.5]:bg-amber-50 [&_div.p-2\.5]:dark:bg-amber-900/20 [&_div.p-2\.5]:text-amber-600 [&_div.p-2\.5]:dark:text-amber-400">
-                    <StatCard title="Total Attendees" value={stats.totalAttendees} icon={Calendar} />
-                </div>
+                <StatCard title="Total Attendees" value={stats.totalAttendees} icon={Calendar} theme='amber'/>
 
             </div>
+
 
             {/* Sorting Toolbar */}
             <div className="card-table p-4 flex flex-col sm:flex-row items-center justify-between gap-4">

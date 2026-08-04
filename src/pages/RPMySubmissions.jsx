@@ -5,14 +5,20 @@ import { Greeting } from '../components/features/Greeting';
 import { fetchSubmissionsByUser } from '../components/features/Registration/service/registrationQueryService';
 import { deleteParticipantRegistration } from '../components/features/Registration/service/registrationService';
 import { Spinner } from '../components/ui/Spinner';
-import { Eye, FileText, Trash2, AlertTriangle, CheckCircle2, X } from 'lucide-react';
+import { Eye, FileText, Trash2, AlertTriangle, CheckCircle2, X,
+         HouseHeart, Users, Baby, Calendar1
+ } from 'lucide-react';
 import { doc, deleteDoc } from 'firebase/firestore';
+import { StatCard } from '../components/ui/StatCard';
 import { db } from '../config/firebase.config';
+import { useRPStats } from '../hooks/useRPStats';
 
 export const RPMySubmissions = () => {
 
     const { user } = useAuth();
+    const { stats} = useRPStats(user?.uid);
     const navigate = useNavigate();
+
     const [submissions, setSubmissions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -113,6 +119,38 @@ export const RPMySubmissions = () => {
                 role="My Submissions" 
                 subtitle="Review the status and details of the participants you have registered." 
             />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+                
+                <StatCard
+                    title="Total Families"
+                    value={stats.totalFamilies}
+                    icon={HouseHeart}
+                    theme="blue"
+                />
+
+                <StatCard
+                    title="Total Adults"
+                    value={stats.totalAdults}
+                    icon={Users}
+                    theme="purple"
+                />
+
+                <StatCard
+                    title="Total Kids"
+                    value={stats.totalKids}
+                    icon={Baby}
+                    theme="emerald"
+                />
+
+                <StatCard
+                    title="Total Attendees"
+                    value={stats.totalAttendees}
+                    icon={Calendar1}
+                    theme="amber"
+                />
+
+            </div>
 
             {/* Table Card Container */}
             <div className="card-table">
