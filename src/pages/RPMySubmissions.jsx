@@ -111,6 +111,14 @@ export const RPMySubmissions = () => {
         return isNaN(date) ? 'N/A' : date.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
     };
 
+     if (loading) {
+            return (
+                <div className="flex justify-center items-center min-h-[60vh]">
+                    <Spinner size="lg" />
+                </div>
+            );
+        }
+
     return (
         <div className="max-w-7xl mx-auto space-y-8">
             

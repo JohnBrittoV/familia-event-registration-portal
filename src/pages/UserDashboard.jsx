@@ -11,7 +11,7 @@ export const UserDashboard = () => {
     const { stats, loading } = useRPStats(user?.uid);
 
     if (loading) {
-        return <div className="py-4 flex justify-center"><Spinner size="sm" /></div>;
+        return <div className="py-4 flex justify-center"><Spinner size="lg" /></div>;
     }
 
     return(
@@ -20,7 +20,7 @@ export const UserDashboard = () => {
             <Greeting 
                 name={user?.displayName} 
                 role="responsible persons overview" 
-                subtitle="Review the status and details of the participants you have registered." 
+                subtitle="Monitor your registration progress, update participant details, and view collection totals." 
             />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
