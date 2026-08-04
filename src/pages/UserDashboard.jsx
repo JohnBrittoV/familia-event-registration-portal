@@ -1,45 +1,59 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
-import { Users, FileCheck, IndianRupee } from "lucide-react";
+import { Users, Baby, IndianRupee, UserCheck, Calendar, HouseHeart } from "lucide-react";
 import { StatCard } from '../components/ui/StatCard';
 import { Greeting } from "../components/features/Greeting";
+import { Spinner } from "../components/ui/Spinner";
+import { useRPStats } from "../hooks/useRPStats";
 
 export const UserDashboard = () => {
     const { user } = useAuth();
+    const { stats, loading } = useRPStats(user?.uid);
+
+    if (loading) {
+        return <div className="py-4 flex justify-center"><Spinner size="sm" /></div>;
+    }
 
     return(
-                  
-            <div className="max-w-7xl mx-auto space-y-8">
+
+        <div className="max-w-7xl mx-auto space-y-8">
+            <Greeting 
+                name={user?.displayName} 
+                role="responsible persons overview" 
+                subtitle="Review the status and details of the participants you have registered." 
+            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
                 
-                <Greeting 
-                    name={user?.displayName} 
-                    role="Responsible Person" 
-                    subtitle="Here is an overview of your registration activity." 
+                <StatCard
+                    title="Total Families"
+                    value={stats.totalFamilies}
+                    icon={HouseHeart}
+                    theme="blue"
                 />
 
-                {/* Metrics Overview Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <StatCard
+                    title="Total Adults"
+                    value={stats.totalAdults}
+                    icon={Users}
+                    theme="purple"
+                />
 
-                    <StatCard 
-                        title="My Total Registrations" 
-                        value="0" 
-                        icon={Users} 
-                        trend="+0 this week"
-                    />
-                    <StatCard 
-                        title="Completed Payments" 
-                        value="0" 
-                        icon={FileCheck} 
-                    />
-                    <StatCard 
-                        title="Total Amount Collected" 
-                        value="₹0" 
-                        icon={IndianRupee} 
+                <StatCard
+                    title="Total Kids"
+                    value={stats.totalKids}
+                    icon={Baby}
+                    theme="emerald"
+                />
 
-                    />
-                </div>
+                <StatCard
+                    title="Total Attendees"
+                    value={stats.totalAttendees}
+                    icon={Calendar}
+                    theme="amber"
+                />
 
             </div>
-
+        </div>
     )
 }
