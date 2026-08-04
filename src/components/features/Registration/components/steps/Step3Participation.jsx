@@ -7,6 +7,7 @@ import { Users, User, Baby } from 'lucide-react';
 
 export const Step3Participation = () => {
     const { watch, setValue, register } = useFormContext();
+    const isAdvancePaid = watch('advancePaid');
 
     // 1. "Watch" the data from Step 1
     const fullName = watch("fullName");
@@ -132,6 +133,30 @@ export const Step3Participation = () => {
                     />
                     <span className="font-semibold text-slate-900 dark:text-white">Advance Payment Collected</span>
                 </label>
+
+            {/* Conditionally Rendered Amount Input with Smooth Reveal */}
+            {isAdvancePaid && (
+                <div className="mb-6 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">
+                        Advance Amount Collected *
+                    </label>
+                    <div className="relative">
+                        <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-semibold text-sm">
+                            ₹
+                        </span>
+                        <input 
+                            type="number"
+                            step="0.01"
+                            placeholder="Enter amount"
+                            {...register("advanceAmount", { 
+                                required: isAdvancePaid ? "Advance amount is required" : false,
+                                min: { value: 1, message: "Amount must be greater than 0" }
+                            })}
+                            className="w-full pl-8 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-1 focus:ring-blue-400 text-slate-800 dark:text-slate-100 text-sm font-medium"
+                        />
+                    </div>
+                </div>
+            )}
 
                 <FloatingTextarea name="prayerRequest" label="Prayer Request (Optional)" rows={4} />
             </FormSection>
