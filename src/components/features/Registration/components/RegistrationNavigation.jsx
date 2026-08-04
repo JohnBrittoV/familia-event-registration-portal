@@ -27,7 +27,7 @@ export const RegistrationNavigation = ({ currentStep, onPrev, onNext, isValid, i
                         type='button' 
                         onClick={onNext} 
                         disabled={isSubmitting} 
-                        className="flex-1">
+                        className="truncate">
                        <span>Next</span>  
                        <ChevronRight size={18} className="ml-0 sm:ml-1 shrink-0"/>
                     </Button>
@@ -36,7 +36,7 @@ export const RegistrationNavigation = ({ currentStep, onPrev, onNext, isValid, i
                         type="submit" 
                         disabled={!isValid}
                         isLoading={isSubmitting}
-                        className="flex-1">
+                        className="truncate">
                         Confirm
                     </Button>
                 )}
