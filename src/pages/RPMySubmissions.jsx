@@ -191,20 +191,17 @@ export const RPMySubmissions = () => {
                         <table className="table">
                             <thead className="table-thead">
                                 <tr>
-                                    <th className="table-th text-center">No.</th>
-                                    <th className="table-th text-center">Participant Name</th>
-                                    <th className="table-th text-center">Spouse Name</th>
-                                    <th className="table-th text-center">Kids</th>
-                                    <th className="table-th text-center">House Name</th>
-                                    <th className="table-th text-center">Parish</th>
-                                    <th className="table-th text-center">Date Submitted</th>
-                                    <th className="table-th text-center">Status</th>
-                                    <th className="table-th text-center">Actions</th>
+                                    <th className="table-th text-center">NO.</th>
+                                    <th className="table-th text-center">PARTICIPANT</th>
+                                    <th className="table-th text-center">SPOUSE</th>
+                                    <th className="table-th text-center">HOUSE NAME</th>
+                                    <th className="table-th text-center">ACTIONS</th>
+                                    <th className="table-th text-center">REG.DATE</th>
                                 </tr>
                             </thead>
                             <tbody className="table-tbody">
                                 {submissions.map((sub, index) => (
-                                    <tr key={sub.id || index} className="table-tr">
+                                    <tr key={sub.id || index} className="table-tr text-center">
                                         <td className="table-td font-medium text-slate-900 dark:text-slate-100">
                                             {index + 1}
                                         </td>
@@ -215,39 +212,30 @@ export const RPMySubmissions = () => {
                                             {sub.spouseName || '—'}
                                         </td>
                                         <td className="table-td text-slate-600 dark:text-slate-300">
-                                            {sub.kidsCount ?? (Array.isArray(sub.children) ? sub.children.length : 0)}
-                                        </td>
-                                        <td className="table-td text-slate-600 dark:text-slate-300">
                                             {sub.houseName || 'N/A'}
                                         </td>
-                                        <td className="table-td text-slate-600 dark:text-slate-300">
-                                            {sub.parish || 'N/A'}
-                                        </td>
-                                        <td className="table-td text-slate-500 dark:text-slate-400">
-                                            {formatDate(sub.createdAt || sub.date)}
-                                        </td>
-                                        <td className="table-td">
-                                            <span className={`badge-status ${getStatusColor(sub.status || 'Pending')}`}>
-                                                {sub.status || 'Pending'}
-                                            </span>
-                                        </td>
-                                        <td className="table-td text-right space-x-5">
+                                        
+                                        <td className="table-td space-x-5">
                                             <button 
                                                 onClick={() => navigate(`/rp/participant/${sub.id}`)}
-                                                className="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm transition-colors"
-                                            >
+                                                className="btn-xs bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/30 dark:hover:text-blue-400 text-slate-700 dark:text-slate-300 inline-flex items-center gap-1.5">
+                                           
                                                 <Eye size={16} />
-                                                <span>View Profile</span>
+                                                <span>Profile View</span>
                                             </button>
 
                                             <button 
                                                 onClick={() => openDeleteModal(sub)}
-                                                className="inline-flex items-center gap-1 text-red-600 hover:text-red-800 dark:text-red-400 font-medium text-sm transition-colors"
+                                                className="btn-xs bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-red-600/30 dark:hover:text-red-400 text-slate-700 dark:text-slate-300 inline-flex items-center gap-1.5"
                                             >
                                                 <Trash2 size={16} />
                                                 <span>Delete</span>
                                             </button>
 
+                                        </td>
+
+                                         <td className="table-td text-slate-500 dark:text-slate-400">
+                                            {formatDate(sub.createdAt || sub.date)}
                                         </td>
                                     </tr>
                                 ))}
