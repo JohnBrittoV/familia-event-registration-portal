@@ -1,10 +1,12 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
-import { Users, Baby, IndianRupee, UserCheck, Calendar, HouseHeart } from "lucide-react";
 import { StatCard } from '../components/ui/StatCard';
 import { Greeting } from "../components/features/Greeting";
 import { Spinner } from "../components/ui/Spinner";
 import { useRPStats } from "../hooks/useRPStats";
+import { Users, Baby, IndianRupee, UserCheck, Calendar, Hash, 
+        HouseHeart, Layers, ToyBrick, BookOpen,Backpack,
+        GraduationCap, } from "lucide-react";
 
 export const UserDashboard = () => {
     const { user } = useAuth();
@@ -52,6 +54,62 @@ export const UserDashboard = () => {
                     icon={Calendar}
                     theme="amber"
                 />
+
+                <StatCard
+                    title="Families Paid"
+                    value={stats.advanceCount}
+                    icon={Hash}
+                    theme="pink"
+                />
+
+                <StatCard
+                    title="Total Advance"
+                    value={stats.formattedAdvanceAmount}
+                    icon={IndianRupee}
+                    theme="lime"
+                />
+
+            </div>
+
+                {/* Child Age Group Breakdown Section */}
+            <div className="space-y-4 pt-4">
+                <div className="flex items-center gap-2">
+                    <Layers className="text-slate-500 dark:text-slate-400" size={20} />
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">Kids Count by Age Category</h3>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                    <StatCard
+                        title="Age 0 - 2"
+                        value={stats.ageGroups?.["0-2"] || 0}
+                        icon={Baby}
+                        theme="red"
+                    />
+                    <StatCard
+                        title="Age 3 - 5"
+                        value={stats.ageGroups?.["3-5"] || 0}
+                        icon={ToyBrick}
+                        theme="indigo"
+                    />
+                    <StatCard
+                        title="Age 6 - 8"
+                        value={stats.ageGroups?.["6-8"] || 0}
+                        icon={BookOpen}
+                        theme="sky"
+                    />
+                    <StatCard
+                        title="Age 9 - 11"
+                        value={stats.ageGroups?.["9-11"] || 0}
+                        icon={Backpack}
+                        theme="yellow"
+                    />
+                    <StatCard
+                        title="Age 12 - 14"
+                        value={stats.ageGroups?.["12-14"] || 0}
+                        icon={GraduationCap}
+                        theme="orange"
+                    />
+                </div>
 
             </div>
         </div>
