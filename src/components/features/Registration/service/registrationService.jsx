@@ -127,6 +127,7 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
             transaction.set(newRegRef, {
                 ...payload,
                 registeredBy: repUid,
+                registrationStatus: 'pending',
                 ResponsiblePersonName: repName,
                 createdAt: serverTimestamp()
             });

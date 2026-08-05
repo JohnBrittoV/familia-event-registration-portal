@@ -149,7 +149,7 @@ export const RPGlobalRoster = () => {
                                     <td className="table-td font-bold text-slate-400">#{index + 1}</td>
                                     <td className="table-td table-user-name">{p.fullName}</td>
                                     <td className="table-td text-slate-600 dark:text-slate-300">{p.spouseName || '—'}</td>
-                                    <td className="table-td font-medium text-slate-800 dark:text-slate-200">{p.houseName || '—'}</td>
+                                    <td className="table-td text-slate-600 dark:text-slate-200">{p.houseName || '—'}</td>
                                     <td className="table-td">
                                         <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium">
                                             {p.parish || 'General'}
