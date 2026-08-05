@@ -3,6 +3,7 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../config/firebase.config';
 
 export const useRPStats = (userId) => {
+    const defaultAgeGroups = { "0-2": 0, "3-5": 0, "6-8": 0, "9-11": 0, "12-14": 0, ">15": 0 };
     const [stats, setStats] = useState({
         totalFamilies: 0,
         totalAdults: 0,
@@ -11,7 +12,7 @@ export const useRPStats = (userId) => {
         advanceCount: 0,
         advanceAmount: 0,
         formattedAdvanceAmount: '₹ 0',
-        ageGroups: { "0-2": 0, "3-5": 0, "6-8": 0, "9-11": 0, "12-14": 0 }
+        ageGroups: defaultAgeGroups
     });
     const [loading, setLoading] = useState(true);
 
@@ -32,7 +33,7 @@ export const useRPStats = (userId) => {
                 const kids = data.totalKids || 0;
                 const advanceCount = data.advancePaymentCount || 0;
                 const advanceAmount = data.totalAdvanceAmount || 0;
-                const ageGroups = data.ageGroups || { "0-2": 0, "3-5": 0, "6-8": 0, "9-11": 0, "12-14": 0 };
+                const ageGroups = data.ageGroups || defaultAgeGroups;
 
                 // Format amount with Indian style comma separation (e.g., 1,50,000)
                 const formattedAdvanceAmount = new Intl.NumberFormat('en-IN', {
@@ -61,7 +62,7 @@ export const useRPStats = (userId) => {
                     advanceCount: 0,
                     advanceAmount: 0,
                     formattedAdvanceAmount: '₹ 0',
-                    ageGroups: { "0-2": 0, "3-5": 0, "6-8": 0, "9-11": 0, "12-14": 0 }
+                    ageGroups: defaultAgeGroups
                 });
             }
             setLoading(false);

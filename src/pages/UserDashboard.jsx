@@ -6,7 +6,7 @@ import { Spinner } from "../components/ui/Spinner";
 import { useRPStats } from "../hooks/useRPStats";
 import { Users, Baby, IndianRupee, UserCheck, Calendar, Hash, 
         HouseHeart, Layers, ToyBrick, BookOpen,Backpack,
-        GraduationCap, } from "lucide-react";
+        GraduationCap, PersonStanding } from "lucide-react";
 
 export const UserDashboard = () => {
     const { user } = useAuth();
@@ -108,6 +108,12 @@ export const UserDashboard = () => {
                         value={stats.ageGroups?.["12-14"] || 0}
                         icon={GraduationCap}
                         theme="orange"
+                    />
+                    <StatCard
+                        title="Age > 15"
+                        value={stats.ageGroups?.[">15"] || 0}
+                        icon={PersonStanding}
+                        theme="green"
                     />
                 </div>
 

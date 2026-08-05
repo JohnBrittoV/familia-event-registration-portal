@@ -5,7 +5,7 @@ import { doc, getDoc, updateDoc, collection,
 
 // Helper function to calculate age brackets from children array
 const calculateAgeBrackets = (children) => {
-    const ageGroups = { "0-2": 0, "3-5": 0, "6-8": 0, "9-11": 0, "12-14": 0 };
+    const ageGroups = { "0-2": 0, "3-5": 0, "6-8": 0, "9-11": 0, "12-14": 0, ">15": 0 };
     if (Array.isArray(children)) {
         children.forEach((child) => {
             if (child?.isAttending) {
@@ -16,6 +16,7 @@ const calculateAgeBrackets = (children) => {
                     else if (age <= 8) ageGroups["6-8"]++;
                     else if (age <= 11) ageGroups["9-11"]++;
                     else if (age <= 14) ageGroups["12-14"]++;
+                    else ageGroups[">15"]++;
                 }
             }
         });
@@ -63,38 +64,42 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
             // Calculate child age brackets
             const ageGroups = calculateAgeBrackets(payload.children);
 
+            const defaultAgeGroups = { "0-2": 0, "3-5": 0, "6-8": 0, "9-11": 0, "12-14": 0, ">15": 0 };
+
             // Calculate new global totals structure fallback
             const currentGlobal = globalDoc.exists() ? globalDoc.data() : { 
                     totalAdults: 0, totalKids: 0, totalRegistrations: 0, 
                     advancePaymentCount: 0, totalAdvanceAmount: 0,
-                    ageGroups: { "0-2": 0, "3-5": 0, "6-8": 0, "9-11": 0, "12-14": 0 },
+                    ageGroups: defaultAgeGroups,
                     isOpen: true 
                 };
 
             const currentRep = repDoc.exists() ? repDoc.data() : {
                     totalAdults: 0, totalKids: 0, totalRegistrations: 0, 
                     advancePaymentCount: 0, totalAdvanceAmount: 0,
-                    ageGroups: { "0-2": 0, "3-5": 0, "6-8": 0, "9-11": 0, "12-14": 0 },
+                    ageGroups: defaultAgeGroups,
                     isOpen: true
                 };
 
             // Build age groups increment map
-            const currentGlobalAgeGroups = currentGlobal.ageGroups || { "0-2": 0, "3-5": 0, "6-8": 0, "9-11": 0, "12-14": 0 };
+            const currentGlobalAgeGroups = currentGlobal.ageGroups || defaultAgeGroups;
             const updatedGlobalAgeGroups = {
                 "0-2": (currentGlobalAgeGroups["0-2"] || 0) + ageGroups["0-2"],
                 "3-5": (currentGlobalAgeGroups["3-5"] || 0) + ageGroups["3-5"],
                 "6-8": (currentGlobalAgeGroups["6-8"] || 0) + ageGroups["6-8"],
                 "9-11": (currentGlobalAgeGroups["9-11"] || 0) + ageGroups["9-11"],
                 "12-14": (currentGlobalAgeGroups["12-14"] || 0) + ageGroups["12-14"],
+                ">15": (currentGlobalAgeGroups[">15"] || 0) + ageGroups[">15"],
             };
 
-            const currentRepAgeGroups = currentRep.ageGroups || { "0-2": 0, "3-5": 0, "6-8": 0, "9-11": 0, "12-14": 0 };
+            const currentRepAgeGroups = currentRep.ageGroups || defaultAgeGroups;
             const updatedRepAgeGroups = {
                 "0-2": (currentRepAgeGroups["0-2"] || 0) + ageGroups["0-2"],
                 "3-5": (currentRepAgeGroups["3-5"] || 0) + ageGroups["3-5"],
                 "6-8": (currentRepAgeGroups["6-8"] || 0) + ageGroups["6-8"],
                 "9-11": (currentRepAgeGroups["9-11"] || 0) + ageGroups["9-11"],
                 "12-14": (currentRepAgeGroups["12-14"] || 0) + ageGroups["12-14"],
+                ">15": (currentRepAgeGroups[">15"] || 0) + ageGroups[">15"],
             };
 
             transaction.set(globalStatusRef, {
@@ -188,6 +193,7 @@ export const deleteParticipantRegistration = async (participantId) => {
             "ageGroups.6-8": increment(-ageGroups["6-8"]),
             "ageGroups.9-11": increment(-ageGroups["9-11"]),
             "ageGroups.12-14": increment(-ageGroups["12-14"]),
+            "ageGroups.>15": increment(-ageGroups[">15"]),
         });
 
         // Decrement the specific Responsible Person's statistics if it exists
@@ -203,6 +209,7 @@ export const deleteParticipantRegistration = async (participantId) => {
                 "ageGroups.6-8": increment(-ageGroups["6-8"]),
                 "ageGroups.9-11": increment(-ageGroups["9-11"]),
                 "ageGroups.12-14": increment(-ageGroups["12-14"]),
+                "ageGroups.>15": increment(-ageGroups[">15"]),
             });
         }
     });
@@ -265,6 +272,7 @@ export const updateParticipantRegistration = async (participantId, formData, cal
         "6-8": newAgeGroups["6-8"] - oldAgeGroups["6-8"],
         "9-11": newAgeGroups["9-11"] - oldAgeGroups["9-11"],
         "12-14": newAgeGroups["12-14"] - oldAgeGroups["12-14"],
+        ">15": newAgeGroups[">15"] - oldAgeGroups[">15"],
     };
 
     const hasCountChanged = 
@@ -303,6 +311,7 @@ export const updateParticipantRegistration = async (participantId, formData, cal
                 "ageGroups.6-8": increment(ageGroupDeltas["6-8"]),
                 "ageGroups.9-11": increment(ageGroupDeltas["9-11"]),
                 "ageGroups.12-14": increment(ageGroupDeltas["12-14"]),
+                "ageGroups.>15": increment(ageGroupDeltas[">15"]),
             });
 
             // Update RP Statistics if it exists
@@ -317,6 +326,7 @@ export const updateParticipantRegistration = async (participantId, formData, cal
                     "ageGroups.6-8": increment(ageGroupDeltas["6-8"]),
                     "ageGroups.9-11": increment(ageGroupDeltas["9-11"]),
                     "ageGroups.12-14": increment(ageGroupDeltas["12-14"]),
+                    "ageGroups.>15": increment(ageGroupDeltas?.[">15"] || ageGroupDeltas[">15"]),
                 });
             }
         }          
