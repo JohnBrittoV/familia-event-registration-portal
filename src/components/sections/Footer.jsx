@@ -19,7 +19,7 @@ export const Footer = () => {
                                            fill-red-500" /> by {""}
 
                     <span className="text-slate-700 dark:text-slate-300 
-                                    font-medium">Jesus Youth Mananthavady</span>
+                                    font-medium">techies Inside</span>
                 </p>
                 <p>&copy; 2026 FAMILIA26. All rights reserved.</p>
             </div>
