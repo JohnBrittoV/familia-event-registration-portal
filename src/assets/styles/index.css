@@ -29,12 +29,21 @@
 .marquee-track {
   display: flex;
   gap: 1rem; /* same as gap-4 */
-  animation: marqueeScroll 20s linear infinite;
+  animation: marqueeScroll 35s linear infinite;
   width: max-content;
 }
 
 .marquee-track:hover {
   animation-play-state: paused;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
 }
 
 /* --------------------------------------------------

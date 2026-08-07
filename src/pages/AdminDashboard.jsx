@@ -9,8 +9,8 @@ import { useAdminControls } from '../hooks/useAdminControls';
 import { Spinner } from '../components/ui/Spinner';
 import { RecentParticipantsTable } from '../components/features/RecentParticipantsTable';
 import { fetchLatestResponsiblePersons } from '../services/userService';
+import { AccessOverridesCard } from '../components/features/AccessOverridesCard';
 import { Users, Globe, TrendingUp, ShieldCheck, Gift } from 'lucide-react';
-
 
 export const AdminDashboard = () => {
     
@@ -189,7 +189,10 @@ export const AdminDashboard = () => {
 
             <div className="grid grid-cols-1 2xl:grid-cols-12 gap-6">
 
-                <div className='w-full 2xl:col-span-7'>
+                <div className='w-full 2xl:col-span-7 space-y-6'>
+
+                    <AccessOverridesCard/>
+
                     {loadingRecentUsers ? (
                         <div className="flex justify-center p-12 bg-white 
                                         dark:bg-slate-800 rounded-2xl border 
