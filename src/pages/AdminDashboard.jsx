@@ -57,6 +57,136 @@ export const AdminDashboard = () => {
                 subtitle="Monitor portal activity and manage user access." 
             />
 
+             {/* Stats Cards - Responsive Grid without horizontal scroll */}
+            <div className="w-full overflow-hidden p-5">
+                <div className="marquee-track">
+
+                    {/* First set of cards */}
+                    
+                    <div className='min-w-75 shrink-0'>
+                        <StatCard 
+                            title="Total Registrations" 
+                            value="12,846" 
+                            trend="▲ 12.5% vs last month" 
+                            icon={Users} 
+                            theme="violet" 
+                        />
+                    </div>
+                    
+                    <div className='min-w-75 shrink-0'>
+                        <StatCard 
+                            title="Prayer Offerings" 
+                            value="₹ 8,450" 
+                            trend="▲ 18.7% vs last month" 
+                            icon={Gift} 
+                            theme="amber" 
+                        />
+                    </div>
+
+                    <div className='min-w-75 shrink-0'>
+                        <StatCard 
+                            title="Active Responsible Persons" 
+                            value="103" 
+                            trend="▲ 6.3% vs last month" 
+                            icon={ShieldCheck} 
+                            theme="emerald" 
+                    />
+                    </div>
+
+                    <div className='min-w-75 shrink-0'>
+                         <StatCard 
+                            title="New Monthly Participants" 
+                            value="1,256" 
+                            trend="▲ 8.9% vs last month" 
+                            icon={TrendingUp} 
+                            theme="blue" 
+                        />
+                    </div>
+
+                    <div className='min-w-75 shrink-0'>
+                        <StatCard 
+                            title="Global Access Views" 
+                            value="45,983" 
+                            trend="▲ 15.4% vs last month" 
+                            icon={Globe} 
+                            theme="rose" 
+                        />
+                    </div>
+                    
+                    <div className='min-w-75 shrink-0'>   
+                        <StatCard 
+                            title="Global Access Views" 
+                            value="45,983" 
+                            trend="▲ 15.4% vs last month" 
+                            icon={Globe} 
+                            theme="sky" 
+                        />
+                    </div>
+
+                    {/* Second set of same card for seemless loop */}
+                        <div className='min-w-75 shrink-0'>
+                        <StatCard 
+                            title="Total Registrations" 
+                            value="12,846" 
+                            trend="▲ 12.5% vs last month" 
+                            icon={Users} 
+                            theme="violet" 
+                        />
+                    </div>
+                    
+                    <div className='min-w-75 shrink-0'>
+                        <StatCard 
+                            title="Prayer Offerings" 
+                            value="₹ 8,450" 
+                            trend="▲ 18.7% vs last month" 
+                            icon={Gift} 
+                            theme="amber" 
+                        />
+                    </div>
+
+                    <div className='min-w-75 shrink-0'>
+                        <StatCard 
+                            title="Active Responsible Persons" 
+                            value="103" 
+                            trend="▲ 6.3% vs last month" 
+                            icon={ShieldCheck} 
+                            theme="emerald" 
+                    />
+                    </div>
+
+                    <div className='min-w-75 shrink-0'>
+                         <StatCard 
+                            title="New Monthly Participants" 
+                            value="1,256" 
+                            trend="▲ 8.9% vs last month" 
+                            icon={TrendingUp} 
+                            theme="blue" 
+                        />
+                    </div>
+
+                    <div className='min-w-75 shrink-0'>
+                        <StatCard 
+                            title="Global Access Views" 
+                            value="45,983" 
+                            trend="▲ 15.4% vs last month" 
+                            icon={Globe} 
+                            theme="rose" 
+                        />
+                    </div>
+                    
+                    <div className='min-w-75 shrink-0'>   
+                        <StatCard 
+                            title="Global Access Views" 
+                            value="45,983" 
+                            trend="▲ 15.4% vs last month" 
+                            icon={Globe} 
+                            theme="sky" 
+                        />
+                    </div>
+                    
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 2xl:grid-cols-12 gap-6">
 
                 <div className='w-full 2xl:col-span-7'>
