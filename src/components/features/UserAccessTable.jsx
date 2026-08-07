@@ -50,8 +50,8 @@ export const UserAccessTable = ({ users, onToggleAccess,
                                         border-b border-slate-200 dark:border-slate-700 
                                         text-slate-500 dark:text-slate-400 font-medium">
                         <tr>
+                            <th className="px-6 py-4">No</th>
                             <th className="px-6 py-4">User (Name & Email)</th>
-                            <th className="px-6 py-4">Reg</th>
                             <th className="px-6 py-4 text-center">Account Status</th>
                             <th className="px-6 py-4 text-center">Actions</th>
                         </tr>
@@ -60,13 +60,17 @@ export const UserAccessTable = ({ users, onToggleAccess,
                     <tbody className="divide-y divide-slate-100 
                                       dark:divide-slate-700">
                         
-                        {users.map((u) => (
+                        {users.map((u, index) => (
                             <tr key={u.id} 
                                 className="hover:bg-slate-50 
                                            dark:hover:bg-slate-800/50 
                                             transition-colors">
 
                                 {/* User infor column */}
+                                <td className='px-6 py-4'>
+                                    #{index + 1}
+                                </td>
+
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-sm overflow-hidden shrink-0 ring-2 ring-emerald-500/20">
@@ -90,10 +94,6 @@ export const UserAccessTable = ({ users, onToggleAccess,
                                             </div>
                                         </div>
                                     </div>
-                                </td>
-
-                                <td className="px-6 py-4 font-medium text-slate-700 dark:text-slate-300">
-                                    {u.assignedCount ?? u.participantCount ?? 0}
                                 </td>
 
                                  {/* Status column  */}

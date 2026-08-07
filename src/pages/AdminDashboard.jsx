@@ -10,6 +10,7 @@ import { Spinner } from '../components/ui/Spinner';
 import { RecentParticipantsTable } from '../components/features/RecentParticipantsTable';
 import { fetchLatestResponsiblePersons } from '../services/userService';
 import { AccessOverridesCard } from '../components/features/AccessOverridesCard';
+import { adminDashboardCards } from '../components/features/adminDashboardCard';
 import { Users, Globe, TrendingUp, ShieldCheck, Gift } from 'lucide-react';
 
 export const AdminDashboard = () => {
@@ -187,32 +188,34 @@ export const AdminDashboard = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 2xl:grid-cols-12 gap-6">
-
-                <div className='w-full 2xl:col-span-7 space-y-6'>
-
-                    <AccessOverridesCard/>
+            <div className="w-full xl:col-span-8 flex flex-col">
 
                     {loadingRecentUsers ? (
-                        <div className="flex justify-center p-12 bg-white 
-                                        dark:bg-slate-800 rounded-2xl border 
-                                        border-slate-200 dark:border-slate-700">                                    
+                        <div className="flex justify-center items-center p-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 flex-1">                                    
                             <Spinner />
                         </div>
                     ) : (
-                        <UserAccessTable 
+                        <UserAccessTable
                             users={responsibleUsers} 
                             onToggleAccess={handleToggleAccess}
                             onToggleRole={handleToggleRole}
                             onDelete={handleDeleteUser}
                         />
                     )}
-                </div>
-                    
-                <div className="w-full 2xl:col-span-5">
-                    <RecentParticipantsTable />
-                </div>
+                
+            </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                    {adminDashboardCards.map((card, index) => (
+                        <div key={index} className='flex flex-col'>
+                            <AccessOverridesCard data={card} />
+                        </div>
+                    ))}
+            </div>
+          
+
+            <div className="w-full xl:col-span-12">
+                    <RecentParticipantsTable />
             </div>
 
         </div>
