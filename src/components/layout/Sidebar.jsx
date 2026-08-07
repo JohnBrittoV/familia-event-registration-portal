@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LogOut, X} from "lucide-react";
 import { useAuth } from '../../context/AuthContext';
 import { Spinner } from "../ui/Spinner";
-import { navItems } from "../../config/navigationConfig";
+import { navItems, adminNavigation } from "../../config/navigationConfig";
 import logo from '../../assets/icons/blue.png';
 
 export const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -15,9 +15,10 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
     const { pathname } = useLocation();
     
     const currentRole = dbUser?.role || '';
+    const isAdminOrOwner = currentRole === 'admin' || currentRole === 'owner';
 
     // Filter tabs based on the user's role 
-    const visibleNavItems = navItems.filter(items => items.allowedRoles.includes(currentRole));
+    const visibleRPNavItems = navItems.filter(items => items.allowedRoles.includes(currentRole));
 
     useEffect(() => {
         return () => {
@@ -76,29 +77,62 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
 
                 </div>
 
-                <nav className="flex-1 p-4 flex flex-col gap-2 
-                                overflow-y-auto">
-                    {/* DYNAMICALLY RENDERED NAVIGATION */}
-                    {visibleNavItems.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = pathname === item.path;
-                        
-                        return (
-                            <Link 
-                                key={item.id}
-                                to={item.path}
-                                onClick={() => setIsOpen(false)}
-                                className={`flex items-center gap-3 px-4 py-3 
-                                            rounded-xl font-medium transition-colors ${
-                                    isActive 
-                                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' 
-                                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
-                                }`}
-                            >
-                                <Icon size={20} /> {item.label}
-                            </Link>
-                        );
-                    })}
+                <nav className="flex-1 p-4 flex flex-col gap-2 overflow-y-auto">
+                    {isAdminOrOwner ? (
+                        /* --- ADMIN MENU WITH CATEGORIES --- */
+                        adminNavigation.map((group, index) => (
+                            <div key={index} className="mb-4">
+                                {/* Category Heading */}
+                                <h3 className="px-4 text-xs font-bold text-slate-400 dark:text-slate-500 tracking-wider mb-2 uppercase">
+                                    {group.category}
+                                </h3>
+                                
+                                {/* Category Items */}
+                                <div className="flex flex-col gap-1">
+                                    {group.items.map((item) => {
+                                        const Icon = item.icon;
+                                        const isActive = pathname === item.path;
+                                        
+                                        return (
+                                            <Link 
+                                                key={item.id}
+                                                to={item.path}
+                                                onClick={() => setIsOpen(false)}
+                                                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
+                                                    isActive 
+                                                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' 
+                                                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                                }`}
+                                            >
+                                                <Icon size={20} /> {item.label}
+                                            </Link>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        /* --- RESPONSIBLE PERSONS MENU (FLAT LIST, UNCHANGED) --- */
+                        visibleRPNavItems.map((item) => {
+                            const Icon = item.icon;
+                            const isActive = pathname === item.path;
+                            
+                            return (
+                                <Link 
+                                    key={item.id}
+                                    to={item.path}
+                                    onClick={() => setIsOpen(false)}
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
+                                        isActive 
+                                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' 
+                                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                    }`}
+                                >
+                                    <Icon size={20} /> {item.label}
+                                </Link>
+                            );
+                        })
+                    )}
                 </nav>
 
                 <div className="p-4 border-t border-slate-200 

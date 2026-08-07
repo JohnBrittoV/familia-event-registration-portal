@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { AdminHeader } from '../components/layout/AdminDashboardHeader';
 import { Greeting } from '../components/features/Greeting';
+import { StatCard } from '../components/ui/StatCard';
+import { cardThemes } from '../assets/styles/cardThemes';
 import { UserAccessTable } from '../components/features/UserAccessTable';
 import { useAuth } from '../context/AuthContext';
 import { useAdminControls } from '../hooks/useAdminControls';
 import { Spinner } from '../components/ui/Spinner';
 import { RecentParticipantsTable } from '../components/features/RecentParticipantsTable';
 import { fetchLatestResponsiblePersons } from '../services/userService';
+import { Users, Globe, TrendingUp, ShieldCheck, Gift } from 'lucide-react';
+
 
 export const AdminDashboard = () => {
     
@@ -29,62 +33,55 @@ export const AdminDashboard = () => {
 
     const onAccessToggle = async (id, isApproved) => {
         await handleToggleAccess(id, isApproved);
-        loadResponsiblePersons(); // Refresh table data
+        loadResponsiblePersons();
     };
 
     const onRoleToggle = async (id, currentRole) => {
         await handleToggleRole(id, currentRole);
-        loadResponsiblePersons(); // Refresh table data
+        loadResponsiblePersons();
     };
 
     const onUserDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this user?")) {
             await handleDeleteUser(id);
-            loadResponsiblePersons(); // Refresh table data
+            loadResponsiblePersons();
         }
     };
 
     return(
-        
-        <>
-                <div className='max-w-7xl mx-auto 
-                                space-y-6'>
+        <div className='max-w-360 mx-auto px-4 sm:px-6 lg:px-8 space-y-6'>
 
-                    <Greeting 
-                        name={user?.displayName} 
-                        role="Admin" 
-                        subtitle="Monitor portal activity and manage user access." 
-                    />
+            <Greeting 
+                name={user?.displayName} 
+                role="Admin" 
+                subtitle="Monitor portal activity and manage user access." 
+            />
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 2xl:grid-cols-12 gap-6">
 
-                        <div className='w-full'>
-    
-                            {loadingRecentUsers ? (
-                                <div className="flex justify-center p-12 bg-white 
-                                                dark:bg-slate-800 rounded-2xl border 
-                                                border-slate-200 dark:border-slate-700">
-                                    
-                                    <Spinner />
-                                </div>
-                            ) : (
-                                <UserAccessTable 
-                                    users={responsibleUsers} 
-                                    onToggleAccess={handleToggleAccess}
-                                    onToggleRole={handleToggleRole}
-                                    onDelete={handleDeleteUser}
-                                />
-                            )}
-                        
+                <div className='w-full 2xl:col-span-7'>
+                    {loadingRecentUsers ? (
+                        <div className="flex justify-center p-12 bg-white 
+                                        dark:bg-slate-800 rounded-2xl border 
+                                        border-slate-200 dark:border-slate-700">                                    
+                            <Spinner />
                         </div>
-                        
-                        <div className="w-full">
-                            <RecentParticipantsTable />
-                        </div>
-                    </div>
-
+                    ) : (
+                        <UserAccessTable 
+                            users={responsibleUsers} 
+                            onToggleAccess={handleToggleAccess}
+                            onToggleRole={handleToggleRole}
+                            onDelete={handleDeleteUser}
+                        />
+                    )}
+                </div>
+                    
+                <div className="w-full 2xl:col-span-5">
+                    <RecentParticipantsTable />
                 </div>
 
-        </>
+            </div>
+
+        </div>
     )
 }
