@@ -2,7 +2,8 @@ import React, { useState} from 'react';
 import { Link } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 import { Button } from '../../../../components/ui/Button';
-import { FloatingInput } from '../../../../components/ui/form/FloatingInput'
+import { FloatingInput } from '../../../../components/ui/form/FloatingInput';
+import candleIcon from '../../../../assets/icons/Candle.svg';
 
 export const MobileEntryStep = ({ onSubmit, isLoading, error: serverError }) => {
     
@@ -12,6 +13,34 @@ export const MobileEntryStep = ({ onSubmit, isLoading, error: serverError }) => 
     });
     
     const { handleSubmit } = methods;
+
+    // Advanced Phone Validation Logic
+    const validatePhoneNumber = (value) => {
+
+        // 1. Check exact 10 digits pattern first
+        if (!/^\d{10}$/.test(value)) {
+            return "Must be exactly 10 digits";
+        }
+
+        // 2. Detect repetitive sequences (e.g., 0000000000, 9999999999, etc.)
+        if (/^(\d)\1{9}$/.test(value)) {
+            return "Invalid: repetitive sequence is not allowed";
+        }
+
+        // 3. Detect ascending sequential patterns (e.g., 1234567890)
+        const ascending = "01234567890123456789";
+        if (ascending.includes(value)) {
+            return "Invalid: sequential pattern is not allowed";
+        }
+
+        // 4. Detect descending sequential patterns (e.g., 9876543210)
+        const descending = "98765432109876543210";
+        if (descending.includes(value)) {
+            return "Invalid phone number: sequential pattern is not allowed";
+        }
+
+        return true; // Valid number
+    };
 
     const onFormSubmit = (data) => {
         onSubmit(data.mobile);
@@ -23,15 +52,11 @@ export const MobileEntryStep = ({ onSubmit, isLoading, error: serverError }) => 
                     p-4 font-sans transition-colors duration-200">
 
       <div className="text-center mb-8">
-        <div className="bg-blue-600 text-white w-12 h-12 
+        <div className="bg-blue-600 text-white w-20 h-20 
                         rounded-xl flex items-center justify-center 
-                        mx-auto mb-4 shadow-lg">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" 
-               viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-
-            <path strokeLinecap="round" strokeLinejoin="round" 
-                  strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-          </svg>
+                        mx-auto mb-4 shadow-lg p-1">
+          
+          <img src={candleIcon} alt="candle" />
 
         </div>
         <h1 className="text-2xl font-bold text-slate-900 
@@ -69,17 +94,14 @@ export const MobileEntryStep = ({ onSubmit, isLoading, error: serverError }) => 
                   disabled={isLoading}
                   validation={{
                     required: "Mobile number is required",
-                    pattern: {
-                      value: /^\d{10}$/,
-                      message: "Must be exactly 10 digits"
-                    }
+                    validate: validatePhoneNumber
                   }}
                 />
               </div>
             </div>
 
             {serverError && (
-              <p className="text-red-500 text-sm mt-2 mb-4 font-medium">{serverError}</p>
+              <p className="text-red-500 text-sm m-4 font-medium">{serverError}</p>
             )}
 
             {/* Reused Button Component */}

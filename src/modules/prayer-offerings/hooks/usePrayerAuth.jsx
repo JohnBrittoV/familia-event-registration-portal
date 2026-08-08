@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { prayerAuthService } from "../services/prayerAuthService";
 
+const STORAGE_KEY = 'prayer_user_mobile';
+
 export const usePrayerAuth = () => {
     const [currentUser, setCurrentUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -11,16 +13,16 @@ export const usePrayerAuth = () => {
 
     useEffect(() => {
         const checkLocalSession = async () => {
-            const saveMobile = localStorage.getItem('prayer_user_mobile');
-            if (saveMobile) {
+            const savedMobile = localStorage.getItem('prayer_user_mobile');
+            if (savedMobile) {
                 try {
                     const userData = await prayerAuthService.checkUserExists(savedMobile);
                     if (userData) {
                         setCurrentUser(userData);
-                        prayerAuthService.updateLastActive(saveMobile);
+                        await prayerAuthService.updateLastActive(savedMobile);
                     }
                     else {
-                        localStorage.removeItem('prayer_user_mobile');
+                        localStorage.removeItem(STORAGE_KEY);
                     }
                 } catch (error) {
                     console.error('Session restore failed', error)
@@ -42,8 +44,8 @@ export const usePrayerAuth = () => {
             const existingUser = await prayerAuthService.checkUserExists(mobileNumber);
 
             if (existingUser) {
-                localStorage.setItem('paryer_user_mobile', mobileNumber);
-                prayerAuthService.updateLastActive(mobileNumber);
+                localStorage.setItem(STORAGE_KEY, mobileNumber);
+                await prayerAuthService.updateLastActive(mobileNumber);
                 setCurrentUser(existingUser)
             }
             else {
@@ -60,7 +62,6 @@ export const usePrayerAuth = () => {
 
     // Handle profile creation
     const handleProfileSubmit = async (profileData) => {
-        
         setIsLoading(true);
         setError(null);
 
@@ -68,7 +69,7 @@ export const usePrayerAuth = () => {
             const fullUserData = {...profileData, mobile: tempMobile};
             const newUser = await prayerAuthService.registerPrayerUser(fullUserData);
 
-            localStorage.setItem('prayer_user_mobile', tempMobile);
+            localStorage.setItem(STORAGE_KEY, tempMobile);
             setCurrentUser(newUser);
         } catch (error) {
             setError(error.message);

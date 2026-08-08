@@ -1,6 +1,8 @@
 import React from 'react';
 import { usePrayerCounter } from '../hooks/usePrayerCounter';
 import { Button } from '../../../components/ui/Button';
+import { HeartPlusIcon, Heart } from 'lucide-react';
+
 
 export const HailMaryCounter = ({ userMobile }) => {
   const { 
@@ -24,7 +26,7 @@ export const HailMaryCounter = ({ userMobile }) => {
 
           <span className="text-4xl animate-bounce transition-opacity 
                            duration-500 opacity-100">
-            🙏✨
+              ❤️👏
           </span>
         </div>
       )}
@@ -44,12 +46,12 @@ export const HailMaryCounter = ({ userMobile }) => {
           <p className="text-sm text-slate-600 
                         dark:text-slate-400 mb-4 
                         leading-relaxed">
-            Familia'26 പ്രോഗ്രാമിനായി നമുക്കൊരുമിച്ച് പ്രാർത്ഥനയിൽ ഐക്യപ്പെടാം. 🌟🕊️
+            Familia'26 പ്രോഗ്രാമിനായി നമുക്കൊരുമിച്ച് പ്രാർത്ഥനയിൽ ഐക്യപ്പെടാം. 
           </p>
           <p className="text-sm font-medium text-slate-800 
                       dark:text-slate-200">
             "നന്മനിറഞ്ഞ മറിയമേ, സ്വസ്തി. കര്‍ത്താവ് അങ്ങയോടുകൂടെ സ്ത്രീകളില്‍ അങ്ങ്  അനുഗ്രഹിക്കപ്പെട്ടവള്‍ ആകുന്നു അങ്ങയുടെ ഉദരത്തില്‍ ഫലമായ ഈശോ അനുഗ്രഹിക്കപ്പെട്ടവനാകുന്നു.
-            പരിശുദ്ധ മറിയമേ, തമ്പുരാൻ്റെ അമ്മേ, പാപികളായ ഞങ്ങള്‍ക്കുവേണ്ടി ഇപ്പോഴും ഞങളുടെ മരണ സമയത്തും തമ്പുരാനോട് അപേക്ഷിക്കണമേ. ആമ്മേന്‍ ." 🙏💖
+            പരിശുദ്ധ മറിയമേ, തമ്പുരാൻ്റെ അമ്മേ, പാപികളായ ഞങ്ങള്‍ക്കുവേണ്ടി ഇപ്പോഴും ഞങളുടെ മരണ സമയത്തും തമ്പുരാനോട് അപേക്ഷിക്കണമേ. ആമ്മേന്‍."
           </p>
         </div>
       </div>
@@ -88,7 +90,7 @@ export const HailMaryCounter = ({ userMobile }) => {
           isSubmitting ? 'bg-green-600 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700'
         }`}
       >
-        🙏 Pray Now
+        <HeartPlusIcon/> Pray Now
       </Button>
     </div>
   );

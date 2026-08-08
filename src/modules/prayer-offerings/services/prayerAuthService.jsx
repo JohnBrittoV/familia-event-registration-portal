@@ -2,6 +2,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../../config/firebase.config';
 
 const COLLECTION_NAME = 'prayerOfferings';
+const STORAGE_KEY = 'familia_prayer_user';
 
 export const prayerAuthService = {
 
@@ -11,7 +12,10 @@ export const prayerAuthService = {
             const userSnap = await getDoc(userRef);
 
             if (userSnap.exists()) {
-                return userSnap.data();
+                const data = userSnap.data();
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                return data;
+
             }
             return null;
         } catch (error) {
@@ -34,7 +38,8 @@ export const prayerAuthService = {
                 lastActive: serverTimestamp()
             };
 
-            await setDoc(userRef, newProfile);
+            await setDoc(userRef, newProfile, {merge: true});
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(newProfile));
             return newProfile;
         } catch (error) {
             console.error('Error registering user:', error);
@@ -49,5 +54,21 @@ export const prayerAuthService = {
         } catch (error) {
             console.error('Error updating activity:', error);
         }
+    },
+
+    // Helper to check if a session already exists locally on app load
+    getLocalUser: () => {
+        try {
+            const cached = localStorage.getItem(STORAGE_KEY);
+            return cached ? JSON.parse(cached) : null;
+        } catch (error) {
+            console.error('Error reading local user session:', error);
+            return null;
+        }
+    },
+
+    // Helper for handling logouts
+    clearLocalUser: () => {
+        localStorage.removeItem(STORAGE_KEY);
     }
 };
