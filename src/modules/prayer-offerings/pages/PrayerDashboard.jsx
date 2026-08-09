@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Globe, MapPin, LogOut, User} from 'lucide-react';
 import { usePrayerAuth } from '../hooks/usePrayerAuth';
 import { MobileEntryStep } from '../components/auth/MobileEntryStep';
 import { ProfileSetupStep } from '../components/auth/ProfileSetupStep';
 import { HailMaryCounter } from '../components/HailMaryCounter';
 import { PrayerBookingForm } from '../components/PrayerBookingForm';
 import { PrayerHistoryTable } from '../components/PrayerHistoryTable';
+import { GreetingBanner } from '../components/GreetingBanner';
+import { WordOfGodCard } from '../components/WordOfGodCard';
 import { Spinner } from '../../../components/ui/Spinner';
+import logo from '../../../assets/icons/logo.png';
 
 export const PrayerDashboard = () => {
+      
     const {
         currentUser, 
         isLoading, 
@@ -20,6 +25,13 @@ export const PrayerDashboard = () => {
         logout
     } = usePrayerAuth();
 
+    const [language, setLanguage] = useState('EN');;
+    const [selectedPlace, setSelectedPlace] = useState(currentUser?.place || '' )
+
+    const toggleLanguage = () => {
+        setLanguage(prev => prev === 'EN' ? 'ML' : 'EN');
+    };
+
     if (isLoading) {
         return (
             <Spinner/>
@@ -30,55 +42,63 @@ export const PrayerDashboard = () => {
     if (currentUser) {
         return (
             <div className="min-h-screen bg-slate-50 dark:bg-slate-900 
-                            font-sans transition-colors duration-200">
+                            font-malayalam transition-colors duration-200">
             
             {/* Top Navigation Bar */}
-            <div className="p-4 px-6 flex justify-between items-center 
-                            bg-white dark:bg-slate-800 shadow-sm 
-                            border-b border-slate-200 dark:border-slate-700 
-                            transition-colors duration-200">
+            {/* Redesigned Navigation Bar */}
+            <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
 
-                <div className="flex items-center gap-2">
-                    <div className="bg-blue-600 text-white w-8 h-8 
-                                    rounded-lg flex items-center 
-                                    justify-center shadow-sm">
-
-                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                       </svg>
+                    {/* Left Side: Jesus Youth Logo + Familia'26 Branding */}
+                    <div className="flex items-center gap-3">
+                        <div className="w-15 h-15 rounded-xl bg-blue-50 dark:bg-blue-900/10 flex items-center justify-center p-1.5 shadow-inner hover:-translate-y-0.5 duration-300">
+                            <img src={logo} alt="Jesus Youth Logo" className="w-full h-full object-contain" />
+                        </div>
+                        <div>
+                            <span className="text-xs uppercase tracking-wider text-blue-600 font-sans dark:text-blue-400 font-bold block">Jesus Youth</span>
+                            <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 font-sans dark:text-white tracking-tight">Familia'26</h1>
+                        </div>
                     </div>
 
-                    <span className="font-bold text-slate-900 
-                                     dark:text-white">Familia'26 Prayer Partners</span>
-                </div>
+                    {/* Right Side: User Name, Location Dropdown, Language Switcher, Logout */}
+                    <div className="flex items-center gap-2 sm:gap-4">
+                        
+                        {/* Logged-in User Badge */}
+                        <div className="hidden md:flex items-center gap-2 bg-slate-100 dark:bg-slate-700/50 px-3 py-2 rounded-md border border-slate-200 dark:border-slate-600">
+                            <User size={14} className="text-blue-600 dark:text-blue-400" />
+                            <span className="text-xs font-semibold font-sans text-slate-700 dark:text-slate-200">{currentUser.name}</span>
+                        </div>
 
-                <div className="flex items-center gap-4">
-                    <div className="hidden sm:flex items-center gap-2 
-                                    bg-green-50 dark:bg-green-900/30 
-                                    text-green-700 dark:text-green-400 
-                                    px-3 py-1 rounded-full text-sm font-medium 
-                                    border border-green-200 dark:border-green-800">
+                        {/* Language Switcher (World Icon) */}
+                        <button 
+                            onClick={toggleLanguage}
+                            title="Switch Language (English / Malayalam)"
+                            className="p-2 rounded-lg bg-slate-100 font-sans dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-2 text-xs font-bold"
+                        >
+                            <Globe size={17} className="text-blue-600 dark:text-blue-400" />
+                            <span>{language}</span>
+                        </button>
 
-                        <span>✅</span> {currentUser.name}
-                        <span className="bg-green-200 dark:bg-green-800 
-                                         px-2 py-0.5 rounded-full text-xs ml-1">
-                            {currentUser.place}
-                        </span>
+                        {/* Logout Button */}
+                        <button 
+                            onClick={logout} 
+                            title="Logout"
+                            className="p-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors flex items-center justify-center"
+                        >
+                            <LogOut size={17} />
+                        </button>
                     </div>
 
-                    <button onClick={logout} className="text-sm font-medium 
-                                                      text-slate-500 dark:text-slate-400 
-                                                      hover:text-slate-800 dark:hover:text-slate-200 
-                                                      transition-colors flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                        Logout
-                    </button>
-
                 </div>
-            </div>
+            </header>
 
             {/* Dashboard Content */}
             <div className="max-w-4xl mx-auto p-6 mt-8 space-y-8">
+
+                <GreetingBanner userName={currentUser.name} />
+
+                <WordOfGodCard userName={currentUser.name} language={language} />      
+
                 {/* Hail Mary Counter Widget */}
                 <HailMaryCounter userMobile={currentUser.mobile}/>
 
@@ -88,8 +108,6 @@ export const PrayerDashboard = () => {
                                 border-slate-100 dark:border-slate-700 
                                 text-center text-slate-500 dark:text-slate-400">
                     <PrayerBookingForm currentUser={currentUser}/>
-
-                    
 
                 </div>
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { usePrayerCounter } from '../hooks/usePrayerCounter';
 import { Button } from '../../../components/ui/Button';
-import { HeartPlusIcon, Heart } from 'lucide-react';
+import { HeartPlusIcon, Heart, Cross } from 'lucide-react';
 
 
 export const HailMaryCounter = ({ userMobile }) => {
@@ -37,7 +37,7 @@ export const HailMaryCounter = ({ userMobile }) => {
                        dark:text-white mb-4 flex items-center 
                        justify-center gap-2">
 
-          <span>🕊️</span> Pray for Familia'26
+          <span><Cross/></span> Pray for Familia'26  <span><Cross/></span>
         </h3>
         <div className="bg-slate-50 dark:bg-slate-900/50 
                         rounded-xl p-4 border border-slate-100 
@@ -46,7 +46,7 @@ export const HailMaryCounter = ({ userMobile }) => {
           <p className="text-sm text-slate-600 
                         dark:text-slate-400 mb-4 
                         leading-relaxed">
-            Familia'26 പ്രോഗ്രാമിനായി നമുക്കൊരുമിച്ച് പ്രാർത്ഥനയിൽ ഐക്യപ്പെടാം. 
+            ഫാമിലിയ 26 - പ്രോഗ്രാമിനെ സമർപ്പിച്ചു നമ്മുക്ക് പ്രാർത്ഥിക്കാം  
           </p>
           <p className="text-sm font-medium text-slate-800 
                       dark:text-slate-200">
