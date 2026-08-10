@@ -1,10 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
 import { prayerCounterService } from '../services/prayerCounterService';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../../../config/firebase.config';
+import { HailMaryCounter } from '../components/HailMaryCounter';
 
 export const usePrayerCounter = (userMobile, target = 50000) => {
     const [currentCount, setCurrentCount] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showAnimation, setShowAnimation] = useState(false);
+
+    const [userStats, setUserStats] = useState({
+      totalHailMarys: 0,
+      holyMassCount: 0,
+      fastingCount: 0,
+      familiaPrayerCount: 0,
+      loadingStats: true
+    })
 
     // Listen to the live count from Firestore
     useEffect(() => {
@@ -15,6 +26,58 @@ export const usePrayerCounter = (userMobile, target = 50000) => {
 
         return () => unsubscribe(); 
     }, []);
+
+    // Fetch individual partner stats when userMobile changes
+    useEffect(() => {
+      const fetchUserContributions = async () => {
+        
+        if(!userMobile) {
+          setUserStats(prev => ({ ...prev, loadingStats: false }));
+          return;
+        }
+
+        try {
+                // Fetch user profile stats from prayerOfferings
+                const userDocRef = doc(db, 'prayerOfferings', userMobile);
+                const userSnap = await getDoc(userDocRef);
+
+                let HailMarys = 0;
+                if (userSnap.exists()) {
+                    const data = userSnap.data();
+                    HailMarys = data.totalHailMarys || 0;
+
+                  const bookingRef = collection(db, 'PrayerBookings');
+                  const q = query(bookingRef, where('mobile', '==', userMobile));
+                  const bookingSnapshot = await getDocs(q);
+
+                  let holyMass = 0;
+                  let fasting = 0;
+
+                  bookingSnapshot.docs.forEach(docSnap => {
+                    const bookingData = docSnap.data();
+                    const prayersArray = bookingData.prayers || [];
+
+                    if (prayersArray.includes('holy_mass')) holyMass += 1;
+                    if (prayersArray.includes('fasting')) fasting += 1;
+                  });
+                    
+                    setUserStats({
+                        totalHailMarys: HailMarys,
+                        holyMassCount: holyMass,
+                        fastingCount: fasting,
+                        familiaPrayerCount: 0,
+                        TotalContribution: bookingSnapshot.docs.length,
+                        loadingStats: false
+                    });
+                }
+              } catch (error) {
+                  console.error('Failed to fetch individual prayer partner stats', error);
+                  setUserStats(prev => ({ ...prev, loadingStats: false }));
+              }
+      };
+
+       fetchUserContributions();
+    }, [userMobile]);
 
     const handlePrayNow = useCallback(async () => {
     if (isSubmitting || !userMobile) return;
@@ -48,6 +111,7 @@ export const usePrayerCounter = (userMobile, target = 50000) => {
     progressPercentage,
     isSubmitting,
     showAnimation,
-    handlePrayNow
+    handlePrayNow,
+    userStats
   };
 }

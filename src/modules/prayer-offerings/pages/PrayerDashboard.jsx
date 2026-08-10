@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Globe, MapPin, LogOut, User} from 'lucide-react';
 import { usePrayerAuth } from '../hooks/usePrayerAuth';
 import { MobileEntryStep } from '../components/auth/MobileEntryStep';
 import { ProfileSetupStep } from '../components/auth/ProfileSetupStep';
@@ -8,8 +7,11 @@ import { PrayerBookingForm } from '../components/PrayerBookingForm';
 import { PrayerHistoryTable } from '../components/PrayerHistoryTable';
 import { GreetingBanner } from '../components/GreetingBanner';
 import { WordOfGodCard } from '../components/WordOfGodCard';
+import { usePrayerCounter } from '../hooks/usePrayerCounter';
+import { PrayerStatsOverview } from '../components/PrayerStatsOverview';
 import { Spinner } from '../../../components/ui/Spinner';
 import logo from '../../../assets/icons/logo.png';
+import { Globe, MapPin, LogOut, User, Heart, Church, Flame, Users} from 'lucide-react';
 
 export const PrayerDashboard = () => {
       
@@ -24,6 +26,8 @@ export const PrayerDashboard = () => {
         setAuthStep,
         logout
     } = usePrayerAuth();
+
+    const { userStats } =  usePrayerCounter(currentUser?.mobile);
 
     const [language, setLanguage] = useState('EN');;
     const [selectedPlace, setSelectedPlace] = useState(currentUser?.place || '' )
@@ -97,7 +101,9 @@ export const PrayerDashboard = () => {
 
                 <GreetingBanner userName={currentUser.name} />
 
-                <WordOfGodCard userName={currentUser.name} language={language} />      
+                <WordOfGodCard userName={currentUser.name} language={language} />  
+
+                <PrayerStatsOverview userStats={userStats}/>    
 
                 {/* Hail Mary Counter Widget */}
                 <HailMaryCounter userMobile={currentUser.mobile}/>
