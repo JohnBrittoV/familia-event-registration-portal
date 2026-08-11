@@ -17,20 +17,23 @@ export const prayerCounterService = {
     }, 
 
     // Safely increment the counter using Firebase's build-in increment
-    incrementCount: async (mobileNumber) => {
+    incrementCount: async (mobileNumber, amount = 1) => {
 
         if (!mobileNumber) throw new Error('User mobile number is required');
 
         try {
 
             const globalUpdate = updateDoc(TARGET_DOC, {
-                count: increment(1)
+                count: increment(amount)
             });
 
             const userRef = doc(db, 'prayerOfferings', mobileNumber);
+            
             const personalUpdate = updateDoc(userRef, {
-                totalHailMarys: increment(1)
-            })
+                totalHailMarys: increment(1),
+                mobile: mobileNumber,
+                lastActive: new Date()
+            }, {merge: true});
 
             await Promise.all([globalUpdate, personalUpdate]);
 

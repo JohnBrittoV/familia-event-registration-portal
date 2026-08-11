@@ -46,30 +46,42 @@ export const WordOfGodCard = ({ userName, language = 'ML' }) => {
     const verseText = language === 'EN' ? selectedVerse.english : selectedVerse.malayalam;
 
     return (
-        <div className="bg-linear-to-br from-blue-50/70 via-white to-indigo-50/50 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900 rounded-3xl p-6 sm:p-8 shadow-sm border border-blue-100 dark:border-slate-700 transition-colors duration-200 relative overflow-hidden">
             
-            {/* Decorative ambient background spark */}
-            <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-blue-400/10 rounded-full blur-2xl pointer-events-none"></div>
-
-            <div className="flex items-start gap-4">
-                <div className="bg-blue-600 text-white p-3 rounded-2xl shadow-md shrink-0 mt-1">
-                    <Sparkles size={20} />
-                </div>
-
-                <div className="space-y-2">
-                    <span className="text-xs font-bold font-malayalam uppercase tracking-widest text-blue-600 dark:text-blue-400">
-                        {language === 'EN' ? 'Word of God for You' : 'ഇന്നത്തെ തിരുവചനം'}
-                    </span>
+            <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-200 relative overflow-hidden flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="relative z-10">
                     
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
-                        Dear beloved {userName}, your God says to you this:
-                    </h3>
+                    <span className="bg-blue-50 dark:bg-blue-900/40 text-blue-100 dark:text-blue-500 text-xs px-3 py-1 font-semibold uppercase tracking-wider mb-3 inline-block">
+                        Intercession Portal
+                    </span>
 
-                    <blockquote className="text-slate-700 dark:text-slate-300 text-base sm:text-lg font-medium font-malayalam pt-2 border-l-2 border-blue-500 pl-4 my-2">
-                        "{verseText}"
-                    </blockquote>
+                    {/* Decorative ambient background spark */}
+                    <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-blue-400/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                    <div className="flex items-start gap-4">
+                        
+                        <div className="bg-blue-600 text-white p-3 rounded-2xl shadow-md shrink-0 mt-1">
+                            <Sparkles size={20} />
+                        </div>
+
+                        <div className="space-y-2">
+                            <span className="text-xs font-bold font-malayalam uppercase tracking-widest text-blue-600 dark:text-blue-400">
+                                {language === 'EN' ? 'Word of God for You' : 'ഇന്നത്തെ തിരുവചനം'}
+                            </span>
+                            
+                            <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+                                Dear beloved {userName}, your God says to you this:
+                            </h3>
+
+                            <blockquote className="text-slate-700 dark:text-slate-300 text-base sm:text-lg font-medium font-malayalam pt-2 border-l-2 border-blue-500 pl-4 my-2">
+                                "{verseText}"
+                            </blockquote>
+                        </div>
+
+                    </div>
+
                 </div>
+
             </div>
-        </div>
+
     );
 };

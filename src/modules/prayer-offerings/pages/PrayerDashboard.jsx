@@ -11,7 +11,7 @@ import { usePrayerCounter } from '../hooks/usePrayerCounter';
 import { PrayerStatsOverview } from '../components/PrayerStatsOverview';
 import { Spinner } from '../../../components/ui/Spinner';
 import logo from '../../../assets/icons/logo.png';
-import { Globe, MapPin, LogOut, User, Heart, Church, Flame, Users} from 'lucide-react';
+import { Globe, MapPin, LogOut, User, Heart, Church, Flame, Users, Construction} from 'lucide-react';
 
 export const PrayerDashboard = () => {
       
@@ -27,7 +27,7 @@ export const PrayerDashboard = () => {
         logout
     } = usePrayerAuth();
 
-    const { userStats } =  usePrayerCounter(currentUser?.mobile);
+    const { userStats, refreshUserStats } =  usePrayerCounter(currentUser?.mobile);
 
     const [language, setLanguage] = useState('EN');;
     const [selectedPlace, setSelectedPlace] = useState(currentUser?.place || '' )
@@ -97,27 +97,14 @@ export const PrayerDashboard = () => {
             </header>
 
             {/* Dashboard Content */}
-            <div className="max-w-4xl mx-auto p-6 mt-8 space-y-8">
+            <div className="max-w-4xl mx-auto p-6 mt-2 space-y-8">
 
-                <GreetingBanner userName={currentUser.name} />
+                {/* <WordOfGodCard userName={currentUser.name} language={language} />  */}
 
-                <WordOfGodCard userName={currentUser.name} language={language} />  
-
-                <PrayerStatsOverview userStats={userStats}/>    
-
-                {/* Hail Mary Counter Widget */}
-                <HailMaryCounter userMobile={currentUser.mobile}/>
-
-                {/* Placeholder for Prayer Booking (Step 4.3) */}
-                <div className="bg-white dark:bg-slate-800 
-                                p-6 rounded-2xl shadow-sm border 
-                                border-slate-100 dark:border-slate-700 
-                                text-center text-slate-500 dark:text-slate-400">
-                    <PrayerBookingForm currentUser={currentUser}/>
-
+                <div className='flex flex-row gap-5 font-bold text-xl'>
+                    <Construction size={30}/>
+                    <span>... We're working behind the scenes to imporve this page. Please check back soon ... </span>
                 </div>
-
-                <PrayerHistoryTable currentUser={currentUser}/>
                 
             </div>
 

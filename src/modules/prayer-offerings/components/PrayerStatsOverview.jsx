@@ -1,6 +1,6 @@
 import React from "react";
 import { StatCard } from "../../../components/ui/StatCard";
-import { Heart, Church, Flame, Users } from 'lucide-react';
+import { Heart, Church, Flame, Users, Award } from 'lucide-react';
 
 export const PrayerStatsOverview = ({ userStats }) => {
     
@@ -9,8 +9,8 @@ export const PrayerStatsOverview = ({ userStats }) => {
     const holyMassCount = userStats?.holyMassCount || 0;
     const fastingCount = userStats?.fastingCount || 0;
     const familiaPrayerCount = userStats?.familiaPrayerCount || 0;
-
-    const hailMaryTarget = 100;
+    const totalContributions = userStats?.TotalContribution || 0;
+    const hailMaryTarget = 500;
     const completionPercentage = Math.min(Math.round((totalHailMarys / hailMaryTarget) * 100), 100);
 
     return (
@@ -29,7 +29,7 @@ export const PrayerStatsOverview = ({ userStats }) => {
                 
                 {/* 1. Hail Mary Counter Card */}
                 <StatCard 
-                    title="Hail Marys Offered"
+                    title="Hail Mary"
                     value={totalHailMarys.toLocaleString()}
                     icon={Heart}
                     theme="blue"
@@ -66,10 +66,10 @@ export const PrayerStatsOverview = ({ userStats }) => {
                 {/* 4. Familia Prayers Card */}
                 <StatCard 
                     title="Total Contributions"
-                    value={familiaPrayerCount}
-                    icon={Users}
+                    value={totalContributions.toLocaleString()}
+                    icon={Award}
                     theme="sky"
-                    trend="Event intercession"
+                    trend="Grant total offered"
                 />
 
             </div>
