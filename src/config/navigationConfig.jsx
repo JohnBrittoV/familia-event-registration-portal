@@ -1,6 +1,6 @@
-import { LayoutDashboard, Users, Cross, FileText,
-         FileUser, ChartLine, HandHelping, UserPlus,
-         Download, Heart, MessageSquare, Clock } from 'lucide-react'
+import { LayoutDashboard, Users, ClipboardList, Cross, FileText, UserCog, UserCheck,
+         FileUser, ChartNoAxesCombined, ListPlus, UserPlus, HandHeart,
+         FileDown, Heart, MessageSquare, Clock3, ShieldCheck } from 'lucide-react'
 
 // 1. Categorized configuration strictly for Admin / Owner
 export const adminNavigation = [
@@ -20,51 +20,71 @@ export const adminNavigation = [
         category: 'USER MANAGEMENT',
         items: [
             {
+                id: 'pending-access',
+                label: 'Pending Access',
+                path: '/admin/pending-access',
+                icon: Clock3, 
+                allowedRoles: ['admin', 'owner']
+            },
+
+            {
+                id: 'prayer-partners',
+                label: 'Prayer Partners',
+                path: '/admin/prayer-partners',
+                icon: HandHeart,
+                allowedRoles: ['admin', 'owner']
+            },
+
+            {
                 id: 'responsible-persons',
                 label: 'Responsible Persons',
                 path: '/admin/responsible-persons',
-                icon: FileUser,
+                icon: UserCog,
                 allowedRoles: ['admin', 'owner']
             },
+
             {
-                id: 'participants',
-                label: 'Participants List',
-                path: '/admin/participants',
-                icon: Users,
+                id: 'confirm-list',
+                label: 'Confirm Participants',
+                path: '/admin/participants-confirmation',
+                icon: UserCheck,
                 allowedRoles: ['admin', 'owner']
             },
-            // Note: Added Pending Access here as seen in your screenshot design
-            {
-                id: 'pending-access',
-                label: 'Pending Access',
-                path: '/admin/pending',
-                icon: Clock, // Make sure to import Clock from lucide-react if used
-                allowedRoles: ['admin', 'owner']
-            }
+            
         ]
     },
     {
         category: 'CONTENT & SERVICES',
         items: [
             {
-                id: 'statistics',
-                label: 'Global Statistics',
-                path: '/admin/stats',
-                icon: ChartLine,
+                id: 'registration-list',
+                label: 'Registration Data',
+                path: '/admin/participants',
+                icon: ClipboardList,
                 allowedRoles: ['admin', 'owner']
             },
+
+            {
+                id: 'statistics',
+                label: 'Global Overview',
+                path: '/admin/stats',
+                icon: ChartNoAxesCombined,
+                allowedRoles: ['admin', 'owner']
+            },
+
             {
                 id: 'prayer-offerings',
-                label: 'Prayer control',
+                label: 'Manage Prayers',
                 path: '/admin/prayer-bookings',
-                icon: HandHelping,
+                icon: ListPlus,
                 allowedRoles: ['admin', 'owner']
             },
+
             {
                 id: 'export',
                 label: 'Reports',
                 path: '/admin/export',
-                icon: Download,
+                icon: FileDown,
                 allowedRoles: ['admin', 'owner']
             }
         ]
@@ -98,26 +118,26 @@ export const navItems = [
     },
 
     {
-        id: 'rp-participants-list',
-        label: 'Participants List',
-        path: '/rp/global-participants',
+        id: 'rp-registration-list',
+        label: 'Registration List',
+        path: '/rp/global-registrations',
         icon: Users,
         allowedRoles: ['responsible_person'],
     },
 
-    {
-        id: 'prayer-dashboard',
+     {
+        id: 'rp-prayer-offerings',
         label: 'Prayer Offerings',
         path: '/prayer-dashboard',
         icon: Heart,
-        allowedRoles: ['admin', 'owner', 'responsible_person', 'standard'],
+        allowedRoles: ['responsible_person'],
     },
 
     {
         id: 'rp-export',
         label: 'Export Attendees',
         path: '/rp/reports',
-        icon: Download,
+        icon: FileDown,
         allowedRoles: ['responsible_person'],
     },
 
@@ -131,3 +151,12 @@ export const navItems = [
 
 ];
 
+export const ownerItems = [
+    {
+        id: 'admin-control',
+        label: 'Admin Controls',
+        path: '/admin/admin-controls',
+        icon: ShieldCheck,
+        allowedRoles: ['owner']
+    },
+]

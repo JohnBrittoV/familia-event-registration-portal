@@ -1,11 +1,22 @@
 import React from 'react';
+import { Greeting } from '../../../components/features/Greeting';
+import { useAuth } from '../../../context/AuthContext';
 import { usePrayerConfig } from '../hooks/usePrayerConfig';
 
 export const PrayerAdminPage = () => {
-    const { isBookingOpen, toggleBooking, isHistoryVisible, 
+    
+  const { user } = useAuth();
+  const { isBookingOpen, toggleBooking, isHistoryVisible, 
             toggleHistory, isLoadingConfig } = usePrayerConfig();
 
     return (
+
+      <>
+      <Greeting 
+                          name={user?.displayName} 
+                          role="Admin" 
+                          subtitle="Create, update, and manage prayers available to users."/>
+
     <div className="p-8 max-w-6xl mx-auto font-sans">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Prayer Admin Controls</h1>
@@ -64,5 +75,7 @@ export const PrayerAdminPage = () => {
           <p className="text-slate-500">Admin monitoring tools coming next...</p>
       </div>
     </div>
+
+  </>
   );
 }

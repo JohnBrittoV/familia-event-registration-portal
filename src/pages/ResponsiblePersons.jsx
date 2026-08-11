@@ -74,7 +74,7 @@ export const ResponsiblePersons = () => {
                  <Greeting 
                     name={user?.displayName} 
                     role="Admin" 
-                    subtitle="Monitor portal activity and manage user access."/>
+                    subtitle="Manage people responsible for participant registrations."/>
 
                     <div className="max-w-7xl mx-auto space-y-6">
                 

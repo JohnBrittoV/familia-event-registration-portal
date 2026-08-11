@@ -11,7 +11,7 @@ export const AdminExport = () => {
             <Greeting 
                     name={user?.displayName} 
                     role="Admin" 
-                    subtitle="Monitor portal activity and manage user access."/>
+                    subtitle="Download registration data and generate reports."/>
                        
             <div className="flex items-center justify-center h-screen">
                 <p>Coming soon</p>

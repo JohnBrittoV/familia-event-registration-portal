@@ -11,7 +11,7 @@ export const AdminParticipants = () => { // <-- The Page
             <Greeting 
                 name={user?.displayName} 
                 role="Admin" 
-                subtitle="View all participants registered for Familia'26." 
+                subtitle="View and manage all participants registration for Familia'26." 
             />
             {/* Rendering the Component here */}
             <AdminParticipantsList /> 

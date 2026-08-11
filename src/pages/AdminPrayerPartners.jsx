@@ -1,20 +1,20 @@
-import React from "react";
-import { useAuth } from "../context/AuthContext";
-import { Greeting } from "../components/features/Greeting";
+import React from 'react';
+import { Greeting } from '../components/features/Greeting';
+import { useAuth } from '../context/AuthContext';
 
-export const AdminStats = () => {
+export const AdminPrayerPartners = () => {
     
     const { user } = useAuth();
-    
-        return(
+
+    return(
             <>
                 <Greeting 
                     name={user?.displayName} 
                     role="Admin" 
-                    subtitle="View an overall summary of registration and participants."/>
+                    subtitle="Manage prayer partners and thier account details."/>
                                 
                 <div className="flex items-center justify-center h-[80%]">
-                    <p>Global Overview Page</p>
+                    <p>Prayer Partners Page</p>
                 </div>
                         
             </>  

@@ -8,10 +8,15 @@ import { AdminDashboard } from "./pages/AdminDashboard";
 import { PrayerDashboard } from "./modules/prayer-offerings/pages/PrayerDashboard";
 import { PrayerAdminPage } from "./modules/prayer-offerings/pages/PrayerAdminPage";
 import { db } from "./config/firebase.config"
+
 import { AdminParticipants } from "./pages/AdminParticipantsPage";
 import { ResponsiblePersons } from "./pages/ResponsiblePersons";
 import { AdminStats } from "./pages/AdminStats";
 import { AdminExport } from "./pages/AdminExport";
+import { AdminPendingAccess } from './pages/AdminPendingAccess';
+import { AdminPrayerPartners } from "./pages/AdminPrayerPartners";
+import { AdminParticipantsConfirmation } from "./pages/AdminParticipantsConfirmation";
+
 import { RPNewParticipant } from "./pages/RPNewParticipant";
 import { RPMySubmissions } from "./pages/RPMySubmissions";
 import { RPGlobalRoster } from "./pages/RPGlobalRoaster";
@@ -47,6 +52,10 @@ export const App = () => {
             <Route path="/admin/stats" element={<AdminStats/>}/>
             <Route path="/admin/export" element={<AdminExport/>}/>
             <Route path="/admin/prayer-bookings" element={<PrayerAdminPage/>}/>
+            <Route path="/admin/pending-access" element={<AdminPendingAccess/>}/>
+            <Route path="/admin/prayer-partners" element={<AdminPrayerPartners/>}/>
+            <Route path="/admin/participants-confirmation" element={<AdminParticipantsConfirmation/>}/>
+        
         </Route> 
 
         {/* Responsible persons & Standard user Routes  */}
@@ -60,7 +69,7 @@ export const App = () => {
             <Route path="/rp/dashboard" element={<UserDashboard />} />
             <Route path="/rp/new-participant" element={<RPNewParticipant />} />
             <Route path="/rp/my-registrations" element={<RPMySubmissions />} />
-            <Route path="/rp/global-participants" element={<RPGlobalRoster />} />
+            <Route path="/rp/global-registrations" element={<RPGlobalRoster />} />
             <Route path="/rp/reports" element={<RPExport />} />
             <Route path="/rp/tech-support" element={<RPTechSupport />} />
             <Route path="/rp/participant/:id" element={<RPParticipantProfile />} />

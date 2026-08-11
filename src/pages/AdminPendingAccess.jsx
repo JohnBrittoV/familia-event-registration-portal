@@ -1,8 +1,8 @@
-import React from "react";
-import { useAuth } from "../context/AuthContext";
-import { Greeting } from "../components/features/Greeting";
+import React from 'react';
+import { Greeting } from '../components/features/Greeting';
+import { useAuth } from '../context/AuthContext';
 
-export const AdminStats = () => {
+export const AdminPendingAccess = () => {
     
     const { user } = useAuth();
     
@@ -11,10 +11,10 @@ export const AdminStats = () => {
                 <Greeting 
                     name={user?.displayName} 
                     role="Admin" 
-                    subtitle="View an overall summary of registration and participants."/>
+                    subtitle="Review and manage pending access requests."/>
                                 
                 <div className="flex items-center justify-center h-[80%]">
-                    <p>Global Overview Page</p>
+                    <p>Pending Access Page</p>
                 </div>
                         
             </>  

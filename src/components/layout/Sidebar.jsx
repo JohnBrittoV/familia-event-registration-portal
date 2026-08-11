@@ -4,7 +4,7 @@ import { LogOut, X} from "lucide-react";
 import { useAuth } from '../../context/AuthContext';
 import { Spinner } from "../ui/Spinner";
 import { navItems, adminNavigation } from "../../config/navigationConfig";
-import logo from '../../assets/icons/blue.png';
+import logo from '../../assets/icons/logo.png';
 
 export const Sidebar = ({ isOpen, setIsOpen }) => {
 
@@ -64,7 +64,7 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
                                 border-b border-slate-200 dark:border-slate-700">
 
                     <div className="flex items-center gap-3">
-                        <img src={logo} alt="Logo" className="w-8 h-8 object-contain shrink-0" />
+                        <img src={logo} alt="Logo" className="w-11 h-11 object-contain shrink-0" />
                         <span className="font-bold text-lg text-slate-900 
                                          dark:text-white">Familia'26</span>
                     </div>
