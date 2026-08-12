@@ -16,6 +16,7 @@ import { AdminExport } from "./pages/AdminExport";
 import { AdminPendingAccess } from './pages/AdminPendingAccess';
 import { AdminPrayerPartners } from "./pages/AdminPrayerPartners";
 import { AdminParticipantsConfirmation } from "./pages/AdminParticipantsConfirmation";
+import { AdminAccommodationPage } from "./pages/AdminAccommodationPage";
 
 import { RPNewParticipant } from "./pages/RPNewParticipant";
 import { RPMySubmissions } from "./pages/RPMySubmissions";
@@ -55,6 +56,7 @@ export const App = () => {
             <Route path="/admin/pending-access" element={<AdminPendingAccess/>}/>
             <Route path="/admin/prayer-partners" element={<AdminPrayerPartners/>}/>
             <Route path="/admin/participants-confirmation" element={<AdminParticipantsConfirmation/>}/>
+            <Route path="/admin/room-management" element={<AdminAccommodationPage/>}/>
         
         </Route> 
 

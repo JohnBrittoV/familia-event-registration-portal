@@ -1,6 +1,6 @@
 import { LayoutDashboard, Users, ClipboardList, Cross, FileText, UserCog, UserCheck,
          FileUser, ChartNoAxesCombined, ListPlus, UserPlus, HandHeart,
-         FileDown, Heart, MessageSquare, Clock3, ShieldCheck } from 'lucide-react'
+         FileDown, Heart, MessageSquare, Clock3, ShieldCheck, BedDouble } from 'lucide-react'
 
 // 1. Categorized configuration strictly for Admin / Owner
 export const adminNavigation = [
@@ -71,6 +71,14 @@ export const adminNavigation = [
                 icon: ChartNoAxesCombined,
                 allowedRoles: ['admin', 'owner']
             },
+
+            {
+                id: 'room-management',
+                label: 'Room Management',
+                path: '/admin/room-management',
+                icon: BedDouble,
+                allowedRoles: ['admin', 'owner']
+            },            
 
             {
                 id: 'prayer-offerings',
