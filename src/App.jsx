@@ -16,7 +16,7 @@ import { AdminExport } from "./pages/AdminExport";
 import { AdminPendingAccess } from './pages/AdminPendingAccess';
 import { AdminPrayerPartners } from "./pages/AdminPrayerPartners";
 import { AdminParticipantsConfirmation } from "./pages/AdminParticipantsConfirmation";
-import { AdminAccommodationPage } from "./pages/AdminAccommodationPage";
+import { AdminAccommodationPage } from "./components/features/Accommodation/Pages/AdminAccommodationPage";
 
 import { RPNewParticipant } from "./pages/RPNewParticipant";
 import { RPMySubmissions } from "./pages/RPMySubmissions";

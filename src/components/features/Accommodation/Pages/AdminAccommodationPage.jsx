@@ -1,6 +1,6 @@
 import React from 'react';
-import { Greeting } from '../components/features/Greeting';
-import { useAuth } from '../context/AuthContext';
+import { Greeting } from '../../Greeting';
+import { useAuth } from '../../../../context/AuthContext';
 
 export const AdminAccommodationPage = () => {
 
