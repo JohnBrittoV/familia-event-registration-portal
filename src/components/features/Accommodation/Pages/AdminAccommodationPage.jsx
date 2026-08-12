@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Greeting } from '../../Greeting';
 import { useAuth } from '../../../../context/AuthContext';
+import { useToast } from '../../../../context/ToastContext';
 import { useAccommodations } from '../Hooks/useAccommodations';
 import { Spinner } from '../../../ui/Spinner';
 import { Building2, Plus, Edit2, Trash2, Layers } from 'lucide-react';
@@ -10,6 +11,7 @@ import { BlockModal } from '../components/BlockModal';
 export const AdminAccommodationPage = () => {
 
     const { user } = useAuth();
+    const { showToast } = useToast();
     const { blocks, loading, error, createBlock, updateBlock, deleteBlock } = useAccommodations();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,9 +41,23 @@ export const AdminAccommodationPage = () => {
         if (selectedBlock) {
             // Update existing block
             res = await updateBlock(blockId, blockData);
+
+            if (res.success) {
+                showToast('Accommodation block updated successfully!', 'success');
+            }
+            else {
+                showToast(res.error || 'Failed to update block', error);
+            }
+
         } else {
             // Create new block
             res = await createBlock(blockId, blockData);
+            
+            if (res.success) {
+                showToast("New accommodation block created successfully!", "success");
+            } else {
+                showToast(res.error || "Failed to create block", "error");
+            }
         }
         return res;
     };
@@ -50,8 +66,11 @@ export const AdminAccommodationPage = () => {
     const handleDelete = async (blockId) => {
         if (window.confirm("Are you sure you want to delete this accommodation block?")) {
             const res = await deleteBlock(blockId);
-            if (!res.success) {
-                alert(res.error || "Failed to delete block");
+            
+            if (res.success) {
+                showToast("Accommodation block deleted successfully!", "success");
+            } else {
+                showToast(res.error || "Failed to delete block", "error");
             }
         }
     };
