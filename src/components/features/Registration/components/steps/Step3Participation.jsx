@@ -3,11 +3,18 @@ import { useFormContext } from 'react-hook-form';
 import { FormSection } from '../../../../layout/FormSection';
 import { FloatingTextarea } from '../../../../ui/form/FloatingTextarea';
 import { StatCard } from '../../../../ui/StatCard';
-import { Users, User, Baby } from 'lucide-react';
+import { useAccommodations } from '../../../Accommodation/Hooks/useAccommodations';
+import { useToast } from '../../../../../context/ToastContext';
+import { Users, User, Baby, Building2, BedDouble } from 'lucide-react';
 
 export const Step3Participation = () => {
     const { watch, setValue, register } = useFormContext();
+    const { blocks, loading: accommodationLoading } = useAccommodations();
+    const { showToast } = useToast();
+
     const isAdvancePaid = watch('advancePaid');
+    const selectedBlockId = watch('accommodation.blockId');
+    const selectedRoomType = watch('accommodation.roomType');
 
     // 1. "Watch" the data from Step 1
     const fullName = watch("fullName");
@@ -45,6 +52,25 @@ export const Step3Participation = () => {
     useEffect(() => {
         setValue('calculatedStats', stats);
     }, [stats, setValue]);
+
+    // Find currently selected block object
+    const currentBlock = blocks.find(b => b.id === selectedBlockId);
+
+    // Handle block selection change
+    const handleBlockSelect = (block) => {
+        setValue('accommodation.blockId', block.id);
+        setValue('accommodation.blockName', block.blockName);
+        setValue('accommodation.roomType', ''); // Reset room type when block changes
+    };
+
+    // Handle room type selection change
+    const handleRoomSelect = (roomType, remaining) => {
+        if (remaining <= 0) {
+            showToast("This room category is fully occupied.", "error");
+            return;
+        }
+        setValue('accommodation.roomType', roomType);
+    };
 
     // Custom reusable Checkbox Row for family members
     const CheckboxRow = ({ fieldName, label, subtitle }) => (
@@ -157,6 +183,95 @@ export const Step3Participation = () => {
                     </div>
                 </div>
             )}
+
+            {/* --- Accommodation Selection Section --- */}
+                <div className="mb-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center gap-2 mb-3">
+                        <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        <h5 className="font-bold text-slate-900 dark:text-white text-sm">Accommodation Allotment</h5>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                        Select an accommodation block and available room type for this family.
+                    </p>
+
+                    {accommodationLoading ? (
+                        <p className="text-xs text-slate-400">Loading accommodation blocks...</p>
+                    ) : blocks.length === 0 ? (
+                        <p className="text-xs text-slate-400">No accommodation blocks configured by admin yet.</p>
+                    ) : (
+                        <div className="space-y-4">
+                            {/* 1. Block Selection Cards */}
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-500 uppercase mb-2">Select Block</label>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {blocks.map((block) => {
+                                        const isSelected = selectedBlockId === block.id;
+                                        return (
+                                            <div
+                                                key={block.id}
+                                                onClick={() => handleBlockSelect(block)}
+                                                className={`p-3.5 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
+                                                    isSelected 
+                                                        ? 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-500 shadow-sm' 
+                                                        : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                                                }`}
+                                            >
+                                                <span className={`font-semibold text-sm ${isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                                                    {block.blockName}
+                                                </span>
+                                                <BedDouble size={18} className={isSelected ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'} />
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* 2. Room Type Selector (Appears only when a block is chosen) */}
+                            {currentBlock && (
+                                <div className="animate-in fade-in duration-200 pt-2">
+                                    <label className="block text-xs font-semibold text-slate-500 uppercase mb-2">Select Room Category</label>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        {(currentBlock.roomTypes || []).map((room, idx) => {
+                                            const remaining = Number(room.remainingRooms) ?? Number(room.totalRooms);
+                                            const isFullyOccupied = remaining === 0;
+                                            const isSelected = selectedRoomType === room.type;
+
+                                            return (
+                                                <div
+                                                    key={idx}
+                                                    onClick={() => !isFullyOccupied && handleRoomSelect(room.type, remaining)}
+                                                    className={`p-3.5 rounded-xl border flex items-center justify-between transition-all ${
+                                                        isFullyOccupied 
+                                                            ? 'opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800' 
+                                                            : isSelected 
+                                                                ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-500 cursor-pointer shadow-sm' 
+                                                                : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700 cursor-pointer hover:border-slate-300'
+                                                    }`}
+                                                >
+                                                    <div>
+                                                        <p className={`font-semibold text-sm ${isSelected ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                                                            {room.type}
+                                                        </p>
+                                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                                            {isFullyOccupied ? 'Fully Occupied' : `${remaining} Rooms Available`}
+                                                        </p>
+                                                    </div>
+                                                    <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                                                        isFullyOccupied 
+                                                            ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' 
+                                                            : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                                                    }`}>
+                                                        {isFullyOccupied ? 'Full' : `${remaining} Left`}
+                                                    </span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
 
                 <FloatingTextarea name="prayerRequest" label="Prayer Request (Optional)" rows={4} />
             </FormSection>
