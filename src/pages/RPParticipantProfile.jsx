@@ -68,8 +68,18 @@ export const RPParticipantProfile = () => {
                 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    setOriginalData(data);
-                    reset(data);
+
+                    const sanitizedData = {
+                        ...data,
+                        accommodation: {
+                            blockId: data.accommodation?.blockId || '',
+                            blockName: data.accommodation?.blockName || '',
+                            roomType: data.accommodation?.roomType || ''
+                        } 
+                    };
+
+                    setOriginalData(sanitizedData);
+                    reset(sanitizedData);
                 } else {
                     setFetchError("Participant record could not be found.");
                 }
@@ -165,13 +175,12 @@ export const RPParticipantProfile = () => {
             };
 
             setOriginalData(updatedFullData);
-
-            // Reset form dirty state with new data to hide sticky bar
             reset(updatedFullData);
+
             setIsEditingAccommodation(false);
             alert("Participant profile updated successfully!");
-        } catch (err) {
-            console.error("Error updating document:", err);
+        } catch (error) {
+            console.error("Error updating document:", error);
             alert("Failed to update profile changes.");
         } finally {
             setIsSubmitting(false);

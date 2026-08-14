@@ -2,16 +2,21 @@ import { useState } from "react";
 import { submitRegistrationData } from "../service/registrationService";
 import { useAuth } from '../../../../context/AuthContext';
 
-export const sanitizeDataToUppercase = (data) => {
+export const sanitizeDataToUppercase = (data, parentKey = '') => {
     if (typeof data === "string") {
+
+        if (parentKey === 'blockId' || parentKey === 'roomType' || parentKey === 'blockName') {
+            return data;
+        }
         return data.toUpperCase();
     }
+
     if (Array.isArray(data)) {
-        return data.map(item => sanitizeDataToUppercase(item));
+        return data.map(item => sanitizeDataToUppercase(item, parentKey));
     }
     if (data !== null && typeof data === "object") {
         return Object.keys(data).reduce((acc, key) => {
-            acc[key] = sanitizeDataToUppercase(data[key]);
+            acc[key] = sanitizeDataToUppercase(data[key], key);
             return acc;
         }, {});
     }
