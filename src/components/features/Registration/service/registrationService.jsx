@@ -34,6 +34,9 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
     const repStatusRef = doc(db, 'statistics', `rep_stats_${repUid}`);
     const newRegRef = doc(collection(db, 'registrations'));
 
+    const accomm = payload.accommodation;
+    const blockRef = accomm?.blockId ? doc(db, 'accommodations', accomm.blockId) : null;
+
     try {
         await runTransaction(db, async (transaction) => {
             console.log('Starting Firestore transaction...');
@@ -41,6 +44,7 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
             // Read all necessary documents first 
             const globalDoc = await transaction.get(globalStatusRef);
             const repDoc = await transaction.get(repStatusRef);
+            const blockDoc = blockRef ? await transaction.get(blockRef) : null;
 
             // Validate Access controls ( open / close registration)
             if (globalDoc.exists() && globalDoc.data().isOpen === false) {
@@ -49,6 +53,29 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
 
             if (repDoc.exists() && repDoc.data().isOpen === false) {
                 throw new Error("Your specific registration counter has been closed by an Admin.");
+            }
+
+            // Validate and update accommodation inventory if chosen
+            let updatedRoomTypes = null;
+            if (accomm?.blockId && accomm?.roomType) {
+                if (!blockDoc || !blockDoc.exists()) {
+                    throw new Error("Selected accommodation block no longer exists.");
+                }
+
+                const blockData = blockDoc.data();
+                updatedRoomTypes = (blockData.roomTypes || []).map(rt => {
+                    if (rt.type === accomm.roomType) {
+                        const currentRemaining = Number(rt.remainingRooms ?? rt.totalRooms);
+                        if (currentRemaining <= 0) {
+                            throw new Error(`The ${rt.type} category in ${blockData.blockName} is fully occupied.`);
+                        }
+                        return {
+                            ...rt,
+                            remainingRooms: currentRemaining - 1
+                        };
+                    }
+                    return rt;
+                });
             }
 
             // Extract calculated totals from the wizard payloads
@@ -63,7 +90,6 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
 
             // Calculate child age brackets
             const ageGroups = calculateAgeBrackets(payload.children);
-
             const defaultAgeGroups = { "0-2": 0, "3-5": 0, "6-8": 0, "9-11": 0, "12-14": 0, ">15": 0 };
 
             // Calculate new global totals structure fallback
@@ -122,6 +148,10 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
                 isOpen: true
             }, {merge: true});
 
+            // Update accommodation block room inventory if chosen
+            if (blockRef && updatedRoomTypes) {
+                transaction.update(blockRef, { roomTypes: updatedRoomTypes });
+            }
             
             // Executes all writes atomically
             transaction.set(newRegRef, {
@@ -158,6 +188,7 @@ export const deleteParticipantRegistration = async (participantId) => {
 
         const data = participantDoc.data();
         const repUid = data.registeredBy;
+        const accomm = data.accommodation;
 
         // If there is an RP, read their stats document right here (before any writes)
         let repStatsRef = null;
@@ -166,6 +197,10 @@ export const deleteParticipantRegistration = async (participantId) => {
             repStatsRef = doc(db, "statistics", `rep_stats_${repUid}`);
             repDoc = await transaction.get(repStatsRef);
         }
+
+        // If accommodation was booked, read that block document to restore counts
+        let blockRef = accomm?.blockId ? doc(db, 'accommodations', accomm.blockId) : null;
+        let blockDoc = blockRef ? await transaction.get(blockRef) : null;
 
         // Extract counts safely matching how they are calculated during submission
         const stats = data.calculatedStats || {};
@@ -181,6 +216,23 @@ export const deleteParticipantRegistration = async (participantId) => {
         
         // Delete the participant document
         transaction.delete(participantRef);
+
+        // Restore accommodation room count if it existed
+        if (blockRef && blockDoc && blockDoc.exists() && accomm?.roomType) {
+            const blockData = blockDoc.data();
+            const restoredRoomTypes = (blockData.roomTypes || []).map(rt => {
+                if (rt.type === accomm.roomType) {
+                    const currentRemaining = Number(rt.remainingRooms ?? rt.totalRooms);
+                    const maxLimit = Number(rt.totalRooms || currentRemaining);
+                    return {
+                        ...rt,
+                        remainingRooms: Math.min(maxLimit, currentRemaining + 1)
+                    };
+                }
+                return rt;
+            });
+            transaction.update(blockRef, { roomTypes: restoredRoomTypes });
+        }
 
         // Decrement global statistics
         transaction.update(globalStatsRef, {
@@ -283,11 +335,42 @@ export const updateParticipantRegistration = async (participantId, formData, cal
         advanceAmountDelta !== 0 ||
         Object.values(ageGroupDeltas).some(delta => delta !== 0);
 
+        const oldAcc = originalData.accommodation || {};
+        const newAcc = formData.accommodation || {};
+        const hasAccommodationChanged = 
+                (oldAcc.blockId !== newAcc.blockId) || 
+                (oldAcc.roomType !== newAcc.roomType);
+
     await runTransaction(db, async (transaction) => {
         // If counts changed, ensure RP stats doc is read first (Firestore transaction rule: reads before writes)
         let repDoc = null;
         if (hasCountChanged && repStatsRef) {
             repDoc = await transaction.get(repStatsRef);
+        }
+
+        // Read accommodation blocks if accommodation choice changed
+        let oldBlockRef = (hasAccommodationChanged && oldAcc.blockId) ? doc(db, 'accommodations', oldAcc.blockId) : null;
+        let newBlockRef = (hasAccommodationChanged && newAcc.blockId) ? doc(db, 'accommodations', newAcc.blockId) : null;
+
+        let oldBlockDoc = oldBlockRef ? await transaction.get(oldBlockRef) : null;
+        let newBlockDoc = newBlockRef ? await transaction.get(newBlockRef) : null;
+
+        // Validate new room capacity if accommodation changed and new block is selected
+        if (hasAccommodationChanged && newAcc.blockId && newAcc.roomType) {
+            if (!newBlockDoc || !newBlockDoc.exists()) {
+                throw new Error("The newly selected accommodation block no longer exists.");
+            }
+            const newBlockData = newBlockDoc.data();
+            const targetRoom = (newBlockData.roomTypes || []).find(rt => rt.type === newAcc.roomType);
+            const availableCount = Number(targetRoom?.remainingRooms ?? targetRoom?.totalRooms ?? 0);
+            
+            // If staying in same block, account for releasing old room first
+            const isSameBlock = oldAcc.blockId === newAcc.blockId;
+            const effectiveAvailable = (isSameBlock && oldAcc.roomType === newAcc.roomType) ? availableCount + 1 : availableCount;
+
+            if (effectiveAvailable <= 0) {
+                throw new Error(`Selected room category (${newAcc.roomType}) is fully occupied.`);
+            }
         }
 
         // Prepare updated payload
@@ -299,6 +382,49 @@ export const updateParticipantRegistration = async (participantId, formData, cal
 
         // Perform the participant document update
         transaction.set(participantRef, updatedPayload, { merge: true });
+
+        // Handle Accommodation Inventory Swapping Only if Changed
+        if (hasAccommodationChanged) {
+            // Step A: Restore old room slot if it existed
+            if (oldBlockRef && oldBlockDoc && oldBlockDoc.exists() && oldAcc.roomType) {
+                const oldBlockData = oldBlockDoc.data();
+                const restoredOldRooms = (oldBlockData.roomTypes || []).map(rt => {
+                    if (rt.type === oldAcc.roomType) {
+                        const currentRem = Number(rt.remainingRooms ?? rt.totalRooms);
+                        const maxLimit = Number(rt.totalRooms || currentRem);
+                        return { ...rt, remainingRooms: Math.min(maxLimit, currentRem + 1) };
+                    }
+                    return rt;
+                });
+                
+                // If old block and new block are the same reference, update combined, otherwise update old block directly
+                if (oldAcc.blockId === newAcc.blockId && newBlockDoc) {
+                    newBlockDoc._cachedRestoredRooms = restoredOldRooms; // cache for next step
+                } else {
+                    transaction.update(oldBlockRef, { roomTypes: restoredOldRooms });
+                }
+            }
+
+            // Step B: Decrement new room slot if selected
+            if (newBlockRef && newAcc.roomType) {
+                const isSameBlockWithCache = (oldAcc.blockId === newAcc.blockId && newBlockDoc?._cachedRestoredRooms);
+                const blockSourceDoc = isSameBlockWithCache 
+                    ? { data: () => ({ roomTypes: newBlockDoc._cachedRestoredRooms }), exists: () => true } // Added exists() method here!
+                    : newBlockDoc;
+
+                if (blockSourceDoc && typeof blockSourceDoc.exists === 'function' && blockSourceDoc.exists()) {
+                    const blockData = blockSourceDoc.data();
+                    const updatedNewRooms = (blockData.roomTypes || []).map(rt => {
+                        if (rt.type === newAcc.roomType) {
+                            const currentRem = Number(rt.remainingRooms ?? rt.totalRooms);
+                            return { ...rt, remainingRooms: Math.max(0, currentRem - 1) };
+                        }
+                        return rt;
+                    });
+                    transaction.update(newBlockRef, { roomTypes: updatedNewRooms });
+                }
+            }
+        }
 
         // Update Statistics only if stats/counts changed
         if (hasCountChanged) {

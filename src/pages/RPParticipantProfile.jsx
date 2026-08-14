@@ -2,16 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { doc, getDoc, updateDoc, runTransaction, increment } from 'firebase/firestore';
+import { useAccommodations } from '../components/features/Accommodation/Hooks/useAccommodations';
 import { updateParticipantRegistration } from '../components/features/Registration/service/registrationService';
 import { validationRules } from '../components/features/Registration/schema/RegistrationSchema';
 import { db } from '../config/firebase.config';
-import { ArrowLeft, User, MapPin, CheckSquare, Plus, Trash2, Save, TriangleAlertIcon, Info, AlertCircle } from 'lucide-react';
 import { Spinner } from '../components/ui/Spinner';
 import { useAuth } from '../context/AuthContext';
+import { ArrowLeft, User, MapPin, CheckSquare, Plus, Trash2, Edit3, X, 
+         Save, TriangleAlertIcon, Info, AlertCircle, Building2, BedDouble } from 'lucide-react';
 
 export const RPParticipantProfile = () => {
     const { id } = useParams();
     const { user, dbUser } = useAuth();
+    const { blocks, loading: accommodationLoading } = useAccommodations();
+
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -19,6 +23,8 @@ export const RPParticipantProfile = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [originalData, setOriginalData] = useState(null);
     const [fetchError, setFetchError] = useState(null);
+    
+    const [isEditingAccommodation, setIsEditingAccommodation] = useState(false);
 
     // Initialize React Hook Form
     const { register, control, handleSubmit, reset, watch, setValue, formState: { isDirty, errors } } = useForm({
@@ -38,7 +44,12 @@ export const RPParticipantProfile = () => {
             attendees: { self: true, spouse: false },
             prayerRequest: '',
             advancePaid: false,
-            advanceAmount: ''
+            advanceAmount: '', 
+            accommodation: {
+                blockId: '',
+                blockName: '',
+                roomType: ''
+            }
         }
     });
 
@@ -93,6 +104,26 @@ export const RPParticipantProfile = () => {
     const fullName = watch("fullName");
     const isAdvancePaid = watch("advancePaid");
 
+    // Accommodation watchers
+    const selectedBlockId = watch('accommodation.blockId');
+    const selectedRoomType = watch('accommodation.roomType');
+    const currentBlock = blocks.find(b => b.id === selectedBlockId);
+
+    // Handle block selection change
+    const handleBlockSelect = (block) => {
+        if (isReadOnly) return;
+        setValue('accommodation.blockId', block.id, { shouldDirty: true });
+        setValue('accommodation.blockName', block.blockName, { shouldDirty: true });
+        setValue('accommodation.roomType', '', { shouldDirty: true }); // Reset room type when block changes
+    };
+
+    // Handle room type selection change
+    const handleRoomSelect = (roomType, remaining) => {
+        if (isReadOnly) return;
+        if (remaining <= 0) return;
+        setValue('accommodation.roomType', roomType, { shouldDirty: true });
+    };
+
     // Real-time calculation of attending adults and kids
     const calculatedStats = React.useMemo(() => {
         let adults = 0;
@@ -137,6 +168,7 @@ export const RPParticipantProfile = () => {
 
             // Reset form dirty state with new data to hide sticky bar
             reset(updatedFullData);
+            setIsEditingAccommodation(false);
             alert("Participant profile updated successfully!");
         } catch (err) {
             console.error("Error updating document:", err);
@@ -164,6 +196,9 @@ export const RPParticipantProfile = () => {
             </div>
         );
     }
+
+    const originalAcc = originalData?.accommodation || {};
+    const hasAssignedRoom = Boolean(originalAcc.blockName && originalAcc.roomType);
 
     return (
         <div className="max-w-4xl mx-auto space-y-6 pb-24 animate-in fade-in duration-300">
@@ -447,6 +482,158 @@ export const RPParticipantProfile = () => {
                             <label className="block text-xs font-semibold text-slate-500 uppercase mb-2">Special Prayer Requests</label>
                             <textarea {...register("prayerRequest")} autoCapitalize='characters' disabled={isReadOnly} rows="3" className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-100" />
                         </div>
+                    </div>
+                </div>
+
+                {/* STEP 4: ACCOMMODATION ALLOTMENT */}
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                            <h2 className="font-bold text-lg text-slate-900 dark:text-white">4. Accommodation Allotment</h2>
+                        </div>
+                        {!isReadOnly && hasAssignedRoom && !isEditingAccommodation && (
+                            <button 
+                                type="button" 
+                                onClick={() => setIsEditingAccommodation(true)}
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg text-xs font-bold transition-colors"
+                            >
+                                <Edit3 size={14} /> Change Room
+                            </button>
+                        )}
+                    </div>
+                    
+                    <div className="p-6 space-y-4">
+                        {/* VIEW MODE: If room assigned and NOT editing */}
+                        {hasAssignedRoom && !isEditingAccommodation ? (
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl gap-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-3 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-xl">
+                                        <BedDouble size={22} />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-semibold text-slate-500 uppercase">Currently Allotted Room</p>
+                                        <p className="font-bold text-slate-900 dark:text-white text-base">
+                                            {originalAcc.blockName} <span className="text-blue-600 dark:text-blue-400 font-normal">({originalAcc.roomType})</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-bold rounded-full">
+                                    Confirmed Booking
+                                </span>
+                            </div>
+                        ) : !hasAssignedRoom && !isEditingAccommodation && !isReadOnly ? (
+                            <div className="text-center py-6 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl space-y-3">
+                                <p className="text-sm text-slate-500">No room currently allotted for this participant family.</p>
+                                <button 
+                                    type="button" 
+                                    onClick={() => setIsEditingAccommodation(true)}
+                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition-colors"
+                                >
+                                    Select Room Allotment
+                                </button>
+                            </div>
+                        ) : null}
+
+                        {/* EDIT MODE: Revealed Selection Grid */}
+                        {(isEditingAccommodation || !hasAssignedRoom) && (
+                            <div className="space-y-4 animate-in fade-in duration-200">
+                                <div className="flex items-center justify-between">
+                                    <p className="text-xs text-slate-500 uppercase font-semibold">Select a block and room category below:</p>
+                                    {hasAssignedRoom && (
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setIsEditingAccommodation(false)}
+                                            className="text-xs font-semibold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center gap-1"
+                                        >
+                                            <X size={14} /> Cancel Editing
+                                        </button>
+                                    )}
+                                </div>
+
+                                {accommodationLoading ? (
+                                    <p className="text-xs text-slate-400 py-4">Loading accommodation blocks...</p>
+                                ) : blocks.length === 0 ? (
+                                    <p className="text-xs text-slate-400 py-4">No accommodation blocks configured by admin yet.</p>
+                                ) : (
+                                    <div className="space-y-4">
+                                        {/* 1. Block Selection Cards */}
+                                        <div>
+                                            <label className="block text-xs font-semibold text-slate-500 uppercase mb-2">Select Block</label>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                {blocks.map((block) => {
+                                                    const isSelected = selectedBlockId === block.id;
+                                                    return (
+                                                        <div
+                                                            key={block.id}
+                                                            onClick={() => !isReadOnly && handleBlockSelect(block)}
+                                                            className={`p-3.5 rounded-xl border transition-all flex items-center justify-between ${
+                                                                isReadOnly ? 'cursor-default opacity-80' : 'cursor-pointer'
+                                                            } ${
+                                                                isSelected 
+                                                                    ? 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-500 shadow-sm' 
+                                                                    : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                                                            }`}
+                                                        >
+                                                            <span className={`font-semibold text-sm ${isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                                                                {block.blockName}
+                                                            </span>
+                                                            <BedDouble size={18} className={isSelected ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'} />
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+
+                                        {/* 2. Room Type Selector (Appears only when a block is chosen) */}
+                                        {currentBlock && (
+                                            <div className="animate-in fade-in duration-200 pt-2">
+                                                <label className="block text-xs font-semibold text-slate-500 uppercase mb-2">Select Room Category</label>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                    {(currentBlock.roomTypes || []).map((room, idx) => {
+                                                        const remaining = Number(room.remainingRooms) ?? Number(room.totalRooms);
+                                                        const isFullyOccupied = remaining === 0;
+                                                        const isSelected = selectedRoomType === room.type;
+
+                                                        return (
+                                                            <div
+                                                                key={idx}
+                                                                onClick={() => !isReadOnly && !isFullyOccupied && handleRoomSelect(room.type, remaining)}
+                                                                className={`p-3.5 rounded-xl border flex items-center justify-between transition-all ${
+                                                                    isReadOnly ? 'cursor-default' : 'cursor-pointer'
+                                                                } ${
+                                                                    isFullyOccupied 
+                                                                        ? 'opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800' 
+                                                                        : isSelected 
+                                                                            ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-500 shadow-sm' 
+                                                                            : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                                                                }`}
+                                                            >
+                                                                <div>
+                                                                    <p className={`font-semibold text-sm ${isSelected ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                                                                        {room.type}
+                                                                    </p>
+                                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                                                        {isFullyOccupied ? 'Fully Occupied' : `${remaining} Rooms Available`}
+                                                                    </p>
+                                                                </div>
+                                                                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                                                                    isFullyOccupied 
+                                                                        ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' 
+                                                                        : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                                                                }`}>
+                                                                    {isFullyOccupied ? 'Full' : `${remaining} Left`}
+                                                                </span>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
 
