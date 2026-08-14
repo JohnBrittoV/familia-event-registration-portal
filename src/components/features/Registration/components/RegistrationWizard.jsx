@@ -13,6 +13,7 @@ export const RegistrationWizard = () => {
     const [submissionStatus, setSubmissionStatus] = useState('idle');
     const [feedback, setFeedback] = useState({type: '', message: ''});
     const [currentStep, setCurrentStep] = useState(1);
+    const [attemptedSubmit, setAttemptedSubmit] = useState(false);
     const { submitForm, isSubmitting, error } = useRegistrationSubmit();
 
     const defaultFormValues = {
@@ -44,7 +45,7 @@ export const RegistrationWizard = () => {
         defaultValues: defaultFormValues,
     });
 
-    const { trigger, handleSubmit, formState: { isValid }, reset } = methods;
+    const { trigger, handleSubmit, formState: { isValid }, reset, getValues } = methods;
 
     // Sync hooks error into feedback when it's appear
     useEffect(() => {
@@ -58,6 +59,7 @@ export const RegistrationWizard = () => {
     const resetToIdle = () => {
         reset(defaultFormValues);
         setCurrentStep(1);
+        setAttemptedSubmit(false);
         setSubmissionStatus('idle');
         setFeedback({ type: '', message: ''});
     }
@@ -85,6 +87,24 @@ export const RegistrationWizard = () => {
     const handlePrev = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
     const onSubmit = async (data) => {
+        
+        const attendees = data.attendees || {};
+        const fullName = data.fullName;
+        const spouseName = data.spouseName;
+        
+        let adultsCount = 0;
+        if (attendees['self'] && fullName) adultsCount++;
+        if (spouseName && attendees['spouse']) adultsCount++;
+
+        const blockId = data.accommodation?.blockId;
+        const roomType = data.accommodation?.roomType;
+
+        // If rules are violated, block submission and display inline errors in Step 3
+        if (adultsCount < 2 || !blockId || !roomType) {
+            setAttemptedSubmit(true);
+            return;
+        }
+        
         console.log(data);
 
         setSubmissionStatus('submitting');
@@ -161,7 +181,7 @@ export const RegistrationWizard = () => {
 
                                         {currentStep === 2 && <Step2ContactDetails/>}
 
-                                        {currentStep === 3 && <Step3Participation/>}
+                                        {currentStep === 3 && <Step3Participation attemptedSubmit={attemptedSubmit}/>}
                                     
                                     </div>
 

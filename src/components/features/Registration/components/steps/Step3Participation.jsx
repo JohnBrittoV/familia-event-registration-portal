@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { FormSection } from '../../../../layout/FormSection';
 import { FloatingTextarea } from '../../../../ui/form/FloatingTextarea';
@@ -7,7 +7,7 @@ import { useAccommodations } from '../../../Accommodation/Hooks/useAccommodation
 import { useToast } from '../../../../../context/ToastContext';
 import { Users, User, Baby, Building2, BedDouble } from 'lucide-react';
 
-export const Step3Participation = () => {
+export const Step3Participation = ({ attemptedSubmit }) => {
     const { watch, setValue, register } = useFormContext();
     const { blocks, loading: accommodationLoading } = useAccommodations();
     const { showToast } = useToast();
@@ -15,6 +15,8 @@ export const Step3Participation = () => {
     const isAdvancePaid = watch('advancePaid');
     const selectedBlockId = watch('accommodation.blockId');
     const selectedRoomType = watch('accommodation.roomType');
+
+    const [ touched, setTouched ] = useState(false);
 
     // 1. "Watch" the data from Step 1
     const fullName = watch("fullName");
@@ -53,6 +55,10 @@ export const Step3Participation = () => {
         setValue('calculatedStats', stats);
     }, [stats, setValue]);
 
+    // Validation checks for Step 3 requirements
+    const isAdultsValid = stats.adults >= 2;
+    const isAccommodationValid = Boolean(selectedBlockId && selectedRoomType);
+    
     // Find currently selected block object
     const currentBlock = blocks.find(b => b.id === selectedBlockId);
 
@@ -123,6 +129,14 @@ export const Step3Participation = () => {
                         ) : null
                     ))}
                 </div>
+
+                {/* Inline Error Message for Adult Participation Rule (Visible only after confirmation attempt) */}
+                {attemptedSubmit && !isAdultsValid && (
+                    <p className="text-xs font-medium text-red-500 mt-1 mb-6 animate-in fade-in duration-200">
+                        Two adults must be selected to proceed with the family registration.
+                    </p>
+                )}
+
             </FormSection>
 
             {/* --- The Dynamic Summary Dashboard --- */}
@@ -271,6 +285,14 @@ export const Step3Participation = () => {
                             )}
                         </div>
                     )}
+
+                   {/* Inline Error Message for Accommodation Rule (Visible only after confirmation attempt) */}
+                    {attemptedSubmit && !isAccommodationValid && (
+                        <p className="text-xs font-medium text-red-500 mt-3 animate-in fade-in duration-200">
+                            Please select both an accommodation block and a room type to complete your booking.
+                        </p>
+                    )}
+
                 </div>
 
                 <FloatingTextarea name="prayerRequest" label="Prayer Request (Optional)" rows={4} />
