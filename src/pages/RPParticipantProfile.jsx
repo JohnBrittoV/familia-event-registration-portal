@@ -528,7 +528,7 @@ export const RPParticipantProfile = () => {
                                     </div>
                                 </div>
                                 <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-bold rounded-full">
-                                    Confirmed Booking
+                                    Confirmed Accommodation
                                 </span>
                             </div>
                         ) : !hasAssignedRoom && !isEditingAccommodation && !isReadOnly ? (
@@ -604,6 +604,9 @@ export const RPParticipantProfile = () => {
                                                         const isFullyOccupied = remaining === 0;
                                                         const isSelected = selectedRoomType === room.type;
 
+                                                        const isDorm = room.type.toLowerCase().includes('dormitory');
+                                                        const unitLabel = isDorm ? 'Beds' : 'Rooms';
+
                                                         return (
                                                             <div
                                                                 key={idx}
@@ -623,7 +626,7 @@ export const RPParticipantProfile = () => {
                                                                         {room.type}
                                                                     </p>
                                                                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                                                                        {isFullyOccupied ? 'Fully Occupied' : `${remaining} Rooms Available`}
+                                                                        {isFullyOccupied ? 'Fully Occupied' : `${remaining} ${unitLabel} Available`}
                                                                     </p>
                                                                 </div>
                                                                 <span className={`text-xs font-semibold px-2 py-1 rounded-full ${

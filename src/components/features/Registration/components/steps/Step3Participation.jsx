@@ -250,6 +250,10 @@ export const Step3Participation = ({ attemptedSubmit }) => {
                                             const isFullyOccupied = remaining === 0;
                                             const isSelected = selectedRoomType === room.type;
 
+                                            // Check if room type represents a dormitory to switch wording to "Beds"
+                                            const isDorm = room.type.toLowerCase().includes('dormitory');
+                                            const unitLabel = isDorm ? 'Beds' : 'Rooms';
+
                                             return (
                                                 <div
                                                     key={idx}
@@ -267,7 +271,7 @@ export const Step3Participation = ({ attemptedSubmit }) => {
                                                             {room.type}
                                                         </p>
                                                         <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                                                            {isFullyOccupied ? 'Fully Occupied' : `${remaining} Rooms Available`}
+                                                            {isFullyOccupied ? 'Fully Occupied' : `${remaining} ${unitLabel} Available`}
                                                         </p>
                                                     </div>
                                                     <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
