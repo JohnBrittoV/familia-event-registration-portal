@@ -25,6 +25,7 @@ export const RPParticipantProfile = () => {
     const [fetchError, setFetchError] = useState(null);
     
     const [isEditingAccommodation, setIsEditingAccommodation] = useState(false);
+    const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
     // Initialize React Hook Form
     const { register, control, handleSubmit, reset, watch, setValue, formState: { isDirty, errors } } = useForm({
@@ -157,9 +158,19 @@ export const RPParticipantProfile = () => {
         };
     }, [watchedSelf, watchedSpouse, watchedChildren, spouseName]);
 
+    // Validation constants
+    const isAdultsValid = calculatedStats.adults >= 2;
+    const isAccommodationValid = Boolean(selectedBlockId && selectedRoomType);
+
     // Handle Form Update Submission
     const onSubmit = async (formData) => {
         if (isReadOnly) return;
+
+        setAttemptedSubmit(true);
+        if (!isAdultsValid || !isAccommodationValid) {
+            return;
+        }
+
         setIsSubmitting(true);
         try {
             // Call our transactional service which handles deltas automatically
@@ -178,6 +189,7 @@ export const RPParticipantProfile = () => {
             reset(updatedFullData);
 
             setIsEditingAccommodation(false);
+            setAttemptedSubmit(false);
             alert("Participant profile updated successfully!");
         } catch (error) {
             console.error("Error updating document:", error);
@@ -443,6 +455,13 @@ export const RPParticipantProfile = () => {
                             ))}
                         </div>
 
+                        {/* Inline Error Message for Adult Participation Rule */}
+                        {attemptedSubmit && !isAdultsValid && (
+                            <p className="text-xs font-medium text-red-500 mt-3 animate-in fade-in duration-200">
+                                Two adults must be selected to proceed with the family registration.
+                            </p>
+                        )}
+
                         {/* --- ADVANCE PAYMENT SECTION --- */}
                         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden p-6 space-y-4">
                            <label className="block text-xs font-semibold text-slate-500 uppercase mb-2">Advance Payment details</label>
@@ -648,6 +667,13 @@ export const RPParticipantProfile = () => {
                         )}
                     </div>
                 </div>
+
+                {/* Inline Error Message for Accommodation Rule */}
+                    {attemptedSubmit && !isAccommodationValid && (
+                        <p className="text-xs font-medium text-red-500 mt-3 animate-in fade-in duration-200">
+                            Please select both an accommodation block and a room type to complete your booking.
+                        </p>
+                    )}
 
                 {/* STICKY ACTION BAR - ONLY SHOWS WHEN 'isDirty' IS TRUE */}
                 { !isReadOnly && (
