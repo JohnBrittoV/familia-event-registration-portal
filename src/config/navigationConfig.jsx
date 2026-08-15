@@ -141,6 +141,14 @@ export const navItems = [
         allowedRoles: ['responsible_person'],
     },
 
+    {
+        id: 'rp-view-room-allocation',
+        label: 'Room Allocations',
+        path: '/rp/room-allocations',
+        icon: BedDouble,
+        allowedRoles: ['responsible_person'],
+    },
+
     // {
     //     id: 'rp-prayer-offerings',
     //     label: 'Prayer Offerings',

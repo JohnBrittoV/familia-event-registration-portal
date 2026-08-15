@@ -123,3 +123,21 @@ export const fetchGlobalEventSummary = async () => {
         return { totalFamilies: 0, totalAdults: 0, totalKids: 0, totalAttendees: 0 };
     }
 };
+
+// Fetch all room allocations from the fire store database
+export const fetchRPAllocations = async (userId, isAdminOrGlobalAllowed) => {
+    try {
+        const registrationsRef = collection(db, "registrations");
+        let q = registrationsRef;
+        
+        if (!isAdminOrGlobalAllowed) {
+            q = query(registrationsRef, where("registeredBy", "===", userId));
+        }
+        
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error("Error fetching room allocations:", error);
+        throw error;
+    }
+};

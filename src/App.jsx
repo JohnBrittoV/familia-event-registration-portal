@@ -27,6 +27,7 @@ import { RPGlobalRoster } from "./pages/RPGlobalRoaster";
 import { RPExport } from "./pages/RPExport";
 import { RPTechSupport } from "./pages/RPTechSupport";
 import { RPParticipantProfile } from "./pages/RPParticipantProfile";
+import { RPRoomAllocations } from "./pages/RPRoomAllocations";
 import { useNetworkStatus } from "./hooks/useNetworkStatus";
 
 console.log("Firebase initialized successfully:", db.app.name);
@@ -88,6 +89,7 @@ export const App = () => {
             <Route path="/rp/reports" element={<RPExport />} />
             <Route path="/rp/tech-support" element={<RPTechSupport />} />
             <Route path="/rp/participant/:id" element={<RPParticipantProfile />} />
+             <Route path="/rp/room-allocations" element={<RPRoomAllocations />} />
 
         </Route>
 
