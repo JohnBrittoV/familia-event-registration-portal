@@ -7,6 +7,7 @@ import { UserDashboard } from "./pages/UserDashboard";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import { PrayerDashboard } from "./modules/prayer-offerings/pages/PrayerDashboard";
 import { PrayerAdminPage } from "./modules/prayer-offerings/pages/PrayerAdminPage";
+import { NotFound } from "./components/common/NotFound";
 import { db } from "./config/firebase.config"
 
 import { AdminParticipants } from "./pages/AdminParticipantsPage";
@@ -77,6 +78,8 @@ export const App = () => {
             <Route path="/rp/participant/:id" element={<RPParticipantProfile />} />
 
         </Route>
+
+        <Route path="*" element={<NotFound/>}/>
         
       </Routes>
     </Router>
