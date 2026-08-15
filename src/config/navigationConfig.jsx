@@ -141,13 +141,13 @@ export const navItems = [
         allowedRoles: ['responsible_person'],
     },
 
-     {
-        id: 'rp-prayer-offerings',
-        label: 'Prayer Offerings',
-        path: '/prayer-dashboard',
-        icon: Heart,
-        allowedRoles: ['responsible_person'],
-    },
+    // {
+    //     id: 'rp-prayer-offerings',
+    //     label: 'Prayer Offerings',
+    //     path: '/prayer-dashboard',
+    //     icon: Heart,
+    //     allowedRoles: ['responsible_person'],
+    // },
 
     {
         id: 'rp-export',
