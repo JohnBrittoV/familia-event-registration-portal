@@ -8,6 +8,7 @@ import { AdminDashboard } from "./pages/AdminDashboard";
 import { PrayerDashboard } from "./modules/prayer-offerings/pages/PrayerDashboard";
 import { PrayerAdminPage } from "./modules/prayer-offerings/pages/PrayerAdminPage";
 import { NotFound } from "./components/common/NotFound";
+import { NoNetwork } from "./components/common/NoNetwork";
 import { db } from "./config/firebase.config"
 
 import { AdminParticipants } from "./pages/AdminParticipantsPage";
@@ -25,10 +26,18 @@ import { RPGlobalRoster } from "./pages/RPGlobalRoaster";
 import { RPExport } from "./pages/RPExport";
 import { RPTechSupport } from "./pages/RPTechSupport";
 import { RPParticipantProfile } from "./pages/RPParticipantProfile";
+import { useNetworkStatus } from "./hooks/useNetworkStatus";
 
 console.log("Firebase initialized successfully:", db.app.name);
 
 export const App = () => {
+  
+  const { isOnline, checkConnection } = useNetworkStatus();
+  
+  if (!isOnline) {
+    return <NoNetwork onRetry={checkConnection} />;
+  }
+
   return( 
     <Router>
       <Routes>
