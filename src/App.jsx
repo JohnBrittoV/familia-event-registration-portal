@@ -19,6 +19,7 @@ import { AdminPendingAccess } from './pages/AdminPendingAccess';
 import { AdminPrayerPartners } from "./pages/AdminPrayerPartners";
 import { AdminParticipantsConfirmation } from "./pages/AdminParticipantsConfirmation";
 import { AdminAccommodationPage } from "./components/features/Accommodation/Pages/AdminAccommodationPage";
+import { AdminLists } from "./pages/AdminLists";
 
 import { RPNewParticipant } from "./pages/RPNewParticipant";
 import { RPMySubmissions } from "./pages/RPMySubmissions";
@@ -67,6 +68,8 @@ export const App = () => {
             <Route path="/admin/prayer-partners" element={<AdminPrayerPartners/>}/>
             <Route path="/admin/participants-confirmation" element={<AdminParticipantsConfirmation/>}/>
             <Route path="/admin/room-management" element={<AdminAccommodationPage/>}/>
+            <Route path="/admin/administrators" element={<AdminLists/>}/>
+
         
         </Route> 
 

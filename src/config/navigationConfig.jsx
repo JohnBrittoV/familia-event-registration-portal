@@ -1,5 +1,5 @@
 import { LayoutDashboard, Users, ClipboardList, Cross, FileText, UserCog, UserCheck,
-         FileUser, ChartNoAxesCombined, ListPlus, UserPlus, HandHeart,
+         FileUser, ChartNoAxesCombined, ListPlus, UserPlus, HandHeart, UsersRound,
          FileDown, Heart, MessageSquare, Clock3, ShieldCheck, BedDouble } from 'lucide-react'
 
 // 1. Categorized configuration strictly for Admin / Owner
@@ -19,6 +19,14 @@ export const adminNavigation = [
     {
         category: 'USER MANAGEMENT',
         items: [
+
+            {
+                id: 'admin-list',
+                label: 'Administrators',
+                path: '/admin/administrators',
+                icon: UsersRound, 
+                allowedRoles: ['admin', 'owner']
+            },
             {
                 id: 'pending-access',
                 label: 'Pending Access',
@@ -28,18 +36,18 @@ export const adminNavigation = [
             },
 
             {
-                id: 'prayer-partners',
-                label: 'Prayer Partners',
-                path: '/admin/prayer-partners',
-                icon: HandHeart,
-                allowedRoles: ['admin', 'owner']
-            },
-
-            {
                 id: 'responsible-persons',
                 label: 'Responsible Persons',
                 path: '/admin/responsible-persons',
                 icon: UserCog,
+                allowedRoles: ['admin', 'owner']
+            },
+
+            {
+                id: 'prayer-partners',
+                label: 'Prayer Partners',
+                path: '/admin/prayer-partners',
+                icon: HandHeart,
                 allowedRoles: ['admin', 'owner']
             },
 
