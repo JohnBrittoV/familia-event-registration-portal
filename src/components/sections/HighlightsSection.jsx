@@ -12,7 +12,7 @@ import AdorationImg from '../../assets/images/Adoration.jpg';
 import PraiseImg from '../../assets/images/praise.jpg';
 import KidsImg from '../../assets/images/kids2.jpg';
 import FamilyImg from '../../assets/images/family2.jpg';
-import SharingImg from '../../assets/images/Pray.jpg';
+import SharingImg from '../../assets/images/pray.jpg';
 import FaithImg from '../../assets/images/Sharing.jpg'
 
 const cardTheme = {
