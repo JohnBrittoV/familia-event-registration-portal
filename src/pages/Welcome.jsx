@@ -2,7 +2,7 @@ import React, { useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Header } from '../components/layout/Header';
-import { HeroSection } from "../components/sections/HeroSection";
+import { WelcomePage } from "../components/sections/WelcomePage";
 import { Footer } from "../components/sections/Footer";
 
 export const Welcome = () => {
@@ -28,7 +28,7 @@ export const Welcome = () => {
                         transition-colors duration-300">
             <Header/>
             <main className="page-container">
-                <HeroSection/>
+                <WelcomePage />
             </main>
             <Footer/>
         </div>

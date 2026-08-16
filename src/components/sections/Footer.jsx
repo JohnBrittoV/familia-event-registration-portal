@@ -1,28 +1,28 @@
 // components/sections/Footer.jsx
 import React from 'react';
-import { Heart } from 'lucide-react';
+import { Heart, ArrowUp } from 'lucide-react';
 
-export const Footer = () => {
-    return (
-        <footer className="w-full border-t border-slate-200 
-                           dark:border-slate-700 mt-20 pt-8 
-                           pb-8 text-center">
+export const Footer = () => (
+    <footer className="border-t border-slate-200 bg-white/70 py-8 dark:border-slate-800 dark:bg-slate-950/50">
+        <div className="page-container flex flex-col items-center justify-between gap-4 text-sm text-slate-500 sm:flex-row">
+            <p className="flex items-center gap-1.5">
+                Made with
+                <Heart size={14} className="fill-red-500 text-red-500" />
+                by
+                <span className="font-semibold text-slate-700 dark:text-slate-300">
+                    techies Inside
+                </span>
+            </p>
 
-            <div className="page-container flex flex-col 
-                            items-center gap-2 text-slate-500 
-                            dark:text-slate-400 text-sm">
+            <p>&copy; 2026 FAMILIA26. All rights reserved.</p>
 
-                <p className="flex items-center gap-1">
-                    Made with 
-                    <Heart size={14} 
-                               className="text-red-500
-                                           fill-red-500" /> by {""}
-
-                    <span className="text-slate-700 dark:text-slate-300 
-                                    font-medium">techies Inside</span>
-                </p>
-                <p>&copy; 2026 FAMILIA26. All rights reserved.</p>
-            </div>
-        </footer>
-    );
-};
+            <a
+                href="#home"
+                className="inline-flex items-center gap-2 font-semibold text-[#D9B83F] hover:underline"
+            >
+                Back to top
+                <ArrowUp size={14} />
+            </a>
+        </div>
+    </footer>
+);

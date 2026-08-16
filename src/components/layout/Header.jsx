@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Moon, Sun, User, Church, X, Lock, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Lock, Menu, Moon, Sun, User, X } from 'lucide-react';
 import { useTheme } from '../../hooks/useTheme';
-import { Button } from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../assets/icons/blue.png';
+import logo from '../../assets/icons/logo.png';
+
+const navItems = [
+    ['Home', '#home'],
+    ['About', '#about'],
+    ['Gallery', '#gallery'],
+    ['Highlights', '#highlights'],
+    ['Prayer', '#prayer'],
+];
 
 export const Header = () => {
-    
     const { isDark, toggleTheme } = useTheme();
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -19,30 +24,26 @@ export const Header = () => {
     const [otpError, setOtpError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
-    const ADMIN_SECRET = import.meta.env.VITE_ADMIN_OTP || "1235"; 
+    const ADMIN_SECRET = import.meta.env.VITE_ADMIN_OTP || '1235';
 
     useEffect(() => {
-       if (isOtpModalOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    }; 
-    },[isOtpModalOpen]);
+        document.body.style.overflow = isOtpModalOpen ? 'hidden' : 'unset';
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOtpModalOpen]);
 
     const handleInitialLoginClick = () => {
         const isDeviceVerified = localStorage.getItem('familia_device_verified');
 
         if (isDeviceVerified === 'true') {
             login();
-        }
-        else {
+        } else {
             setIsOTPModalOpen(true);
         }
-    }
+    };
 
     const handleOtpSubmit = async (e) => {
         e.preventDefault();
@@ -51,10 +52,8 @@ export const Header = () => {
 
         if (otpCode === ADMIN_SECRET) {
             try {
-
                 localStorage.setItem('familia_device_verified', 'true');
-                await login();        
-               
+                await login();
                 setIsOTPModalOpen(false);
                 setOtpCode('');
                 setShowPassword(false);
@@ -71,170 +70,155 @@ export const Header = () => {
     };
 
     return (
-        <header className='sticky top-0 z-50 w-full bg-white/95
-                           dark:bg-slate-900/95 backdrop-blur-sm 
-                           border-b border-slate-200 dark:border-slate-700 shadow-sm'>
+        <>
+            <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 text-white shadow-lg backdrop-blur-xl">
+                <div className="page-container">
+                    <div className="flex h-16 items-center justify-between gap-4 sm:h-20">
+                        <a href="#home" className="flex min-w-0 items-center gap-2.5">
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10 p-1 shadow-sm sm:h-10 sm:w-10">
+                                <img src={logo} alt="Jesus Youth Logo" className="h-full w-full object-contain" />
+                            </div>
+                            <div className="min-w-0">
+                                <p className="truncate text-sm font-black tracking-tight sm:text-base">Mananthavady <span className="text-amber-300">Family</span></p>
+                            </div>
+                        </a>
 
-            <div className='page-container'>
-
-                <div className='flex items-center justify-between h-14 sm:h-16 lg:h-20'>
-
-                    {/* Logo section */}
-                    <div className='flex items-center gap-2 sm:gap-3'>
-                    
-                        <div className='flex items-center justify-center p-1
-                                        w-7 h-7 sm:w-9 sm:h-9 lg:w-10 lg:h-10 
-                                        rounded-lg bg-[#d3e1f6] dark:bg-blue-900 
-                                        shadow-sm shrink-0 overflow-hidden'>
-
-                            <img src={logo} 
-                                 alt="Jesus Youth Logo" 
-                                 className="w-full h-full object-contain"
-                            />
-
-                        </div>
-
-                        <span className="text-sm sm:text-lg lg:text-2xl 
-                                         font-bold tracking-tight 
-                                         whitespace-nowrap">
-
-                            <span className="text-slate-800 dark:text-white">Jesus Youth </span>
-                            <span className="text-[#3B6AB0] dark:text-blue-400">Family Mananthavady</span>
-                        </span>
-
-                    </div>
-                
-                    {/* Right section */}
-
-                    <div className='flex items-center gap-1.5 sm:gap-2 lg:gap-3'>
-                        
-                        <Button className=" w-7 h-7 sm:w-9 sm:h-9 lg:w-10 lg:h-10 
-                                            rounded-full hover:bg-slate-100 
-                                            dark:hover:bg-slate-800 flex items-center 
-                                            justify-center transition-colors duration-200"
-
-                                variant='iconOnly' 
-                                onClick={toggleTheme}
-                                aria-label="Toggle theme">
-
-                            {isDark ? <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 
-                                                      lg:w-5 lg:h-5 text-slate-600 
-                                                      dark:text-slate-300"/> 
-
-                                    : <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 
-                                                       lg:w-5 lg:h-5 text-slate-600 
-                                                       dark:text-slate-300"/>}
-
-                        </Button>
-
-                        <Button 
-                                onClick={handleInitialLoginClick}
-                                className="flex items-center gap-1.5 sm:gap-2 px-2 
-                                           py-1.5 sm:px-4 sm:py-2 lg:px-5 lg:py-2.5 
-                                           rounded-full bg-white dark:bg-slate-800 
-                                           border border-slate-200 dark:border-slate-700 
-                                           hover:bg-slate-50 dark:hover:bg-slate-700 
-                                           transition-colors duration-200 shadow-sm"
-
-                                variant='iconOnly'>
-
-                            <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 
-                                             lg:h-5 text-slate-600 
-                                             dark:text-slate-300" 
-                                   strokeWidth={2}/>
-
-                            <span className="hidden sm:inline text-[10px] sm:text-xs 
-                                             lg:text-sm font-medium text-slate-700 
-                                             dark:text-slate-300"
-                                             
-                                            >Login</span>
-                        </Button>
-
-                        {/* OTP MODAL - Available across all screen sizes */}
-                        {isOtpModalOpen && createPortal(
-                        <div className="fixed inset-0 z-999 flex min-h-screen items-center justify-center bg-black/50 backdrop-blur-sm px-4 transition-opacity">
-                            
-                            {/* Your existing Modal Content Wrapper */}
-                            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-100 p-6 sm:p-8 relative animate-in fade-in zoom-in-95 duration-200">
-                                
-                                {/* Close Icon */}
-                                <button 
-                                    onClick={() => { setIsOTPModalOpen(false); setOtpError(''); setOtpCode(''); }}
-                                    className="absolute top-4 right-4 text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
+                        <nav className="hidden items-center gap-6 lg:flex">
+                            {navItems.map(([label, href]) => (
+                                <a
+                                    key={href}
+                                    href={href}
+                                    className="text-sm font-semibold text-slate-300 transition hover:text-white"
                                 >
-                                    <X size={20} />
-                                </button>
+                                    {label}
+                                </a>
+                            ))}
+                        </nav>
 
-                                <div className="flex flex-col items-center text-center mb-6">
-                                    <div className="flex items-center justify-center w-14 h-14 rounded-full bg-[#3B6AB0]/10 dark:bg-blue-500/20 mb-4">
-                                        <Lock className="text-[#3B6AB0] dark:text-blue-400" size={24} />
-                                    </div>
-                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">Admin Access Only</h3>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                                        Enter the secret access code to sign in.
-                                    </p>
-                                </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={toggleTheme}
+                                aria-label="Toggle theme"
+                                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-200 transition hover:bg-white/10"
+                            >
+                                {isDark ? <Sun size={18} /> : <Moon size={18} />}
+                            </button>
 
-                                <form onSubmit={handleOtpSubmit} className="space-y-4">
-                                    <div className='relative'>
-                                        <input 
-                                            type={showPassword ? "text" : "password"} 
-                                            value={otpCode}
-                                            onChange={(e) => setOtpCode(e.target.value)}
-                                            placeholder="Enter Secret Code..."
-                                            className={`w-full px-4 py-3 pr-10 rounded-xl 
-                                                        border bg-slate-50 dark:bg-slate-900 
-                                                        focus:outline-none focus:ring-2 
-                                                        focus:ring-[#3B6AB0] text-slate-900
-                                                        dark:text-white placeholder:text-slate-400 
-                                                        ${otpError ? 'border-red-500 dark:border-red-500 ring-red-500/20' : 'border-slate-200 dark:border-slate-700'}`}
-                                            disabled={isLoading}
-                                        />
+                            <button
+                                type="button"
+                                onClick={handleInitialLoginClick}
+                                className="hidden items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-bold text-slate-950 shadow-sm transition hover:-translate-y-0.5 hover:bg-amber-50 sm:inline-flex"
+                            >
+                                <User size={17} />
+                                Login
+                            </button>
 
-                                        {/* Toggle Visibility Button */}
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-3 top-1.5 translate-y-1/2 
-                                                           text-slate-400 hover:text-slate-600 
-                                                           dark:text-slate-500 dark:hover:text-slate-300 
-                                                           transition-colors focus:outline-none"
-                                                disabled={isLoading}
-                                                tabIndex={-1} // Prevents keyboard focus order issues
-                                            >
-                                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setMenuOpen((value) => !value)}
+                                aria-label="Toggle navigation"
+                                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 lg:hidden"
+                            >
+                                {menuOpen ? <X size={19} /> : <Menu size={19} />}
+                            </button>
+                        </div>
+                    </div>
 
-                                        {otpError && (
-                                            <p className="text-red-500 text-xs 
-                                                          font-medium mt-2 text-left">{otpError}</p>
-                                        )}
-                                    </div>
-                                    
-                                    <button 
-                                        type="submit"
-                                        disabled={isLoading}
-                                        className={`w-full py-3 rounded-xl font-bold text-white transition-all duration-200 ${isLoading ? 'bg-[#3B6AB0]/70 cursor-not-allowed' : 'bg-[#3B6AB0] hover:bg-[#2E5591] shadow-md hover:shadow-lg'}`}
+                    {menuOpen && (
+                        <nav className="border-t border-white/10 py-4 lg:hidden">
+                            <div className="grid gap-1">
+                                {navItems.map(([label, href]) => (
+                                    <a
+                                        key={href}
+                                        href={href}
+                                        onClick={() => setMenuOpen(false)}
+                                        className="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-300 hover:bg-white/5 hover:text-white"
                                     >
-                                        {isLoading ? 'Verifying...' : 'Verify & Sign In'}
-                                    </button>
+                                        {label}
+                                    </a>
+                                ))}
+                                <button
+                                    type="button"
+                                    onClick={handleInitialLoginClick}
+                                    className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-slate-950"
+                                >
+                                    <User size={17} />
+                                    Login
+                                </button>
+                            </div>
+                        </nav>
+                    )}
+                </div>
+            </header>
 
-                                    <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center mt-2">
-                                        *Code is shared only with authorized staff members.
-                                    </p>
-                                </form>
+            {isOtpModalOpen &&
+                createPortal(
+                    <div className="fixed inset-0 z-[999] flex min-h-screen items-center justify-center bg-slate-950/70 px-4 backdrop-blur-md">
+                        <div className="relative w-full max-w-md rounded-3xl border border-white/10 bg-white p-6 shadow-2xl dark:bg-slate-900 sm:p-8">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setIsOTPModalOpen(false);
+                                    setOtpError('');
+                                    setOtpCode('');
+                                }}
+                                className="absolute right-4 top-4 rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-800 dark:hover:bg-slate-800 dark:hover:text-white"
+                                aria-label="Close"
+                            >
+                                <X size={19} />
+                            </button>
+
+                            <div className="mb-6 text-center">
+                                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-[#D9B83F] dark:bg-amber-950/50 dark:text-amber-300">
+                                    <Lock size={24} />
+                                </div>
+                                <h3 className="mt-4 text-xl font-black text-slate-900 dark:text-white">Admin Access Only</h3>
+                                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                                    Enter the secret access code to sign in.
+                                </p>
                             </div>
 
-                        </div>,
-                        document.body 
-                    )}
+                            <form onSubmit={handleOtpSubmit} className="space-y-4">
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        value={otpCode}
+                                        onChange={(e) => setOtpCode(e.target.value)}
+                                        placeholder="Enter Secret Code..."
+                                        disabled={isLoading}
+                                        className={`w-full rounded-2xl border bg-slate-50 px-4 py-3 pr-11 text-slate-900 outline-none transition focus:ring-2 focus:ring-[#D9B83F]/30 dark:bg-slate-950 dark:text-white ${
+                                            otpError ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'
+                                        }`}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword((value) => !value)}
+                                        disabled={isLoading}
+                                        aria-label={showPassword ? 'Hide access code' : 'Show access code'}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+                                    >
+                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                    {otpError && <p className="mt-2 text-xs font-medium text-red-500">{otpError}</p>}
+                                </div>
 
-                    </div>
+                                <button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="w-full rounded-2xl bg-[#D9B83F] py-3 font-bold text-white transition hover:bg-[#B99722] disabled:cursor-not-allowed disabled:opacity-70"
+                                >
+                                    {isLoading ? 'Verifying...' : 'Verify & Sign In'}
+                                </button>
 
-                </div>
-
-            </div>
-
-        </header>
-    )
-}
+                                <p className="text-center text-[10px] text-slate-400">
+                                    *Code is shared only with authorized staff members.
+                                </p>
+                            </form>
+                        </div>
+                    </div>,
+                    document.body
+                )}
+        </>
+    );
+};
