@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Expand, Images } from 'lucide-react';
 import Image1 from '../../assets/themes/Image01.jpg';
-import Image2 from '../../assets/themes/Image02.jpg';
-import Image3 from '../../assets/themes/Image03.jpg';
+import Image2 from '../../assets/themes/Photo_2.png';
+import Image3 from '../../assets/themes/photo_3.png';
 
 const galleryImages = [
     { src: Image1, 
@@ -14,13 +14,13 @@ const galleryImages = [
     { src: Image2, 
       title: "Familia'26", 
       label: 'Family Retreat',
-      prayer: 'ഓഗസ്റ്റ് 26, 27, 28, 29 തീയതികളിൽ നടക്കുന്ന ഈ കുടുംബ നവീകരണ ധ്യാനം പരിശുദ്ധാത്മ നിറവുള്ളതായി മാറുവാൻ. പങ്കെടുക്കുന്ന കുടുംബങ്ങളെല്ലാം തിരുക്കുടുംബത്തിന്റെ മാതൃക സ്വീകരിച്ചുകൊണ്ട് മുന്നേറാൻ അനുഗ്രഹിക്കണമേ.ധ്യാനത്തിന്റെ എല്ലാ മുന്നൊരുക്കങ്ങളും തടസ്സങ്ങൾ ഇല്ലാതെ നടക്കുന്നതിനായി എല്ലാ ലീഡേഴ്‌സും അങ്ങയുടെ ആത്മാവിനാൽ ശക്തിപ്പടുവാനായി.കുടുംബങ്ങളുടെ രാജ്ഞിയായ പരിശുദ്ധ അമ്മേ... ഞങ്ങൾക്കുവേണ്ടി അപേക്ഷിക്കണമേ തിരുക്കുടുംബത്തിൻ്റെ പാലകനായ വിശുദ്ധ യൗസേപ്പിതാവേ..'
+      prayer: 'ഓഗസ്റ്റ് 26, 27, 28, 29 തീയതികളിൽ നടക്കുന്ന ഈ കുടുംബ നവീകരണ ധ്യാനം പരിശുദ്ധാത്മ നിറവുള്ളതായി മാറുവാൻ. പങ്കെടുക്കുന്ന കുടുംബങ്ങളെല്ലാം തിരുക്കുടുംബത്തിന്റെ മാതൃക സ്വീകരിച്ചുകൊണ്ട് മുന്നേറാൻ അനുഗ്രഹിക്കണമേ.ധ്യാനത്തിന്റെ എല്ലാ മുന്നൊരുക്കങ്ങളും തടസ്സങ്ങൾ ഇല്ലാതെ നടക്കുന്നതിനായി എല്ലാ ലീഡേഴ്‌സും അങ്ങയുടെ ആത്മാവിനാൽ ശക്തിപ്പടുവാനായി.'
     },
 
     { src: Image3, 
       title: "Familia'26", 
       label: 'Family Retreat',
-      prayer: 'ഞങ്ങൾക്കുവേണ്ടി അപേക്ഷിക്കണമേ.. വിശുദ്ധ ഫ്രാൻസിസ് അസീസി.. ഞങ്ങൾക്കുവേണ്ടി അപേക്ഷിക്കണമേ 1 സ്വർഗ്ഗസ്ഥനായ പിതാവേ 1 നന്മ നിറഞ്ഞ മറിയമേ 1 ത്രിത്വസ്തുതി' 
+      prayer: 'കുടുംബങ്ങളുടെ രാജ്ഞിയായ പരിശുദ്ധ അമ്മേ... ഞങ്ങൾക്കുവേണ്ടി അപേക്ഷിക്കണമേ തിരുക്കുടുംബത്തിൻ്റെ പാലകനായ വിശുദ്ധ യൗസേപ്പിതാവേ... ഞങ്ങൾക്കുവേണ്ടി അപേക്ഷിക്കണമേ.. വിശുദ്ധ ഫ്രാൻസിസ് അസീസി.. ഞങ്ങൾക്കുവേണ്ടി അപേക്ഷിക്കണമേ 1 സ്വർഗ്ഗസ്ഥനായ പിതാവേ 1 നന്മ നിറഞ്ഞ മറിയമേ 1 ത്രിത്വസ്തുതി' 
     },
 ];
 
@@ -101,7 +101,7 @@ export const GallerySection = () => {
                         MAIN IMAGE SECTION
                     ================================================== */}
                     <div
-                        className="
+                        className=" group
                             overflow-hidden
                             rounded-4xl
                             border border-slate-300
@@ -111,18 +111,13 @@ export const GallerySection = () => {
                         "
                     >
                         {/* Image area */}
-                        <div className="relative aspect-video w-full bg-slate-950">
+                        <div className="relative w-full bg-slate-950 sm:aspect-video">
                             <img
                                 key={currentImage.src}
                                 src={currentImage.src}
                                 alt={currentImage.title}
-                                className="
-                                    absolute inset-0
-                                    h-full w-full
-                                    object-contain
-                                    transition-opacity
-                                    duration-300
-                                "
+                                className="relative block h-auto w-full object-contain transition-opacity
+                                           duration-300 sm:absolute sm:inset-0 sm:h-full sm:w-full"
                             />
 
                             {/* Image counter */}
@@ -228,21 +223,11 @@ export const GallerySection = () => {
                             {/* Added Malayalam Prayer Text with max-height scroll for clean alignment */}
                             {currentImage.prayer && (
                                 <div className="mt-4 pt-4 border-t border-white/10">
-                                    <p className="text-lg font-semibold uppercase font-malayalam tracking-wider text-[#D9B83F]/80 mb-2">
+                                    <p className="mb-3 font-malayalam text-sm font-bold tracking-wider text-[#D9B83F]/80">
                                         ധ്യാനം ഒരുക്ക പ്രാർത്ഥന
                                     </p>
                                     <p 
-                                        className="
-                                            font-malayalam
-                                            text-sm sm:text-base
-                                            leading-relaxed
-                                            text-slate-300
-                                            max-h-36
-                                            overflow-y-auto
-                                            pr-2
-                                            scrollbar-thin
-                                            scrollbar-thumb-slate-700
-                                        "
+                                        className="font-malayalam text-[15px] leading-8 text-slate-300 sm:text-base sm:leading-relaxed"
                                     >
                                         {currentImage.prayer}
                                     </p>
