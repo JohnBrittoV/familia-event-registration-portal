@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
     return(
         <AuthContext.Provider value={contextValue}>
             {loading ? (
-                <div className='fixed inset-0 flex items-center justify-center bg-slate-50 transition-colors'>
+                <div className='fixed inset-0 flex items-center justify-center bg-slate-50 dark:bg-slate-950 transition-colors'>
                     <Spinner size='lg'/>
                 </div>
             ) : (
