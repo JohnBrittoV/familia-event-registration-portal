@@ -32,7 +32,7 @@ export const ContactSection = () => (
     
     <section id="contact" className="pb-24 sm:pb-28">
         <div className="page-container">
-            <div className="rounded-[2rem] border border-slate-200 bg-white/70 p-6 shadow-xl shadow-slate-900/5 backdrop-blur dark:border-slate-700 dark:bg-slate-900/60 sm:p-10">
+            <div className="rounded-4xl border border-slate-200 bg-white/70 p-6 shadow-xl shadow-slate-900/5 backdrop-blur dark:border-slate-700 dark:bg-slate-900/60 sm:p-10">
                 <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
                     <div>
                         <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#D9B83F]">

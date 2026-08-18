@@ -30,7 +30,7 @@ export const Welcome = () => {
         <div className="relative min-h-screen bg-white dark:bg-slate-900 transition-colors duration-300 overflow-hidden">
             
             {/* Mouse Tracking Glow Background Layer */}
-            <div className="pointer-events-none fixed inset-0 -z-0 opacity-60 dark:opacity-40 transition-opacity duration-500">
+            <div className="pointer-events-none fixed inset-0 z-0 opacity-60 dark:opacity-40 transition-opacity duration-500">
                 <div
                     className="absolute h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-400/20 dark:bg-blue-600/15 blur-[100px]"
                     style={{

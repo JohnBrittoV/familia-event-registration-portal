@@ -8,7 +8,7 @@ export const PrayerSection = () => {
     return (
         <section id="prayer" className="py-5 sm:py-10">
             <div className="page-container">
-                <div className="relative overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-12 text-white shadow-2xl sm:px-10 lg:px-16 lg:py-14">
+                <div className="relative overflow-hidden rounded-4xl bg-slate-950 px-6 py-12 text-white shadow-2xl sm:px-10 lg:px-16 lg:py-14">
                     <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-amber-500/20 blur-3xl" />
                     <div className="absolute -bottom-24 left-1/4 h-64 w-64 rounded-full bg-violet-500/15 blur-3xl" />
 

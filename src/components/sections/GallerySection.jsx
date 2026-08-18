@@ -103,7 +103,7 @@ export const GallerySection = () => {
                     <div
                         className="
                             overflow-hidden
-                            rounded-[2rem]
+                            rounded-4xl
                             border border-slate-300
                             bg-slate-950
                             shadow-2xl
@@ -111,7 +111,7 @@ export const GallerySection = () => {
                         "
                     >
                         {/* Image area */}
-                        <div className="relative aspect-[16/9] w-full bg-slate-950">
+                        <div className="relative aspect-video w-full bg-slate-950">
                             <img
                                 key={currentImage.src}
                                 src={currentImage.src}
@@ -281,7 +281,7 @@ export const GallerySection = () => {
                                         }
                                     `}
                                 >
-                                    <div className="relative aspect-[16/9] w-full bg-slate-950">
+                                    <div className="relative aspect-video w-full bg-slate-950">
                                         <img
                                             src={item.src}
                                             alt=""

@@ -8,12 +8,12 @@ import {
     Music2,
 } from 'lucide-react';
 
-import AdorationImg from '../../assets/images/Adoration.jpg';
-import PraiseImg from '../../assets/images/praise.jpg';
-import KidsImg from '../../assets/images/kids2.jpg';
-import FamilyImg from '../../assets/images/family2.jpg';
-import SharingImg from '../../assets/images/pray.jpg';
-import FaithImg from '../../assets/images/Sharing.jpg'
+import AdorationImg from '../../assets/images/Adoration.webp';
+import PraiseImg from '../../assets/images/praise.webp';
+import KidsImg from '../../assets/images/kids2.webp';
+import FamilyImg from '../../assets/images/family2.webp';
+import SharingImg from '../../assets/images/pray.webp';
+import FaithImg from '../../assets/images/Sharing.webp';
 
 const cardTheme = {
     card: `
@@ -96,9 +96,12 @@ export const HighlightsSection = () => (
                             <img
                                 src={image}
                                 alt={title}
+                                loading="lazy"
+                                decoding="async"
+                                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-60" />
+                            <div className="absolute inset-0 bg-linear-to-t from-slate-950/60 via-transparent to-transparent opacity-60" />
                             
                             {/* Card Number Badge over the image */}
                             <span className="absolute right-4 top-4 rounded-full bg-black/40 px-2.5 py-1 text-xs font-bold text-white backdrop-blur-md">

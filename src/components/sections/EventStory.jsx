@@ -38,8 +38,8 @@ export const EventStory = () => (
         <div className="page-container grid items-center gap-12 lg:grid-cols-[.8fr_1.2fr] lg:gap-20">
             
             <div className="relative">
-                <div className="absolute -inset-6 rounded-[2rem] bg-amber-500/10 blur-2xl" />
-                <div className={`relative rounded-[2rem] border border-slate-200/80 ${cardTheme.card} p-8 shadow-2xl dark:border-slate-700/80 sm:p-10`}>
+                <div className="absolute -inset-6 rounded-4xl bg-amber-500/10 blur-2xl" />
+                <div className={`relative rounded-4xl border border-slate-200/80 ${cardTheme.card} p-8 shadow-2xl dark:border-slate-700/80 sm:p-10`}>
                     <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#D9B83F]">
                         Abide in Christ
                     </p>

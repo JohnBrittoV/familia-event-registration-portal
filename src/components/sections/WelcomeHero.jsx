@@ -9,8 +9,8 @@ export const WelcomeHero = () => {
     return (
         <section id="home" className="relative overflow-hidden pt-10 sm:pt-16 lg:pt-20">
             <div className="pointer-events-none absolute inset-0 -z-10">
-                <div className="absolute left-[-8rem] top-24 h-72 w-72 rounded-full bg-amber-500/10 blur-3xl" />
-                <div className="absolute right-[-6rem] top-10 h-96 w-96 rounded-full bg-violet-500/10 blur-3xl" />
+                <div className="absolute -left-32 top-24 h-72 w-72 rounded-full bg-amber-500/10 blur-3xl" />
+                <div className="absolute -right-24 top-10 h-96 w-96 rounded-full bg-violet-500/10 blur-3xl" />
             </div>
 
             <div className="page-container grid items-center gap-12 lg:grid-cols-[1.05fr_.95fr] lg:gap-16">
@@ -19,7 +19,7 @@ export const WelcomeHero = () => {
 
                     <h1 className="text-5xl font-black tracking-tight text-slate-950 dark:text-white sm:text-6xl lg:text-7xl">
                         Familia&apos;26
-                        <span className="block bg-gradient-to-r from-[#D9B83F] via-violet-500 to-violet-500 bg-clip-text text-transparent">
+                        <span className="block bg-linear-to-r from-[#D9B83F] via-violet-500 to-violet-500 bg-clip-text text-transparent">
                             Family Retreat.
                         </span>
                     </h1>
@@ -64,11 +64,11 @@ export const WelcomeHero = () => {
                 </div>
 
                 <div className="relative mx-auto w-full max-w-xl lg:ml-auto">
-                    <div className="pointer-events-none absolute -inset-5 rounded-[2rem] bg-gradient-to-br from-amber-500/20 via-violet-500/10 to-transparent blur-2xl" />
-                    <div className="relative rounded-[2rem] border border-white/80 bg-white/70 p-2 shadow-2xl shadow-slate-900/10 backdrop-blur dark:border-slate-700/80 dark:bg-slate-900/70">
+                    <div className="pointer-events-none absolute -inset-5 rounded-4xl bg-linear-to-br from-amber-500/20 via-violet-500/10 to-transparent blur-2xl" />
+                    <div className="relative rounded-4xl border border-white/80 bg-white/70 p-2 shadow-2xl shadow-slate-900/10 backdrop-blur dark:border-slate-700/80 dark:bg-slate-900/70">
                         
                         {/* Changed wrapper: Removed fixed aspect ratio and added background/centering to fit image completely without crop */}
-                        <div className="overflow-hidden rounded-[1.5rem] bg-slate-950 flex items-center justify-center">
+                        <div className="overflow-hidden rounded-3xl bg-slate-950 flex items-center justify-center">
                             <img
                                 src={HeroImage}
                                 alt="Families gathering at the Familia 26 retreat"

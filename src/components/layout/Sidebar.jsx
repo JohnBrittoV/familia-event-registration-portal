@@ -64,9 +64,10 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
                                 border-b border-slate-200 dark:border-slate-700">
 
                     <div className="flex items-center gap-3">
-                        <img src={logo} alt="Logo" className="w-11 h-11 object-contain shrink-0" />
-                        <span className="font-bold text-lg text-slate-900 
-                                         dark:text-white">Familia'26</span>
+                        <img src={logo} alt="Logo" className="w-10 h-10 object-contain shrink-0" />
+                        <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white leading-none">
+                            Familia&apos;26
+                        </span>
                     </div>
 
                     <button onClick={() => setIsOpen(false)} 
