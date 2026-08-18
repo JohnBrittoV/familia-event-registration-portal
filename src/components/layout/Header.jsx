@@ -4,7 +4,7 @@ import { Eye, EyeOff, Lock, Menu, Moon, Sun, User, X } from 'lucide-react';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../assets/icons/logo.png';
+import logo from '../../assets/icons/blue.png';
 
 const navItems = [
     ['Home', '#home'],
@@ -74,12 +74,20 @@ export const Header = () => {
             <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 text-white shadow-lg backdrop-blur-xl">
                 <div className="page-container">
                     <div className="flex h-16 items-center justify-between gap-4 sm:h-20">
-                        <a href="#home" className="flex min-w-0 items-center gap-2.5">
-                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10 p-1 shadow-sm sm:h-10 sm:w-10">
+                        
+                        <a href="#home" className="flex items-center gap-2.5 min-w-0">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/5 p-1 shadow-sm">
                                 <img src={logo} alt="Jesus Youth Logo" className="h-full w-full object-contain" />
                             </div>
-                            <div className="min-w-0">
-                                <p className="truncate text-sm font-black tracking-tight sm:text-base">Mananthavady <span className="text-amber-300">Family</span></p>
+                            
+                            {/* Text container: Stacks vertically on mobile, goes inline on sm screens and up */}
+                            <div className="min-w-0 flex flex-col sm:flex-row sm:items-center sm:gap-1.5">
+                                <span className="text-xs sm:text-sm font-black tracking-tight text-white leading-tight">
+                                    Jesus Youth
+                                </span>
+                                <span className="text-xs sm:text-sm font-black tracking-tight text-amber-300 leading-tight">
+                                    Mananthavady
+                                </span>
                             </div>
                         </a>
 

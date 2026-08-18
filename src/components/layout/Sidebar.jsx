@@ -4,7 +4,7 @@ import { LogOut, X} from "lucide-react";
 import { useAuth } from '../../context/AuthContext';
 import { Spinner } from "../ui/Spinner";
 import { navItems, adminNavigation } from "../../config/navigationConfig";
-import logo from '../../assets/icons/logo.png';
+import logo from '../../assets/icons/blue.png';
 
 export const Sidebar = ({ isOpen, setIsOpen }) => {
 
