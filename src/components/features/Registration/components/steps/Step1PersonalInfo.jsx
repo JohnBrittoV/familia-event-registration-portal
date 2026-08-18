@@ -39,20 +39,6 @@ export const Step1PersonalInfo = () => {
 
             {/* Dynamic Children Section */}
             <FormSection title="Children" description="Add details for any children attending.">
-                <div className="flex justify-end mb-4">
-                    <button 
-                        type="button"
-                        onClick={() => append({ name: '', age: '', isAttending: false})}
-                        className="flex items-center px-4 py-2 
-                                 bg-blue-50 text-blue-600 
-                                 hover:bg-blue-100 dark:bg-blue-900/30 
-                                 dark:text-blue-400 rounded-lg font-semibold 
-                                 text-sm transition-colors">
-
-                            <Plus size={16} className="mr-2" /> Add Child
-
-                    </button>
-                </div>
 
                 {/* Child Input */}
                 <div className="space-y-4">
@@ -94,6 +80,21 @@ export const Step1PersonalInfo = () => {
                             No children added.
                         </div>
                     )}
+                </div>
+
+                <div className="flex justify-end mt-4 mb-4">
+                    <button 
+                        type="button"
+                        onClick={() => append({ name: '', age: '', isAttending: false})}
+                        className="flex items-center px-4 py-2 
+                                 bg-blue-50 text-blue-600 
+                                 hover:bg-blue-100 dark:bg-blue-900/30 
+                                 dark:text-blue-400 rounded-lg font-semibold 
+                                 text-sm transition-colors">
+
+                            <Plus size={16} className="mr-2" /> Add Child
+
+                    </button>
                 </div>
 
             </FormSection>
