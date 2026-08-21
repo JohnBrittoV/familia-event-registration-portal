@@ -4,10 +4,20 @@ import { FloatingInput } from '../../../../ui/form/FloatingInput';
 import { FormSection } from '../../../../../components/layout/FormSection';
 import { validationRules } from "../../schema/RegistrationSchema";
 import { FormRow } from '../../../../ui/form/FormRow';
-import { Plus, Trash2} from 'lucide-react';
+import { Plus, Trash2, ChevronDown} from 'lucide-react';
+
+// Centralized Child Age Brackets
+    const CHILD_AGE_CATEGORIES = [
+        "0-6 months",
+        "6-1 years",
+        "1-3 years",
+        "3-5 years",
+        "5-9 years",
+        "9-14 above"
+    ];
 
 export const Step1PersonalInfo = () => {
-    const { control } = useFormContext();
+    const { control, register } = useFormContext();
     const { fields, append, remove } = useFieldArray({
         control,
         name: "children"
@@ -55,8 +65,26 @@ export const Step1PersonalInfo = () => {
                                 <FloatingInput name={`children.${index}.name`} label={`Child ${index + 1} Name *`} validation={validationRules.childName}/>
                             </div>
 
-                            <div className="w-full sm:w-32">
-                                <FloatingInput name={`children.${index}.age`} type="number" label="Age *" validation={validationRules.childAge}/>
+                            {/* Child Age Dropdown Selector */}
+                            <div className="w-full sm:w-48 relative">
+                                <select
+                                    {...register(`children.${index}.age`, { required: "Age category is required" })}
+                                    className="w-full appearance-none rounded-xl border-2 border-slate-200 bg-transparent px-4 py-4 pr-10 text-sm font-medium text-slate-900 outline-none transition-colors duration-200 focus:border-blue-600 dark:border-slate-700 dark:text-white dark:focus:border-blue-500 cursor-pointer"
+                                >
+                                    <option value="" className="bg-white dark:bg-slate-900 text-slate-400">
+                                        Select Age group
+                                    </option>
+                                    {CHILD_AGE_CATEGORIES.map((category) => (
+                                        <option key={category} value={category} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">
+                                            {category}
+                                        </option>
+                                    ))}
+                                </select>
+                                
+                                {/* Custom Dropdown Arrow Icon */}
+                                <div className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                                    <ChevronDown size={18} />
+                                </div>
                             </div>
 
                             <button
