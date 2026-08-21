@@ -13,7 +13,8 @@ import { Plus, Trash2, ChevronDown} from 'lucide-react';
         "1-3 years",
         "3-5 years",
         "5-9 years",
-        "9-14 above"
+        "9-14 years",
+        "15 above"
     ];
 
 export const Step1PersonalInfo = () => {
