@@ -120,7 +120,11 @@ export const validationRules = {
 
     address: {
         required: 'Address is required'
+    },
+
+    
+    childAgeCategory: {
+        required: "Please select an age group"
     }
-
-
+    
 }

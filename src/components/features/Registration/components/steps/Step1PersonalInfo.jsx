@@ -17,7 +17,7 @@ import { Plus, Trash2, ChevronDown} from 'lucide-react';
     ];
 
 export const Step1PersonalInfo = () => {
-    const { control, register } = useFormContext();
+    const { control, register, formState: { errors } } = useFormContext();
     const { fields, append, remove } = useFieldArray({
         control,
         name: "children"
@@ -52,7 +52,11 @@ export const Step1PersonalInfo = () => {
 
                 {/* Child Input */}
                 <div className="space-y-4">
-                    {fields.map((field, index) => (
+                    {fields.map((field, index) => {
+
+                        const childAgeError = errors?.children?.[index]?.age;
+
+                        return(
                         
                         <div key={field.id} 
                              className="flex flex-col sm:flex-row gap-4 
@@ -66,11 +70,17 @@ export const Step1PersonalInfo = () => {
                             </div>
 
                             {/* Child Age Dropdown Selector */}
-                            <div className="w-full sm:w-48 relative">
+                            <div className="w-full sm:w-48 relative mb-3 sm:mb-0">
                                 <select
-                                    {...register(`children.${index}.age`, { required: "Age category is required" })}
-                                    className="w-full appearance-none rounded-xl border-2 border-slate-200 bg-transparent px-4 py-4 pr-10 text-sm font-medium text-slate-900 outline-none transition-colors duration-200 focus:border-blue-600 dark:border-slate-700 dark:text-white dark:focus:border-blue-500 cursor-pointer"
-                                >
+                                        {...register(`children.${index}.age`, validationRules.childAgeCategory)}
+                                        className={`
+                                            w-full appearance-none rounded-xl border-2 bg-transparent px-4 py-3 pr-10 text-sm font-medium outline-none transition-colors duration-200 cursor-pointer
+                                            ${childAgeError 
+                                                ? 'border-red-500 text-red-600 dark:text-red-400 focus:border-red-500' 
+                                                : 'border-slate-200 text-slate-900 focus:border-blue-600 dark:border-slate-700 dark:text-white dark:focus:border-blue-500'
+                                            }
+                                        `}
+                                    >
                                     <option value="" className="bg-white dark:bg-slate-900 text-slate-400">
                                         Select Age group
                                     </option>
@@ -85,6 +95,13 @@ export const Step1PersonalInfo = () => {
                                 <div className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
                                     <ChevronDown size={18} />
                                 </div>
+
+                                {/* Error Message Display */}
+                                {childAgeError && (
+                                    <p className="absolute -bottom-5 left-2 text-xs font-medium text-red-500">
+                                            {childAgeError.message}
+                                    </p>
+                                )}
                             </div>
 
                             <button
@@ -99,7 +116,8 @@ export const Step1PersonalInfo = () => {
                             </button>
 
                         </div>
-                    ))}
+                    )
+                    })}
 
                     {fields.length === 0 && (
                         <div className="text-center py-8 text-slate-400 
