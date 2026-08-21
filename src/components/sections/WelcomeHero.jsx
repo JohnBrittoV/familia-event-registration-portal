@@ -43,22 +43,23 @@ export const WelcomeHero = () => {
                     </div>
 
                     <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-                        <button
+                        <a
+                            href="#highlights"
+                            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-slate-300 bg-white/70 px-6 py-3.5 text-center font-bold text-slate-800 backdrop-blur transition hover:-translate-y-0.5 hover:border-[#D9B83F] dark:border-slate-700 dark:bg-slate-900/60 dark:text-white sm:w-auto"
+                        >
+                            Explore the retreat
+                        </a>
+
+                         <button
                             type="button"
                             onClick={() => navigate('/prayer-dashboard')}
-                            className="group inline-flex items-center justify-center gap-2 rounded-full bg-[#D9B83F] px-6 py-3.5 text-center font-bold text-white shadow-lg shadow-blue-900/15 transition duration-200 hover:-translate-y-0.5 hover:bg-[#B99722] hover:shadow-xl sm:w-auto"
+                            className="group inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#D9B83F] px-6 py-3.5 text-center font-bold text-white shadow-lg shadow-blue-900/15 transition duration-200 hover:-translate-y-0.5 hover:bg-[#B99722] hover:shadow-xl sm:w-auto"
                         >
                             <HandHeart size={19} className="shrink-0" />
                             <span>Pray</span>
                             <ArrowRight size={17} className="shrink-0 transition-transform group-hover:translate-x-1" />
                         </button>
 
-                        <a
-                            href="#highlights"
-                            className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white/70 px-6 py-3.5 text-center font-bold text-slate-800 backdrop-blur transition hover:-translate-y-0.5 hover:border-[#D9B83F] dark:border-slate-700 dark:bg-slate-900/60 dark:text-white sm:w-auto"
-                        >
-                            Explore the retreat
-                        </a>
                     </div>
 
                 </div>
