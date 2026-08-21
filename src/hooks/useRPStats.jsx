@@ -3,7 +3,17 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../config/firebase.config';
 
 export const useRPStats = (userId) => {
-    const defaultAgeGroups = { "0-2": 0, "3-5": 0, "6-8": 0, "9-11": 0, "12-14": 0, ">15": 0 };
+    
+    const defaultAgeGroups = { 
+        "0-6 months": 0, 
+        "6-1 years": 0, 
+        "1-3 years": 0, 
+        "3-5 years": 0, 
+        "5-9 years": 0, 
+        "9-14 years": 0, 
+        "15 above": 0 
+    };
+    
     const [stats, setStats] = useState({
         totalFamilies: 0,
         totalAdults: 0,
