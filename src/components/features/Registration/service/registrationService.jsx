@@ -3,31 +3,6 @@ import { doc, getDoc, updateDoc, collection,
          runTransaction, serverTimestamp, increment 
     } from "firebase/firestore";
 
-const calculateAgeBrackets = (children) => {
-    const ageGroups = { 
-        "0-6 months": 0, 
-        "6-1 years": 0, 
-        "1-3 years": 0, 
-        "3-5 years": 0, 
-        "5-9 years": 0, 
-        "9-14 years": 0,
-        "15 above": 0
-     };
-    
-    if (Array.isArray(children)) {
-        children.forEach((child) => {
-            if (child?.isAttending !== false) {
-                const category = child?.age;
-                if (category && ageGroups.hasOwnProperty(category)) {
-                    ageGroups[category]++;
-                }
-                
-            }
-        });
-    }
-    return ageGroups;
-};
-
 const defaultAgeGroups = { 
     "0-6 months": 0, 
     "6-1 years": 0, 
@@ -224,7 +199,8 @@ export const deleteParticipantRegistration = async (participantId) => {
         const advancePaid = Boolean(data.advancePaid);
         const advanceCountDecrement = advancePaid ? -1 : 0;
         const advanceAmountDecrement = advancePaid ? -Number(data.advanceAmount || 0) : 0;
-        const ageGroups = calculateAgeBrackets(data.children);
+
+        const ageGroups = stats.ageGroups || defaultAgeGroups;
    
         // 2. ALL WRITES HAPPEN AFTER ALL READS ARE COMPLETE
         
@@ -255,13 +231,13 @@ export const deleteParticipantRegistration = async (participantId) => {
             totalKids: increment(-kidsCount),
             advancePaymentCount: increment(advanceCountDecrement),
             totalAdvanceAmount: increment(advanceAmountDecrement),
-            "ageGroups.0-6 months": increment(-ageGroups["0-6 months"]),
-            "ageGroups.6-1 years": increment(-ageGroups["6-1 years"]),
-            "ageGroups.1-3 years": increment(-ageGroups["1-3 years"]),
-            "ageGroups.3-5 years": increment(-ageGroups["3-5 years"]),
-            "ageGroups.5-9 years": increment(-ageGroups["5-9 years"]),
-            "ageGroups.9-14 years": increment(-ageGroups["9-14 years"]),
-            "ageGroups.15 above": increment(-ageGroups["15 above"]),
+            "ageGroups.0-6 months": increment(-(ageGroups["0-6 months"] || 0)),
+            "ageGroups.6-1 years": increment(-(ageGroups["6-1 years"] || 0)),
+            "ageGroups.1-3 years": increment(-(ageGroups["1-3 years"] || 0)),
+            "ageGroups.3-5 years": increment(-(ageGroups["3-5 years"] || 0)),
+            "ageGroups.5-9 years": increment(-(ageGroups["5-9 years"] || 0)),
+            "ageGroups.9-14 years": increment(-(ageGroups["9-14 years"] || 0)),
+            "ageGroups.15 above": increment(-(ageGroups["15 above"] || 0)),
         });
 
         // Decrement the specific Responsible Person's statistics if it exists
@@ -272,13 +248,13 @@ export const deleteParticipantRegistration = async (participantId) => {
                 totalKids: increment(-kidsCount),
                 advancePaymentCount: increment(advanceCountDecrement),
                 totalAdvanceAmount: increment(advanceAmountDecrement),
-                "ageGroups.0-6 months": increment(-ageGroups["0-6 months"]),
-                "ageGroups.6-1 years": increment(-ageGroups["6-1 years"]),
-                "ageGroups.1-3 years": increment(-ageGroups["1-3 years"]),
-                "ageGroups.3-5 years": increment(-ageGroups["3-5 years"]),
-                "ageGroups.5-9 years": increment(-ageGroups["5-9 years"]),
-                "ageGroups.9-14 years": increment(-ageGroups["9-14 years"]),
-                "ageGroups.15 above": increment(-ageGroups["15 above"]),
+                "ageGroups.0-6 months": increment(-(ageGroups["0-6 months"] || 0)),
+                "ageGroups.6-1 years": increment(-(ageGroups["6-1 years"] || 0)),
+                "ageGroups.1-3 years": increment(-(ageGroups["1-3 years"] || 0)),
+                "ageGroups.3-5 years": increment(-(ageGroups["3-5 years"] || 0)),
+                "ageGroups.5-9 years": increment(-(ageGroups["5-9 years"] || 0)),
+                "ageGroups.9-14 years": increment(-(ageGroups["9-14 years"] || 0)),
+                "ageGroups.15 above": increment(-(ageGroups["15 above"] || 0)),
             });
         }
     });
@@ -316,7 +292,7 @@ export const updateParticipantRegistration = async (participantId, formData, cal
 
     const oldAdvancePaid = Boolean(originalData.advancePaid);
     const oldAdvanceAmount = oldAdvancePaid ? Number(originalData.advanceAmount || 0) : 0;
-    const oldAgeGroups = calculateAgeBrackets(originalData.children);
+    const oldAgeGroups = oldStats.ageGroups || defaultAgeGroups;
 
     // 2. Extract new counts safely
     const newAdults = Number(calculatedStats.adults || 0);
@@ -324,7 +300,7 @@ export const updateParticipantRegistration = async (participantId, formData, cal
 
     const newAdvancePaid = Boolean(formData.advancePaid);
     const newAdvanceAmount = newAdvancePaid ? Number(formData.advanceAmount || 0) : 0;
-    const newAgeGroups = calculateAgeBrackets(formData.children);
+    const newAgeGroups = calculatedStats.ageGroups || defaultAgeGroups;
 
     // 3. Compute the deltas (differences)
     const adultDelta = newAdults - oldAdults;
@@ -336,13 +312,13 @@ export const updateParticipantRegistration = async (participantId, formData, cal
     const advanceAmountDelta = newAdvanceAmount - oldAdvanceAmount;
 
     const ageGroupDeltas = {
-        "0-6 months": newAgeGroups["0-6 months"] - oldAgeGroups["0-6 months"],
-        "6-1 years": newAgeGroups["6-1 years"] - oldAgeGroups["6-1 years"],
-        "1-3 years": newAgeGroups["1-3 years"] - oldAgeGroups["1-3 years"],
-        "3-5 years": newAgeGroups["3-5 years"] - oldAgeGroups["3-5 years"],
-        "5-9 years": newAgeGroups["5-9 years"] - oldAgeGroups["5-9 years"],
-        "9-14 years": newAgeGroups["9-14 years"] - oldAgeGroups["9-14 years"],
-        "15 above": newAgeGroups["15 above"] - oldAgeGroups["15 above"],
+        "0-6 months": (newAgeGroups["0-6 months"] || 0) - (oldAgeGroups["0-6 months"] || 0),
+        "6-1 years": (newAgeGroups["6-1 years"] || 0) - (oldAgeGroups["6-1 years"] || 0),
+        "1-3 years": (newAgeGroups["1-3 years"] || 0) - (oldAgeGroups["1-3 years"] || 0),
+        "3-5 years": (newAgeGroups["3-5 years"] || 0) - (oldAgeGroups["3-5 years"] || 0),
+        "5-9 years": (newAgeGroups["5-9 years"] || 0) - (oldAgeGroups["5-9 years"] || 0),
+        "9-14 years": (newAgeGroups["9-14 years"] || 0) - (oldAgeGroups["9-14 years"] || 0),
+        "15 above": (newAgeGroups["15 above"] || 0) - (oldAgeGroups["15 above"] || 0),
     };
 
     const hasCountChanged = 
