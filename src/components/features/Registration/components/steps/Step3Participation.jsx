@@ -42,7 +42,7 @@ export const Step3Participation = ({ attemptedSubmit }) => {
         if (spouseName && attendees['spouse']) adults++;
 
         children.forEach((child) => {
-            if (child?.isAttending !== false) {
+            if (child?.isAttending === true) {
                 kids++;
                 const category = child?.age;
                 if (category && ageGroups.hasOwnProperty(category)) {
