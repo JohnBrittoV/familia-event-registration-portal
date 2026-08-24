@@ -16,7 +16,7 @@ const calculateAgeBrackets = (children) => {
     
     if (Array.isArray(children)) {
         children.forEach((child) => {
-            if (child?.isAttending) {
+            if (child?.isAttending !== false) {
                 const category = child?.age;
                 if (category && ageGroups.hasOwnProperty(category)) {
                     ageGroups[category]++;
@@ -103,7 +103,7 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
             const advanceAmountVal = advancePaid ? Number(payload.advanceAmount || 0) : 0;
 
             // Calculate child age brackets
-            const ageGroups = calculateAgeBrackets(payload.children);
+            const ageGroups = stats.ageGroups || defaultAgeGroups;
             
             // Calculate new global totals structure fallback
             const currentGlobal = globalDoc.exists() ? globalDoc.data() : { 
@@ -123,24 +123,24 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
             // Build age groups increment map
             const currentGlobalAgeGroups = currentGlobal.ageGroups || defaultAgeGroups;
             const updatedGlobalAgeGroups = {
-                "0-6 months": (currentGlobalAgeGroups["0-6 months"] || 0) + ageGroups["0-6 months"],
-                "6-1 years": (currentGlobalAgeGroups["6-1 years"] || 0) + ageGroups["6-1 years"],
-                "1-3 years": (currentGlobalAgeGroups["1-3 years"] || 0) + ageGroups["1-3 years"],
-                "3-5 years": (currentGlobalAgeGroups["3-5 years"] || 0) + ageGroups["3-5 years"],
-                "5-9 years": (currentGlobalAgeGroups["5-9 years"] || 0) + ageGroups["5-9 years"],
-                "9-14 years": (currentGlobalAgeGroups["9-14 years"] || 0) + ageGroups["9-14 years"],
-                "15 above": (currentGlobalAgeGroups["15 above"] || 0) + ageGroups["15 above"],
+                "0-6 months": (currentGlobalAgeGroups["0-6 months"] || 0) + (ageGroups["0-6 months"] || 0),
+                "6-1 years": (currentGlobalAgeGroups["6-1 years"] || 0) + (ageGroups["6-1 years"] || 0),
+                "1-3 years": (currentGlobalAgeGroups["1-3 years"] || 0) + (ageGroups["1-3 years"] || 0),
+                "3-5 years": (currentGlobalAgeGroups["3-5 years"] || 0) + (ageGroups["3-5 years"] || 0),
+                "5-9 years": (currentGlobalAgeGroups["5-9 years"] || 0) + (ageGroups["5-9 years"] || 0),
+                "9-14 years": (currentGlobalAgeGroups["9-14 years"] || 0) + (ageGroups["9-14 years"] || 0),
+                "15 above": (currentGlobalAgeGroups["15 above"] || 0) + (ageGroups["15 above"] || 0),
             };
 
             const currentRepAgeGroups = currentRep.ageGroups || defaultAgeGroups;
             const updatedRepAgeGroups = {
-                "0-6 months": (currentRepAgeGroups["0-6 months"] || 0) + ageGroups["0-6 months"],
-                "6-1 years": (currentRepAgeGroups["6-1 years"] || 0) + ageGroups["6-1 years"],
-                "1-3 years": (currentRepAgeGroups["1-3 years"] || 0) + ageGroups["1-3 years"],
-                "3-5 years": (currentRepAgeGroups["3-5 years"] || 0) + ageGroups["3-5 years"],
-                "5-9 years": (currentRepAgeGroups["5-9 years"] || 0) + ageGroups["5-9 years"],
-                "9-14 years": (currentRepAgeGroups["9-14 years"] || 0) + ageGroups["9-14 years"],
-                "15 above": (currentRepAgeGroups["15 above"] || 0) + ageGroups["15 above"],
+                "0-6 months": (currentRepAgeGroups["0-6 months"] || 0) + (ageGroups["0-6 months"] || 0),
+                "6-1 years": (currentRepAgeGroups["6-1 years"] || 0) + (ageGroups["6-1 years"] || 0),
+                "1-3 years": (currentRepAgeGroups["1-3 years"] || 0) + (ageGroups["1-3 years"] || 0),
+                "3-5 years": (currentRepAgeGroups["3-5 years"] || 0) + (ageGroups["3-5 years"] || 0),
+                "5-9 years": (currentRepAgeGroups["5-9 years"] || 0) + (ageGroups["5-9 years"] || 0),
+                "9-14 years": (currentRepAgeGroups["9-14 years"] || 0) + (ageGroups["9-14 years"] || 0),
+                "15 above": (currentRepAgeGroups["15 above"] || 0) + (ageGroups["15 above"] || 0),
             };
 
             transaction.set(globalStatusRef, {

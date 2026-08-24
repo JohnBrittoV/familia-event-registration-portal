@@ -28,21 +28,25 @@ export const Step3Participation = ({ attemptedSubmit }) => {
     const stats = useMemo(() => {
         let adults = 0;
         let kids = 0;
-        let ageGroups = { "0-2": 0, "3-5": 0, "6-8": 0, "9-11": 0, "12-14": 0 };
+        let ageGroups = { 
+            "0-6 months": 0, 
+            "6-1 years": 0, 
+            "1-3 years": 0, 
+            "3-5 years": 0, 
+            "5-9 years": 0, 
+            "9-14 years": 0,
+            "15 above": 0
+        };
 
         if (attendees['self']) adults++;
         if (spouseName && attendees['spouse']) adults++;
 
         children.forEach((child) => {
-            if (child?.isAttending) {
+            if (child?.isAttending !== false) {
                 kids++;
-                const age = parseInt(child.age, 10);
-                if (!isNaN(age)) {
-                    if (age <= 2) ageGroups["0-2"]++;
-                    else if (age <= 5) ageGroups["3-5"]++;
-                    else if (age <= 8) ageGroups["6-8"]++;
-                    else if (age <= 11) ageGroups["9-11"]++;
-                    else if (age <= 14) ageGroups["12-14"]++;
+                const category = child?.age;
+                if (category && ageGroups.hasOwnProperty(category)) {
+                    ageGroups[category]++;
                 }
             }
         });
@@ -110,7 +114,7 @@ export const Step3Participation = ({ attemptedSubmit }) => {
             
             <FormSection 
                 title="Event Participation" 
-                description="Select the family members who will be attending Familia26."
+                description="Select the family members who will be attending Familia'26."
             >
                 <div className="mb-6">
                     {/* Render Husband/Wife */}

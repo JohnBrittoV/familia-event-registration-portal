@@ -80,38 +80,45 @@ export const UserDashboard = () => {
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                     <StatCard
-                        title="Age 0 - 2"
-                        value={stats.ageGroups?.["0-2"] || 0}
+                        title="Age 0 - 6 months"
+                        value={stats.ageGroups?.["0-6 months"] || 0}
                         icon={Baby}
                         theme="red"
                     />
                     <StatCard
-                        title="Age 3 - 5"
-                        value={stats.ageGroups?.["3-5"] || 0}
+                        title="Age 6 - 1 years"
+                        value={stats.ageGroups?.["6-1 years"] || 0}
                         icon={ToyBrick}
                         theme="indigo"
                     />
                     <StatCard
-                        title="Age 6 - 8"
-                        value={stats.ageGroups?.["6-8"] || 0}
+                        title="Age 1 - 3 years"
+                        value={stats.ageGroups?.["1-3 years"] || 0}
                         icon={BookOpen}
                         theme="sky"
                     />
                     <StatCard
-                        title="Age 9 - 11"
-                        value={stats.ageGroups?.["9-11"] || 0}
+                        title="Age 3 - 5 years"
+                        value={stats.ageGroups?.["3-5 years"] || 0}
                         icon={Backpack}
                         theme="yellow"
                     />
                     <StatCard
-                        title="Age 12 - 14"
-                        value={stats.ageGroups?.["12-14"] || 0}
+                        title="Age 5 - 9 years"
+                        value={stats.ageGroups?.["5-9 years"] || 0}
                         icon={GraduationCap}
                         theme="orange"
                     />
                     <StatCard
-                        title="Age > 15"
-                        value={stats.ageGroups?.[">15"] || 0}
+                        title="Age 9 - 14 years"
+                        value={stats.ageGroups?.["9-14 years"] || 0}
+                        icon={GraduationCap}
+                        theme="orange"
+                    />
+
+                    <StatCard
+                        title="Age 15 above"
+                        value={stats.ageGroups?.["15 above"] || 0}
                         icon={PersonStanding}
                         theme="green"
                     />

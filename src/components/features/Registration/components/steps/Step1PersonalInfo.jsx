@@ -75,7 +75,7 @@ export const Step1PersonalInfo = () => {
                                 <select
                                         {...register(`children.${index}.age`, validationRules.childAgeCategory)}
                                         className={`
-                                            w-full appearance-none rounded-xl border-2 bg-transparent px-4 py-3 pr-10 text-sm font-medium outline-none transition-colors duration-200 cursor-pointer
+                                            w-full appearance-none rounded-xl border-2 bg-transparent px-4 py-4 pr-10 text-sm font-medium outline-none transition-colors duration-200 cursor-pointer
                                             ${childAgeError 
                                                 ? 'border-red-500 text-red-600 dark:text-red-400 focus:border-red-500' 
                                                 : 'border-slate-200 text-slate-900 focus:border-blue-600 dark:border-slate-700 dark:text-white dark:focus:border-blue-500'
@@ -132,7 +132,7 @@ export const Step1PersonalInfo = () => {
                 <div className="flex justify-end mt-4 mb-4">
                     <button 
                         type="button"
-                        onClick={() => append({ name: '', age: '', isAttending: false})}
+                        onClick={() => append({ name: '', age: '', isAttending: true })}
                         className="flex items-center px-4 py-2 
                                  bg-blue-50 text-blue-600 
                                  hover:bg-blue-100 dark:bg-blue-900/30 

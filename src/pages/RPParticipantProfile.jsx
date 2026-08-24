@@ -9,7 +9,17 @@ import { db } from '../config/firebase.config';
 import { Spinner } from '../components/ui/Spinner';
 import { useAuth } from '../context/AuthContext';
 import { ArrowLeft, User, MapPin, CheckSquare, Plus, Trash2, Edit3, X, 
-         Save, TriangleAlertIcon, Info, AlertCircle, Building2, BedDouble } from 'lucide-react';
+         Save, TriangleAlertIcon, Info, AlertCircle, Building2, BedDouble, ChevronDown } from 'lucide-react';
+
+const CHILD_AGE_CATEGORIES = [
+    "0-6 months",
+    "6-1 years",
+    "1-3 years",
+    "3-5 years",
+    "5-9 years",
+    "9-14 years",
+    "15 above"
+];
 
 export const RPParticipantProfile = () => {
     const { id } = useParams();
@@ -309,38 +319,86 @@ export const RPParticipantProfile = () => {
 
                         {/* Dynamic Children Section */}
                         <div className="md:col-span-2 pt-4 border-t border-slate-100 dark:border-slate-700">
-                            <div className="flex items-center justify-between mb-4">
-                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Children Details</label>
-                                {!isReadOnly && (
-                                    <button type="button" onClick={() => append({ name: '', age: '', isAttending: false })} className="flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
-                                        <Plus size={14}/> Add Child
-                                    </button>
-                                )}
-                            </div>
-                            <div className="space-y-3">
-                                {childFields.map((field, index) => (
-                                    <div key={field.id} className="flex items-center gap-3">
-                                        <input {...register(`children.${index}.name`, validationRules.childName)} autoCapitalize='characters'  disabled={isReadOnly} placeholder="Child's Name" className="flex-1 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
-                                        
-                                        {errors.children?.[index]?.name && (
-                                            <p className="text-xs text-red-500 mt-1">{errors.children[index].name.message}</p>
-                                        )}
+    <div className="flex items-center justify-between mb-4">
+        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Children Details</label>
+        {!isReadOnly && (
+            <button type="button" onClick={() => append({ name: '', age: '', isAttending: false })} className="flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
+                <Plus size={14}/> Add Child
+            </button>
+        )}
+    </div>
+    <div className="space-y-4">
+        {childFields.map((field, index) => {
+            const childAgeError = errors?.children?.[index]?.age;
 
-                                        <input type="number" {...register(`children.${index}.age`, validationRules.childAge)} disabled={isReadOnly} placeholder="Age" className="w-40 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100" />
-                                        
-                                        {errors.children?.[index]?.age && (
-                                            <p className="text-xs text-red-500 mt-1">{errors.children[index].age.message}</p>
-                                        )}
-                                        {!isReadOnly && (
-                                            <button type="button" onClick={() => remove(index)} className="p-2.5 text-red-500 bg-red-50 dark:bg-red-900/30 rounded-lg hover:bg-red-100 transition-colors">
-                                                <Trash2 size={18} />
-                                            </button>
-                                        )}
-                                    </div>
+            return (
+                <div key={field.id} className="flex flex-col sm:flex-row gap-3 items-start p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                    
+                    {/* Child Name Input */}
+                    <div className="flex-1 w-full">
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Child Name *</label>
+                        <input 
+                            {...register(`children.${index}.name`, validationRules.childName)} 
+                            autoCapitalize='characters'  
+                            disabled={isReadOnly} 
+                            placeholder="Child's Name" 
+                            className="w-full p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none text-slate-800 dark:text-slate-100 text-sm" 
+                        />
+                        {errors.children?.[index]?.name && (
+                            <p className="text-xs text-red-500 mt-1">{errors.children[index].name.message}</p>
+                        )}
+                    </div>
+
+                    {/* Child Age Dropdown Selector (Correctly bound via React Hook Form register) */}
+                    <div className="w-full sm:w-52 relative">
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Age Category *</label>
+                        <div className="relative">
+                            <select
+                                {...register(`children.${index}.age`, validationRules.childAgeCategory)}
+                                disabled={isReadOnly}
+                                className={`
+                                    w-full appearance-none rounded-xl border-2 bg-white dark:bg-slate-900 px-4 py-2.5 pr-10 text-sm font-medium outline-none transition-colors duration-200 
+                                    ${isReadOnly ? 'opacity-75 cursor-not-allowed' : 'cursor-pointer'}
+                                    ${childAgeError 
+                                        ? 'border-red-500 text-red-600 dark:text-red-400' 
+                                        : 'border-slate-200 text-slate-900 focus:border-blue-600 dark:border-slate-700 dark:text-white dark:focus:border-blue-500'
+                                    }
+                                `}
+                            >
+                                <option value="" className="text-slate-400">Select Age group</option>
+                                {CHILD_AGE_CATEGORIES.map((category) => (
+                                    <option key={category} value={category} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">
+                                        {category}
+                                    </option>
                                 ))}
-                                {childFields.length === 0 && <p className="text-sm text-slate-400 italic">No children added.</p>}
+                            </select>
+                            
+                            {/* Dropdown Arrow Icon */}
+                            <div className="pointer-events-none absolute right-3.5 top-9 -translate-y-1/2 text-slate-400">
+                                <ChevronDown size={16} />
                             </div>
                         </div>
+
+                        {childAgeError && (
+                            <p className="absolute -bottom-5 left-1 text-xs font-medium text-red-500">
+                                {childAgeError.message}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Remove Button */}
+                    {!isReadOnly && (
+                        <button type="button" onClick={() => remove(index)} className="mt-6 p-2.5 text-red-500 bg-red-50 dark:bg-red-900/30 rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center" title="Remove child">
+                            <Trash2 size={18} />
+                        </button>
+                    )}
+                </div>
+                );
+                })}
+            {childFields.length === 0 && <p className="text-sm text-slate-400 italic">No children added.</p>}
+        </div>
+    </div>
+
                     </div>
                 </div>
 
