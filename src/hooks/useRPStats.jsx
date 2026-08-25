@@ -5,12 +5,10 @@ import { db } from '../config/firebase.config';
 export const useRPStats = (userId) => {
     
     const defaultAgeGroups = { 
-        "0-6 months": 0, 
-        "6-1 years": 0, 
-        "1-3 years": 0, 
+        "0-2 years": 0, 
         "3-5 years": 0, 
-        "5-9 years": 0, 
-        "9-14 years": 0, 
+        "6-9 years": 0, 
+        "10-14 years": 0, 
         "15 above": 0 
     };
     

@@ -8,12 +8,10 @@ import { Plus, Trash2, ChevronDown} from 'lucide-react';
 
 // Centralized Child Age Brackets
     const CHILD_AGE_CATEGORIES = [
-        "0-6 months",
-        "6-1 years",
-        "1-3 years",
+        "0-2 years",
         "3-5 years",
-        "5-9 years",
-        "9-14 years",
+        "6-9 years",
+        "10-14 years",
         "15 above"
     ];
 

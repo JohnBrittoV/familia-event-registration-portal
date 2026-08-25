@@ -4,12 +4,10 @@ import { doc, getDoc, updateDoc, collection,
     } from "firebase/firestore";
 
 const defaultAgeGroups = { 
-    "0-6 months": 0, 
-    "6-1 years": 0, 
-    "1-3 years": 0, 
+    "0-2 years": 0, 
     "3-5 years": 0, 
-    "5-9 years": 0, 
-    "9-14 years": 0,
+    "6-9 years": 0, 
+    "10-14 years": 0,
     "15 above": 0
 };
 
@@ -98,23 +96,19 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
             // Build age groups increment map
             const currentGlobalAgeGroups = currentGlobal.ageGroups || defaultAgeGroups;
             const updatedGlobalAgeGroups = {
-                "0-6 months": (currentGlobalAgeGroups["0-6 months"] || 0) + (ageGroups["0-6 months"] || 0),
-                "6-1 years": (currentGlobalAgeGroups["6-1 years"] || 0) + (ageGroups["6-1 years"] || 0),
-                "1-3 years": (currentGlobalAgeGroups["1-3 years"] || 0) + (ageGroups["1-3 years"] || 0),
+                "0-2 years": (currentGlobalAgeGroups["0-2 years"] || 0) + (ageGroups["0-2 years"] || 0),
                 "3-5 years": (currentGlobalAgeGroups["3-5 years"] || 0) + (ageGroups["3-5 years"] || 0),
-                "5-9 years": (currentGlobalAgeGroups["5-9 years"] || 0) + (ageGroups["5-9 years"] || 0),
-                "9-14 years": (currentGlobalAgeGroups["9-14 years"] || 0) + (ageGroups["9-14 years"] || 0),
+                "6-9 years": (currentGlobalAgeGroups["6-9 years"] || 0) + (ageGroups["6-9 years"] || 0),
+                "10-14 years": (currentGlobalAgeGroups["10-14 years"] || 0) + (ageGroups["10-14 years"] || 0),
                 "15 above": (currentGlobalAgeGroups["15 above"] || 0) + (ageGroups["15 above"] || 0),
             };
 
             const currentRepAgeGroups = currentRep.ageGroups || defaultAgeGroups;
             const updatedRepAgeGroups = {
-                "0-6 months": (currentRepAgeGroups["0-6 months"] || 0) + (ageGroups["0-6 months"] || 0),
-                "6-1 years": (currentRepAgeGroups["6-1 years"] || 0) + (ageGroups["6-1 years"] || 0),
-                "1-3 years": (currentRepAgeGroups["1-3 years"] || 0) + (ageGroups["1-3 years"] || 0),
+                "0-2 years": (currentRepAgeGroups["0-2 years"] || 0) + (ageGroups["0-2 years"] || 0),
                 "3-5 years": (currentRepAgeGroups["3-5 years"] || 0) + (ageGroups["3-5 years"] || 0),
-                "5-9 years": (currentRepAgeGroups["5-9 years"] || 0) + (ageGroups["5-9 years"] || 0),
-                "9-14 years": (currentRepAgeGroups["9-14 years"] || 0) + (ageGroups["9-14 years"] || 0),
+                "6-9 years": (currentRepAgeGroups["6-9 years"] || 0) + (ageGroups["6-9 years"] || 0),
+                "10-14 years": (currentRepAgeGroups["10-14 years"] || 0) + (ageGroups["10-14 years"] || 0),
                 "15 above": (currentRepAgeGroups["15 above"] || 0) + (ageGroups["15 above"] || 0),
             };
 
@@ -231,12 +225,10 @@ export const deleteParticipantRegistration = async (participantId) => {
             totalKids: increment(-kidsCount),
             advancePaymentCount: increment(advanceCountDecrement),
             totalAdvanceAmount: increment(advanceAmountDecrement),
-            "ageGroups.0-6 months": increment(-(ageGroups["0-6 months"] || 0)),
-            "ageGroups.6-1 years": increment(-(ageGroups["6-1 years"] || 0)),
-            "ageGroups.1-3 years": increment(-(ageGroups["1-3 years"] || 0)),
+            "ageGroups.0-2 years": increment(-(ageGroups["0-2 years"] || 0)),
             "ageGroups.3-5 years": increment(-(ageGroups["3-5 years"] || 0)),
-            "ageGroups.5-9 years": increment(-(ageGroups["5-9 years"] || 0)),
-            "ageGroups.9-14 years": increment(-(ageGroups["9-14 years"] || 0)),
+            "ageGroups.6-9 years": increment(-(ageGroups["6-9 years"] || 0)),
+            "ageGroups.10-14 years": increment(-(ageGroups["10-14 years"] || 0)),
             "ageGroups.15 above": increment(-(ageGroups["15 above"] || 0)),
         });
 
@@ -248,12 +240,10 @@ export const deleteParticipantRegistration = async (participantId) => {
                 totalKids: increment(-kidsCount),
                 advancePaymentCount: increment(advanceCountDecrement),
                 totalAdvanceAmount: increment(advanceAmountDecrement),
-                "ageGroups.0-6 months": increment(-(ageGroups["0-6 months"] || 0)),
-                "ageGroups.6-1 years": increment(-(ageGroups["6-1 years"] || 0)),
-                "ageGroups.1-3 years": increment(-(ageGroups["1-3 years"] || 0)),
+                "ageGroups.0-2 years": increment(-(ageGroups["0-2 years"] || 0)),
                 "ageGroups.3-5 years": increment(-(ageGroups["3-5 years"] || 0)),
-                "ageGroups.5-9 years": increment(-(ageGroups["5-9 years"] || 0)),
-                "ageGroups.9-14 years": increment(-(ageGroups["9-14 years"] || 0)),
+                "ageGroups.6-9 years": increment(-(ageGroups["6-9 years"] || 0)),
+                "ageGroups.10-14 years": increment(-(ageGroups["10-14 years"] || 0)),
                 "ageGroups.15 above": increment(-(ageGroups["15 above"] || 0)),
             });
         }
@@ -312,12 +302,10 @@ export const updateParticipantRegistration = async (participantId, formData, cal
     const advanceAmountDelta = newAdvanceAmount - oldAdvanceAmount;
 
     const ageGroupDeltas = {
-        "0-6 months": (newAgeGroups["0-6 months"] || 0) - (oldAgeGroups["0-6 months"] || 0),
-        "6-1 years": (newAgeGroups["6-1 years"] || 0) - (oldAgeGroups["6-1 years"] || 0),
-        "1-3 years": (newAgeGroups["1-3 years"] || 0) - (oldAgeGroups["1-3 years"] || 0),
+        "0-2 years": (newAgeGroups["0-2 years"] || 0) - (oldAgeGroups["0-2 years"] || 0),
         "3-5 years": (newAgeGroups["3-5 years"] || 0) - (oldAgeGroups["3-5 years"] || 0),
-        "5-9 years": (newAgeGroups["5-9 years"] || 0) - (oldAgeGroups["5-9 years"] || 0),
-        "9-14 years": (newAgeGroups["9-14 years"] || 0) - (oldAgeGroups["9-14 years"] || 0),
+        "6-9 years": (newAgeGroups["6-9 years"] || 0) - (oldAgeGroups["6-9 years"] || 0),
+        "10-14 years": (newAgeGroups["10-14 years"] || 0) - (oldAgeGroups["10-14 years"] || 0),
         "15 above": (newAgeGroups["15 above"] || 0) - (oldAgeGroups["15 above"] || 0),
     };
 
@@ -426,12 +414,10 @@ export const updateParticipantRegistration = async (participantId, formData, cal
                 totalKids: increment(kidDelta),
                 advancePaymentCount: increment(advanceCountDelta),
                 totalAdvanceAmount: increment(advanceAmountDelta),
-                "ageGroups.0-6 months": increment(ageGroupDeltas["0-6 months"]),
-                "ageGroups.6-1 years": increment(ageGroupDeltas["6-1 years"]),
-                "ageGroups.1-3 years": increment(ageGroupDeltas["1-3 years"]),
+                "ageGroups.0-2 years": increment(ageGroupDeltas["0-2 years"]),
                 "ageGroups.3-5 years": increment(ageGroupDeltas["3-5 years"]),
-                "ageGroups.5-9 years": increment(ageGroupDeltas["5-9 years"]),
-                "ageGroups.9-14 years": increment(ageGroupDeltas["9-14 years"]),
+                "ageGroups.6-9 years": increment(ageGroupDeltas["6-9 years"]),
+                "ageGroups.10-14 years": increment(ageGroupDeltas["10-14 years"]),
                 "ageGroups.15 above": increment(ageGroupDeltas["15 above"]),
 
             });
@@ -443,12 +429,10 @@ export const updateParticipantRegistration = async (participantId, formData, cal
                     totalKids: increment(kidDelta),
                     advancePaymentCount: increment(advanceCountDelta),
                     totalAdvanceAmount: increment(advanceAmountDelta),
-                    "ageGroups.0-6 months": increment(ageGroupDeltas["0-6 months"]),
-                    "ageGroups.6-1 years": increment(ageGroupDeltas["6-1 years"]),
-                    "ageGroups.1-3 years": increment(ageGroupDeltas["1-3 years"]),
+                    "ageGroups.0-2 years": increment(ageGroupDeltas["0-2 years"]),
                     "ageGroups.3-5 years": increment(ageGroupDeltas["3-5 years"]),
-                    "ageGroups.5-9 years": increment(ageGroupDeltas["5-9 years"]),
-                    "ageGroups.9-14 years": increment(ageGroupDeltas["9-14 years"]),
+                    "ageGroups.6-9 years": increment(ageGroupDeltas["6-9 years"]),
+                    "ageGroups.10-14 years": increment(ageGroupDeltas["10-14 years"]),
                     "ageGroups.15 above": increment(ageGroupDeltas["15 above"])
                 });
             }

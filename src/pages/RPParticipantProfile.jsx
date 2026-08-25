@@ -12,12 +12,10 @@ import { ArrowLeft, User, MapPin, CheckSquare, Plus, Trash2, Edit3, X,
          Save, TriangleAlertIcon, Info, AlertCircle, Building2, BedDouble, ChevronDown } from 'lucide-react';
 
 const CHILD_AGE_CATEGORIES = [
-    "0-6 months",
-    "6-1 years",
-    "1-3 years",
+    "0-2 years",
     "3-5 years",
-    "5-9 years",
-    "9-14 years",
+    "6-9 years",
+    "10-14 years",
     "15 above"
 ];
 
@@ -165,12 +163,10 @@ export const RPParticipantProfile = () => {
         let adults = 0;
         let kids = 0;
         let ageGroups = { 
-            "0-6 months": 0, 
-            "6-1 years": 0, 
-            "1-3 years": 0, 
+            "0-2 years": 0, 
             "3-5 years": 0, 
-            "5-9 years": 0, 
-            "9-14 years": 0,
+            "6-9 years": 0, 
+            "10-14 years": 0,
             "15 above": 0
         };
 
