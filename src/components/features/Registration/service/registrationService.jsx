@@ -1,6 +1,5 @@
 import { db } from '../../../../config/firebase.config';
-import { doc, getDoc, updateDoc, collection, 
-         runTransaction, serverTimestamp, increment 
+import { doc, getDoc, updateDoc, collection, runTransaction, serverTimestamp, increment 
     } from "firebase/firestore";
 
 const defaultAgeGroups = { 
@@ -440,4 +439,107 @@ export const updateParticipantRegistration = async (participantId, formData, cal
     });
 
     return { success: true };
+};
+
+// ----------------------------------------------------------
+// -- Approve and allocate registration ------------------------------
+// --------------------------------------------------------------------
+
+export const approveAndAllocateRegistration = async (registrationId, allocationData) => {
+    const { blockId, roomType, roomNumber, dueFeeCollected, totalFee, advancePaid } = allocationData;
+
+    try {
+        await runTransaction(db, async (transaction) => {
+            const regRef = doc(db, "registrations", registrationId);
+            const blockRef = doc(db, "accommodations", blockId);
+
+            const regSnap = await transaction.get(regRef);
+            const blockSnap = await transaction.get(blockRef);
+
+            if (!regSnap.exists()) {
+                throw new Error("Registration record not found.");
+            }
+            if (!blockSnap.exists()) {
+                throw new Error("Accommodation block not found.");
+            }
+
+            const blockData = blockSnap.data();
+            const roomTypes = blockData.roomTypes || [];
+
+            // Find the targeted room category index
+            const typeIndex = roomTypes.findIndex(rt => rt.type === roomType);
+            if (typeIndex === -1) {
+                throw new Error(`Room category "${roomType}" does not exist in this block.`);
+            }
+
+            const targetCategory = roomTypes[typeIndex];
+            const roomsArray = targetCategory.rooms || [];
+
+            // Find the specific room object
+            const roomIndex = roomsArray.findIndex(r => r.roomNumber === roomNumber);
+            if (roomIndex === -1) {
+                throw new Error(`Room number "${roomNumber}" was not found in category "${roomType}".`);
+            }
+
+            const targetRoom = roomsArray[roomIndex];
+
+            // Race condition check: ensure room is not already occupied
+            if (targetRoom.isOccupied) {
+                throw new Error(`Room "${roomNumber}" has just been occupied by another coordinator. Please select a different room.`);
+            }
+
+            // Update the specific room's status
+            roomsArray[roomIndex] = {
+                ...targetRoom,
+                isOccupied: true,
+                occupiedBy: registrationId
+            };
+
+            // Recalculate remaining rooms for this category
+            const newlyOccupiedCount = roomsArray.filter(r => r.isOccupied).length;
+            const updatedRemaining = Math.max(0, targetCategory.totalRooms - newlyOccupiedCount);
+
+            roomTypes[typeIndex] = {
+                ...targetCategory,
+                remainingRooms: updatedRemaining,
+                rooms: roomsArray
+            };
+
+            // Calculate final financial balances
+            const dueNum = Number(dueFeeCollected) || 0;
+            const totalNum = Number(totalFee) || 0;
+            const advanceNum = Number(advancePaid) || 0;
+            const balanceDue = Math.max(0, totalNum - advanceNum - dueNum);
+
+            // 1. Commit accommodation updates
+            transaction.update(blockRef, {
+                roomTypes: roomTypes,
+                updatedAt: serverTimestamp()
+            });
+
+            // 2. Commit registration approval & allotment details
+            transaction.update(regRef, {
+                registrationStatus: "Approved",
+                accommodation: {
+                    blockId: blockId,
+                    blockName: blockData.blockName,
+                    roomType: roomType,
+                    roomNumber: roomNumber
+                },
+                financials: {
+                    totalFee: totalNum,
+                    advancePaid: advanceNum,
+                    dueCollectedAtCounter: dueNum,
+                    balanceDue: balanceDue,
+                    paymentStatus: balanceDue === 0 ? "Fully Paid" : "Partial Due"
+                },
+                approvedAt: serverTimestamp()
+            });
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error("Transaction failed during room allocation approval:", error);
+        return { success: false, error: error.message };
+    }
 };

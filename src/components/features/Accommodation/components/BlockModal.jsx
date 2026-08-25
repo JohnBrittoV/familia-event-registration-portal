@@ -5,7 +5,7 @@ export const BlockModal = ({ isOpen, onClose, blockToEdit, onSave }) => {
     const [blockId, setBlockId] = useState('');
     const [blockName, setBlockName] = useState('');
     const [order, setOrder] = useState(0);
-    const [roomTypes, setRoomTypes] = useState([{ type: '', totalRooms: 0 }]);
+    const [roomTypes, setRoomTypes] = useState([{ type: '', roomNumbers: '' }]);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
 
@@ -17,14 +17,17 @@ export const BlockModal = ({ isOpen, onClose, blockToEdit, onSave }) => {
             setOrder(blockToEdit.order || 0);
             setRoomTypes(
                 blockToEdit.roomTypes && blockToEdit.roomTypes.length > 0 
-                    ? blockToEdit.roomTypes.map(rt => ({ type: rt.type, totalRooms: rt.totalRooms, remainingRooms: rt.remainingRooms }))
-                    : [{ type: '', totalRooms: 0 }]
+                    ? blockToEdit.roomTypes.map(rt => ({ 
+                        type: rt.type,
+                        roomNumbers: rt.rooms ? rt.rooms.map(r => r.roomNumber).join(', ') : ''  
+                    }))
+                    : [{ type: '', roomNumbers: '' }]
             );
         } else {
             setBlockId('');
             setBlockName('');
             setOrder(0);
-            setRoomTypes([{ type: 'Double', totalRooms: 5 }]);
+            setRoomTypes([{ type: 'Double', roomNumbers: '101, 102, 103' }]);
         }
         setError('');
     }, [blockToEdit, isOpen]);
@@ -33,7 +36,7 @@ export const BlockModal = ({ isOpen, onClose, blockToEdit, onSave }) => {
 
     // Handle adding a new empty room row
     const handleAddRoomRow = () => {
-        setRoomTypes([...roomTypes, { type: '', totalRooms: 0 }]);
+        setRoomTypes([...roomTypes, { type: '', roomNumbers: '' }]);
     };
 
     // Handle removing a room row
@@ -70,15 +73,46 @@ export const BlockModal = ({ isOpen, onClose, blockToEdit, onSave }) => {
             return;
         }
 
+        const formattedRoomTypes = [];
+
         for (const rt of roomTypes) {
             if (!rt.type.trim()) {
                 setError('All room types must have a valid name (e.g., Double, Single).');
                 return;
             }
-            if (Number(rt.totalRooms) <= 0) {
-                setError(`Total rooms for ${rt.type} must be greater than 0.`);
+            
+            // Parse comma separated room numbers
+            const roomNums = rt.roomNumbers
+                .split(',')
+                .map(num => num.trim())
+                .filter(Boolean);
+
+            if (roomNums.length === 0) {
+                setError(`Please enter at least one room number for ${rt.type}.`);
                 return;
             }
+
+            // Map into structured room objects, preserving occupancy state if editing
+            const existingTypeData = blockToEdit?.roomTypes?.find(r => r.type === rt.type);
+            const roomsArray = roomNums.map(num => {
+                const existingRoom = existingTypeData?.rooms?.find(r => r.roomNumber === num);
+                return {
+                    roomNumber: num,
+                    isOccupied: existingRoom ? existingRoom.isOccupied : false,
+                    occupiedBy: existingRoom ? existingRoom.occupiedBy : null
+                };
+            });
+
+            const total = roomsArray.length;
+            const occupiedCount = roomsArray.filter(r => r.isOccupied).length;
+            const remaining = total - occupiedCount;
+
+            formattedRoomTypes.push({
+                type: rt.type.trim(),
+                totalRooms: total,
+                remainingRooms: remaining,
+                rooms: roomsArray
+            });
         }
 
         setSubmitting(true);
@@ -87,20 +121,7 @@ export const BlockModal = ({ isOpen, onClose, blockToEdit, onSave }) => {
         const payload = {
             blockName: blockName.trim(),
             order: Number(order) || 0,
-            roomTypes: roomTypes.map(rt => {
-                const total = Number(rt.totalRooms);
-                // If editing, preserve remaining rooms or calculate difference safely
-                const existingRoom = blockToEdit?.roomTypes?.find(r => r.type === rt.type);
-                const remaining = existingRoom !== undefined 
-                    ? Math.max(0, existingRoom.remainingRooms + (total - existingRoom.totalRooms))
-                    : total;
-
-                return {
-                    type: rt.type.trim(),
-                    totalRooms: total,
-                    remainingRooms: remaining
-                };
-            })
+            roomTypes: formattedRoomTypes
         };
 
         const result = await onSave(blockId.trim().toLowerCase().replace(/\s+/g, '_'), payload);
@@ -144,7 +165,6 @@ export const BlockModal = ({ isOpen, onClose, blockToEdit, onSave }) => {
                     )}
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {/* Block ID */}
                         <div>
                             <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                                 Block ID
@@ -158,10 +178,9 @@ export const BlockModal = ({ isOpen, onClose, blockToEdit, onSave }) => {
                                 className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500 disabled:opacity-60"
                                 required
                             />
-                            <p className="text-[11px] text-slate-400 mt-1">Unique identifier (cannot be changed once created).</p>
+                            <p className="text-[11px] text-slate-400 mt-1">Unique identifier (cannot be changed).</p>
                         </div>
 
-                        {/* Block Name */}
                         <div>
                             <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                                 Block Name
@@ -177,7 +196,6 @@ export const BlockModal = ({ isOpen, onClose, blockToEdit, onSave }) => {
                         </div>
                     </div>
 
-                    {/* Display Order */}
                     <div>
                         <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                             Display Order Priority
@@ -188,44 +206,42 @@ export const BlockModal = ({ isOpen, onClose, blockToEdit, onSave }) => {
                             onChange={(e) => setOrder(e.target.value)}
                             className="w-full sm:w-1/2 px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500"
                         />
-                        <p className="text-[11px] text-slate-400 mt-1">Lower numbers appear first on lists.</p>
                     </div>
 
-                    {/* Room Types Dynamic Builder */}
+                    {/* Room Types & Specific Room Numbers Builder */}
                     <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
                         <div className="flex items-center justify-between">
                             <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                                Room Categories & Capacities
+                                Room Categories & Specific Room Numbers
                             </label>
                             <button
                                 type="button"
                                 onClick={handleAddRoomRow}
                                 className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
                             >
-                                <Plus size={14} /> Add Room Type
+                                <Plus size={14} /> Add Category
                             </button>
                         </div>
 
                         <div className="space-y-3">
                             {roomTypes.map((room, index) => (
-                                <div key={index} className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/30 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
-                                    <div className="flex-1">
+                                <div key={index} className="flex flex-col sm:flex-row items-center gap-3 bg-slate-50 dark:bg-slate-800/30 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                                    <div className="w-full sm:w-1/3">
                                         <input 
                                             type="text"
                                             value={room.type}
                                             onChange={(e) => handleRoomChange(index, 'type', e.target.value)}
-                                            placeholder="Room Type (e.g. Double)"
+                                            placeholder="Category (e.g. Double)"
                                             className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500"
                                             required
                                         />
                                     </div>
-                                    <div className="w-32">
+                                    <div className="w-full sm:flex-1">
                                         <input 
-                                            type="number"
-                                            min="1"
-                                            value={room.totalRooms}
-                                            onChange={(e) => handleRoomChange(index, 'totalRooms', e.target.value)}
-                                            placeholder="Total"
+                                            type="text"
+                                            value={room.roomNumbers}
+                                            onChange={(e) => handleRoomChange(index, 'roomNumbers', e.target.value)}
+                                            placeholder="Rooms (e.g. 101, 102, 103)"
                                             className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500"
                                             required
                                         />
@@ -233,7 +249,7 @@ export const BlockModal = ({ isOpen, onClose, blockToEdit, onSave }) => {
                                     <button
                                         type="button"
                                         onClick={() => handleRemoveRoomRow(index)}
-                                        className="p-2 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors"
+                                        className="self-end sm:self-center p-2 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors"
                                         title="Remove Row"
                                     >
                                         <Trash2 size={16} />
@@ -241,9 +257,9 @@ export const BlockModal = ({ isOpen, onClose, blockToEdit, onSave }) => {
                                 </div>
                             ))}
                         </div>
+                        <p className="text-[11px] text-slate-400">Separate individual room numbers with commas (e.g., 101, 102, 103).</p>
                     </div>
 
-                    {/* Modal Actions */}
                     <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3">
                         <button
                             type="button"

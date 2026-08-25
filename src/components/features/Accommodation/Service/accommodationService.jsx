@@ -26,11 +26,11 @@ export const createAccommodationBlock = async (blockId, blockData) => {
     try {
         const docRef = doc(db, COLLECTION_NAME, blockId);
 
-        // Ensure remainingRooms matches totalRooms initially for new entries
         const formattedRoomTypes = (blockData.roomTypes || []).map(rt => ({
             type: rt.type,
             totalRooms: Number(rt.totalRooms || 0),
-            remainingRooms: Number(rt.totalRooms || 0)
+            remainingRooms: Number(rt.remainingRooms ?? rt.totalRooms ?? 0),
+            rooms: rt.rooms || []
         }));
 
         await setDoc(docRef, {
@@ -62,7 +62,8 @@ export const updateAccommodationBlock = async (blockId, updatedData) => {
             payload.roomTypes = updatedData.roomTypes.map(rt => ({
                 type: rt.type,
                 totalRooms: Number(rt.totalRooms || 0),
-                remainingRooms: Number(rt.remainingRooms ?? rt.totalRooms ?? 0)
+                remainingRooms: Number(rt.remainingRooms ?? rt.totalRooms ?? 0),
+                rooms: rt.rooms || []
             }));
         }
 
