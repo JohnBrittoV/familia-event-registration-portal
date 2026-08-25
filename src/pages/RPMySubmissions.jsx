@@ -97,7 +97,7 @@ export const RPMySubmissions = () => {
     const getStatusColor = (status) => {
         switch(status) {
             case 'Approved': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
-            case 'Pending': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+            case 'pending': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
             default: return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400';
         }
 
@@ -195,6 +195,7 @@ export const RPMySubmissions = () => {
                                     <th className="table-th text-center">PARTICIPANT</th>
                                     <th className="table-th text-center">SPOUSE</th>
                                     <th className="table-th text-center">HOUSE NAME</th>
+                                    <th className="table-th text-center">STATUS</th>
                                     <th className="table-th text-center">ACTIONS</th>
                                     <th className="table-th text-center">REG.DATE</th>
                                 </tr>
@@ -213,6 +214,12 @@ export const RPMySubmissions = () => {
                                         </td>
                                         <td className="table-td text-slate-600 dark:text-slate-300">
                                             {sub.houseName || 'N/A'}
+                                        </td>
+
+                                        <td className="table-td">
+                                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize ${getStatusColor(sub.registrationStatus)}`}>
+                                                {sub.registrationStatus}
+                                            </span>
                                         </td>
                                         
                                         <td className="table-td space-x-5">
