@@ -149,6 +149,15 @@ export const RPParticipantProfile = () => {
     const calculatedStats = React.useMemo(() => {
         let adults = 0;
         let kids = 0;
+        let ageGroups = { 
+            "0-6 months": 0, 
+            "6-1 years": 0, 
+            "1-3 years": 0, 
+            "3-5 years": 0, 
+            "5-9 years": 0, 
+            "9-14 years": 0,
+            "15 above": 0
+        };
 
         if (watchedSelf) adults += 1;
         if (watchedSpouse && spouseName?.trim()) adults += 1;
@@ -157,6 +166,10 @@ export const RPParticipantProfile = () => {
             watchedChildren.forEach(child => {
                 if (child?.isAttending && child?.name?.trim()) {
                     kids += 1;
+                    const category = child?.age;
+                    if (category && ageGroups.hasOwnProperty(category)) {
+                        ageGroups[category]++;
+                    }
                 }
             });
         }
@@ -164,7 +177,8 @@ export const RPParticipantProfile = () => {
         return {
             adults,
             kids,
-            total: adults + kids
+            total: adults + kids,
+            ageGroups
         };
     }, [watchedSelf, watchedSpouse, watchedChildren, spouseName]);
 
