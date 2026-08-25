@@ -80,8 +80,23 @@ export const RPParticipantProfile = () => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
 
+                    const normalizeAgeCategory = (storedAge) => {
+                        if (!storedAge) return '';
+                        const match = CHILD_AGE_CATEGORIES.find(
+                            cat => cat.toLowerCase().trim() === String(storedAge).toLowerCase().trim()
+                        );
+                        return match || storedAge;
+                    };
+
+                    const sanitizedChildren = (data.children || []).map(child => ({
+                        name: child.name || '',
+                        age: normalizeAgeCategory(child.age), 
+                        isAttending: child.isAttending !== undefined ? child.isAttending : false
+                    }))
+
                     const sanitizedData = {
                         ...data,
+                        children: sanitizedChildren,
                         accommodation: {
                             blockId: data.accommodation?.blockId || '',
                             blockName: data.accommodation?.blockName || '',
@@ -336,7 +351,7 @@ export const RPParticipantProfile = () => {
     <div className="flex items-center justify-between mb-4">
         <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Children Details</label>
         {!isReadOnly && (
-            <button type="button" onClick={() => append({ name: '', age: '', isAttending: false })} className="flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
+            <button type="button" onClick={() => append({ name: '', age: '', isAttending: true })} className="flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
                 <Plus size={14}/> Add Child
             </button>
         )}
@@ -388,7 +403,7 @@ export const RPParticipantProfile = () => {
                             </select>
                             
                             {/* Dropdown Arrow Icon */}
-                            <div className="pointer-events-none absolute right-3.5 top-9 -translate-y-1/2 text-slate-400">
+                            <div className="pointer-events-none absolute right-3.5 top-6 -translate-y-1/2 text-slate-400">
                                 <ChevronDown size={16} />
                             </div>
                         </div>
