@@ -202,20 +202,40 @@ export const deleteParticipantRegistration = async (participantId) => {
         transaction.delete(participantRef);
 
         // Restore accommodation room count if it existed
-        if (blockRef && blockDoc && blockDoc.exists() && accomm?.roomType) {
+        if (blockRef && blockDoc && blockDoc.exists() && accomm?.roomType && accomm?.roomNumber) {
             const blockData = blockDoc.data();
-            const restoredRoomTypes = (blockData.roomTypes || []).map(rt => {
-                if (rt.type === accomm.roomType) {
-                    const currentRemaining = Number(rt.remainingRooms ?? rt.totalRooms);
-                    const maxLimit = Number(rt.totalRooms || currentRemaining);
-                    return {
-                        ...rt,
-                        remainingRooms: Math.min(maxLimit, currentRemaining + 1)
+            const roomTypes = blockData.roomTypes || [];
+            const typeIndex = roomTypes.findIndex(rt => rt.type === accomm.roomType);
+
+           if (typeIndex !== -1) {
+                const targetCat = roomTypes[typeIndex];
+                const roomsArr = targetCat.rooms || [];
+                const roomIdx = roomsArr.findIndex(r => r.roomNumber === accomm.roomNumber);
+
+                if (roomIdx !== -1) {
+                    // Free up the specific room
+                    roomsArr[roomIdx] = {
+                        ...roomsArr[roomIdx],
+                        isOccupied: false,
+                        occupiedBy: null
                     };
+
+                    const occupiedCount = roomsArr.filter(r => r.isOccupied).length;
+                    const updatedRemaining = Math.max(0, targetCat.totalRooms - occupiedCount);
+
+                    roomTypes[typeIndex] = {
+                        ...targetCat,
+                        remainingRooms: updatedRemaining,
+                        rooms: roomsArr
+                    };
+
+                    transaction.update(blockRef, { 
+                        roomTypes: roomTypes,
+                        updatedAt: serverTimestamp() 
+                    });
                 }
-                return rt;
-            });
-            transaction.update(blockRef, { roomTypes: restoredRoomTypes });
+            
+            }
         }
 
         // Decrement global statistics

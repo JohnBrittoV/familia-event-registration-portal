@@ -10,7 +10,7 @@ import { useToast } from '../context/ToastContext';
 export const RPRoomAllocations = () => {
 
     const { user, dbUser } = useAuth();
-    const { blocks, loading: accommodationLoading } = useAccommodations();
+    const { blocks, loading: accommodationLoading, refreshBlocks } = useAccommodations();
     const { showToast } = useToast();
     
     const [allocations, setAllocations] = useState([]);
@@ -85,7 +85,7 @@ export const RPRoomAllocations = () => {
         setEditRoomNumber('');
     };
 
-    // Handle transaction-safe room reallocation & financial update
+    // Handle transaction-safe room reallocation across blocks and categories
     const handleSaveAllocationEdit = async (e) => {
         e.preventDefault();
         if (!editingAllocation || !editBlockId || !editRoomType || !editRoomNumber) {
@@ -106,7 +106,16 @@ export const RPRoomAllocations = () => {
                 const regSnap = await transaction.get(regRef);
                 if (!regSnap.exists()) throw new Error("Registration record not found.");
 
-                // 1. Handle New Block reference
+                // 1. Determine if we are changing blocks
+                const isSameBlock = (oldBlockId === editBlockId);
+                const isSameRoom = (isSameBlock && oldRoomNumber === editRoomNumber && oldRoomType === editRoomType);
+
+                if (isSameRoom) {
+                    // Nothing changed, just return safely
+                    return;
+                }
+
+                // 2. Reference and Fetch New Block Document
                 const newBlockRef = doc(db, "accommodations", editBlockId);
                 const newBlockSnap = await transaction.get(newBlockRef);
                 if (!newBlockSnap.exists()) throw new Error("Selected accommodation block not found.");
@@ -116,66 +125,86 @@ export const RPRoomAllocations = () => {
                 const newTypeIndex = newRoomTypes.findIndex(rt => rt.type === editRoomType);
                 if (newTypeIndex === -1) throw new Error("Selected room category not found in block.");
 
-                // Verify the new room is vacant (unless it's the exact same room already assigned)
-                const isSameRoom = (oldBlockId === editBlockId && oldRoomNumber === editRoomNumber);
+                // Verify target room is vacant
                 const targetCatRooms = newRoomTypes[newTypeIndex].rooms || [];
                 const targetRoomIndex = targetCatRooms.findIndex(r => r.roomNumber === editRoomNumber);
 
                 if (targetRoomIndex === -1) throw new Error(`Room number ${editRoomNumber} does not exist.`);
-                if (!isSameRoom && targetCatRooms[targetRoomIndex].isOccupied) {
+                if (targetCatRooms[targetRoomIndex].isOccupied && targetCatRooms[targetRoomIndex].occupiedBy !== regId) {
                     throw new Error(`Room ${editRoomNumber} is already occupied.`);
                 }
 
-                // 2. If changing rooms or blocks, release the old room first
-                if (oldBlockId && oldRoomNumber && !isSameRoom) {
-                    const oldBlockRef = doc(db, "accommodations", oldBlockId);
-                    const oldBlockSnap = await transaction.get(oldBlockRef);
-                    
-                    if (oldBlockSnap.exists()) {
-                        const oldBlockData = oldBlockSnap.data();
-                        const oldRoomTypes = oldBlockData.roomTypes || [];
-                        const oldTypeIndex = oldRoomTypes.findIndex(rt => rt.type === oldRoomType);
+                // 3. Reference and Fetch Old Block Document (if it exists and differs, or even if same)
+                let oldBlockRef = null;
+                let oldBlockSnap = null;
+                if (oldBlockId) {
+                    oldBlockRef = isSameBlock ? newBlockRef : doc(db, "accommodations", oldBlockId);
+                    oldBlockSnap = isSameBlock ? newBlockSnap : await transaction.get(oldBlockRef);
+                }
 
-                        if (oldTypeIndex !== -1) {
-                            const oldCat = oldRoomTypes[oldTypeIndex];
-                            const oldRoomsArr = oldCat.rooms || [];
-                            const oldRoomIdx = oldRoomsArr.findIndex(r => r.roomNumber === oldRoomNumber);
+                // 4. RELEASE OLD ROOM SLOT
+                if (oldBlockRef && oldBlockSnap && oldBlockSnap.exists() && oldRoomNumber && oldRoomType) {
+                    const blockToUpdate = isSameBlock ? newBlockData : oldBlockSnap.data();
+                    const blockRoomTypes = blockToUpdate.roomTypes || [];
+                    const oldTypeIndex = blockRoomTypes.findIndex(rt => rt.type === oldRoomType);
 
-                            if (oldRoomIdx !== -1) {
-                                oldRoomsArr[oldRoomIdx] = { ...oldRoomsArr[oldRoomIdx], isOccupied: false, occupiedBy: null };
-                                const occCount = oldRoomsArr.filter(r => r.isOccupied).length;
-                                oldRoomTypes[oldTypeIndex] = {
-                                    ...oldCat,
-                                    remainingRooms: Math.max(0, oldCat.totalRooms - occCount),
-                                    rooms: oldRoomsArr
-                                };
-                                transaction.update(oldBlockRef, { roomTypes: oldRoomTypes, updatedAt: serverTimestamp() });
+                    if (oldTypeIndex !== -1) {
+                        const oldCat = blockRoomTypes[oldTypeIndex];
+                        const oldRoomsArr = oldCat.rooms || [];
+                        const oldRoomIdx = oldRoomsArr.findIndex(r => r.roomNumber === oldRoomNumber);
+
+                        if (oldRoomIdx !== -1) {
+                            oldRoomsArr[oldRoomIdx] = { 
+                                ...oldRoomsArr[oldRoomIdx], 
+                                isOccupied: false, 
+                                occupiedBy: null 
+                            };
+                            const occCount = oldRoomsArr.filter(r => r.isOccupied).length;
+                            blockRoomTypes[oldTypeIndex] = {
+                                ...oldCat,
+                                remainingRooms: Math.max(0, oldCat.totalRooms - occCount),
+                                rooms: oldRoomsArr
+                            };
+
+                            if (isSameBlock) {
+                                // Update array in-memory for the same block operation
+                                newRoomTypes.splice(0, newRoomTypes.length, ...blockRoomTypes);
+                            } else {
+                                transaction.update(oldBlockRef, { 
+                                    roomTypes: blockRoomTypes, 
+                                    updatedAt: serverTimestamp() 
+                                });
                             }
                         }
                     }
                 }
 
-                // 3. Lock new room if not same room
-                if (!isSameRoom) {
-                    targetCatRooms[targetRoomIndex] = {
-                        ...targetCatRooms[targetRoomIndex],
-                        isOccupied: true,
-                        occupiedBy: regId
-                    };
-                }
+                // 5. LOCK NEW ROOM SLOT
+                // Re-find target index in case same block array shifted
+                const finalTypeIndex = newRoomTypes.findIndex(rt => rt.type === editRoomType);
+                const finalCatRooms = newRoomTypes[finalTypeIndex].rooms || [];
+                const finalRoomIndex = finalCatRooms.findIndex(r => r.roomNumber === editRoomNumber);
 
-                const newOccCount = targetCatRooms.filter(r => r.isOccupied).length;
-                newRoomTypes[newTypeIndex] = {
-                    ...newRoomTypes[newTypeIndex],
-                    remainingRooms: Math.max(0, newRoomTypes[newTypeIndex].totalRooms - newOccCount),
-                    rooms: targetCatRooms
+                finalCatRooms[finalRoomIndex] = {
+                    ...finalCatRooms[finalRoomIndex],
+                    isOccupied: true,
+                    occupiedBy: regId
                 };
 
-                transaction.update(newBlockRef, { roomTypes: newRoomTypes, updatedAt: serverTimestamp() });
+                const finalOccCount = finalCatRooms.filter(r => r.isOccupied).length;
+                newRoomTypes[finalTypeIndex] = {
+                    ...newRoomTypes[finalTypeIndex],
+                    remainingRooms: Math.max(0, newRoomTypes[finalTypeIndex].totalRooms - finalOccCount),
+                    rooms: finalCatRooms
+                };
 
-                // 5. Update Registration Document
+                transaction.update(newBlockRef, { 
+                    roomTypes: newRoomTypes, 
+                    updatedAt: serverTimestamp() 
+                });
+
+                // 6. Update Registration Document Room Details
                 transaction.update(regRef, {
-                    registrationStatus: "Approved",
                     accommodation: {
                         blockId: editBlockId,
                         blockName: newBlockData.blockName,
@@ -186,17 +215,18 @@ export const RPRoomAllocations = () => {
                 });
             });
 
-            showToast("Room allocation updated successfully!", "success");
+            showToast("Room re-allocated successfully!", "success");
             setIsEditModalOpen(false);
             setIsSubmittingEdit(false);
             fetchAllocations();
-            refreshBlocks();
+            refreshBlocks(); // Refreshes block inventory UI counters
         } catch (err) {
             console.error("Failed to update allocation:", err);
             setIsSubmittingEdit(false);
             alert(err.message || "Failed to update room allocation.");
         }
     };
+   
 
     // Filter allocations by selected block
     const filteredAllocations = allocations.filter(item => {
@@ -476,7 +506,7 @@ export const RPRoomAllocations = () => {
                     </div>
                 </div>
             )}
-        </div>
+        </div>       
     );
 
 }
