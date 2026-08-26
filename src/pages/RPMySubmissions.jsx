@@ -81,15 +81,9 @@ export const RPMySubmissions = () => {
         const targetBlockObj = blocks.find(b => b.id === initialBlock);
         const initialType = sub.accommodation?.roomType || (targetBlockObj?.roomTypes?.[0]?.type || '');
         setSelectedRoomType(initialType);
-
         setSelectedRoomNumber('');
-        
-        // Calculate default remaining due balance if fees are present
-        const total = Number(sub.financials?.totalFee || sub.totalFee || 0);
-        const advance = Number(sub.financials?.advancePaid || sub.advancePaid || 0);
-        const defaultDue = Math.max(0, total - advance);
-        setDueFeeCollected(defaultDue.toString());
 
+        setDueFeeCollected('');
         setIsAllocateModalOpen(true);
     };
 
@@ -115,8 +109,8 @@ export const RPMySubmissions = () => {
 
         setIsAllocating(true);
         try {
-            const totalFee = Number(allocationTarget.financials?.totalFee || allocationTarget.totalFee || 0);
-            const advancePaid = Number(allocationTarget.financials?.advancePaid || allocationTarget.advancePaid || 0);
+            const totalFee = Number(allocationTarget.regFee || allocationTarget.financials?.totalFee|| allocationTarget.totalFee || 2000);
+            const advancePaid = Number(allocationTarget.advanceAmount || allocationTarget.advancePaid || allocationTarget.financials?.advancePaid || 0);
 
             const result = await approveAndAllocateRegistration(allocationTarget.id, {
                 blockId: selectedBlockId,
@@ -211,7 +205,7 @@ export const RPMySubmissions = () => {
         }
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8 pb-24">
+       <div className="max-w-7xl mx-auto space-y-8 pb-24">
             
             <Greeting 
                 name={user?.displayName} 
@@ -336,7 +330,7 @@ export const RPMySubmissions = () => {
                             </div>
                             <div>
                                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">Counter Check-in & Allotment</h3>
-                                <p className="text-xs text-slate-500">Verify identity, settle dues, and lock a room.</p>
+                                <p className="text-xs text-slate-500">Verify identity, enter actual counter collection, and lock room.</p>
                             </div>
                         </div>
 
@@ -351,37 +345,42 @@ export const RPMySubmissions = () => {
                                 {/* 1. Participant Bio Section (Read-only verification) */}
                                 <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-800 space-y-1.5 text-xs">
                                     <p className="font-bold text-slate-900 dark:text-white text-sm">
-                                        {allocationTarget.fullName || 'N/A'} <span className="font-normal text-slate-500">({allocationTarget.spouseName || 'Single/No Spouse'})</span>
+                                        {allocationTarget.fullName || 'N/A'} <span className="font-bold"> - {allocationTarget.spouseName || 'Single/No Spouse'}</span>
                                     </p>
                                     <p className="text-slate-600 dark:text-slate-300">House: <strong>{allocationTarget.houseName || 'N/A'}</strong> | Town: <strong>{allocationTarget.homeTown || 'N/A'}</strong></p>
                                     <p className="text-slate-600 dark:text-slate-300">Phone: <strong>{allocationTarget.phone1 || 'N/A'}</strong></p>
                                 </div>
 
-                                {/* 2. Financial Settlement Section */}
+                                {/* 2. Financial Settlement Section (Fetched from DB) */}
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="p-3 bg-blue-50/50 dark:bg-blue-950/20 rounded-xl border border-blue-100 dark:border-blue-900/30">
-                                        <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 uppercase">Total Fee</span>
-                                        <p className="text-base font-bold text-slate-900 dark:text-white mt-0.5">₹ {allocationTarget.financials?.totalFee || allocationTarget.totalFee || 0}</p>
+                                        <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 uppercase">Total Registration Fee </span>
+                                        <p className="text-base font-bold text-slate-900 dark:text-white mt-0.5">
+                                            ₹ {Number(allocationTarget.regFee || allocationTarget.financials?.totalFee || allocationTarget.totalFee || 2000)}
+                                        </p>
                                     </div>
                                     <div className="p-3 bg-emerald-50/50 dark:bg-emerald-950/20 rounded-xl border border-emerald-100 dark:border-emerald-900/30">
                                         <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase">Advance Paid</span>
-                                        <p className="text-base font-bold text-slate-900 dark:text-white mt-0.5">₹ {allocationTarget.financials?.advancePaid || allocationTarget.advancePaid || 0}</p>
+                                        <p className="text-base font-bold text-slate-900 dark:text-white mt-0.5">
+                                            ₹ {Number(allocationTarget.advanceAmount || allocationTarget.financials?.advancePaid || allocationTarget.advancePaid || 0)}
+                                        </p>
                                     </div>
                                 </div>
 
                                 <div>
                                     <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-                                        Due Fee Collected at Counter (₹)
+                                        Amount Collected at Counter (₹)
                                     </label>
                                     <input 
                                         type="number"
                                         min="0"
                                         value={dueFeeCollected}
                                         onChange={(e) => setDueFeeCollected(e.target.value)}
-                                        placeholder="Enter amount collected..."
+                                        placeholder="Enter received amount"
                                         required
                                         className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500 font-semibold"
                                     />
+                                    <p className="text-[11px] text-slate-400 mt-1">Type the custom amount given by the participant (can be partial, exact, or excess).</p>
                                 </div>
 
                                 {/* 3. Dynamic Room Allotment Section */}
@@ -523,6 +522,6 @@ export const RPMySubmissions = () => {
                     </div>
                 </div>
             )}
-        </div>
+        </div> 
     );
 };
