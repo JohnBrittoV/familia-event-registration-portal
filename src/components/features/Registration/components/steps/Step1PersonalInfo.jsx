@@ -28,7 +28,7 @@ export const Step1PersonalInfo = () => {
             <FormSection title="Participant Details">
                 <FormRow>
                     <FloatingInput name='fullName' label='Full Name*' validation={validationRules.name} />
-                    <FloatingInput name="dob" type="date" label="Date of Birth *" validation={validationRules.dob} />
+                    <FloatingInput name="dob" type="date" label="Date of Birth *" />
                 </FormRow>
             </FormSection>
 
@@ -42,7 +42,7 @@ export const Step1PersonalInfo = () => {
             <FormSection title="Family Information">
                 <FormRow>
                     <FloatingInput name="houseName" label="House Name *" validation={validationRules.requiredText}/>
-                    <FloatingInput name="weddingAnniversary" type="date" label="Wedding Anniversary *" validation={validationRules.weddingDate} />
+                    <FloatingInput name="weddingAnniversary" type="date" label="Wedding Anniversary *" />
                 </FormRow>
             </FormSection>
 
