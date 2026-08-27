@@ -141,7 +141,7 @@ export const submitRegistrationData = async (payload, repUid, repName = 'Unknown
                 ...payload,
                 registeredBy: repUid,
                 registrationStatus: 'pending',
-                regFee: 2000,
+                regFee: 2500,
                 ResponsiblePersonName: repName,
                 createdAt: serverTimestamp()
             });
