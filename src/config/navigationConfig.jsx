@@ -1,6 +1,6 @@
-import { LayoutDashboard, Users, ClipboardList, Cross, FileText, UserCog, UserCheck,
+import { LayoutDashboard, Users, ClipboardList, Cross, FileText, UserCog, UserCheck, UserStar,
          FileUser, ChartNoAxesCombined, ListPlus, UserPlus, HandHeart, UsersRound,
-         FileDown, Heart, MessageSquare, Clock3, ShieldCheck, BedDouble } from 'lucide-react'
+         FileDown, Heart, MessageSquare, Clock3, ShieldUser, ShieldCheck, BedDouble } from 'lucide-react'
 
 // 1. Categorized configuration strictly for Admin / Owner
 export const adminNavigation = [
@@ -21,25 +21,10 @@ export const adminNavigation = [
         items: [
 
             {
-                id: 'admin-list',
-                label: 'Administrators',
-                path: '/admin/administrators',
-                icon: UsersRound, 
-                allowedRoles: ['admin', 'owner']
-            },
-            {
                 id: 'pending-access',
-                label: 'Pending Access',
+                label: 'Access Requests',
                 path: '/admin/pending-access',
                 icon: Clock3, 
-                allowedRoles: ['admin', 'owner']
-            },
-
-            {
-                id: 'responsible-persons',
-                label: 'Responsible Persons',
-                path: '/admin/responsible-persons',
-                icon: UserCog,
                 allowedRoles: ['admin', 'owner']
             },
 
@@ -52,12 +37,29 @@ export const adminNavigation = [
             },
 
             {
-                id: 'confirm-list',
-                label: 'Confirm Participants',
-                path: '/admin/participants-confirmation',
+                id: 'admin-list',
+                label: 'Admin Users',
+                path: '/admin/administrators',
+                icon: ShieldUser, 
+                allowedRoles: ['admin', 'owner']
+            },
+
+            {
+                id: 'responsible-persons',
+                label: 'RP Persons',
+                path: '/admin/responsible-persons',
+                icon: UserStar,
+                allowedRoles: ['admin', 'owner']
+            },
+
+            {
+                id: 'confirm-participants',
+                label: 'Participants',
+                path: '/admin/confirm-participants',
                 icon: UserCheck,
                 allowedRoles: ['admin', 'owner']
             },
+
             
         ]
     },
