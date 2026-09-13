@@ -67,7 +67,7 @@ export const App = () => {
             <Route path="/admin/prayer-bookings" element={<PrayerAdminPage/>}/>
             <Route path="/admin/pending-access" element={<AdminPendingAccess/>}/>
             <Route path="/admin/prayer-partners" element={<AdminPrayerPartners/>}/>
-            <Route path="/admin/participants-confirmation" element={<AdminParticipantsConfirmation/>}/>
+            <Route path="/admin/confirm-participants" element={<AdminParticipantsConfirmation/>}/>
             <Route path="/admin/room-management" element={<AdminAccommodationPage/>}/>
             <Route path="/admin/administrators" element={<AdminLists/>}/>
 

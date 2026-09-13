@@ -38,7 +38,7 @@ export const adminNavigation = [
 
             {
                 id: 'admin-list',
-                label: 'Admin Users',
+                label: 'Administrators',
                 path: '/admin/administrators',
                 icon: ShieldUser, 
                 allowedRoles: ['admin', 'owner']
@@ -46,7 +46,7 @@ export const adminNavigation = [
 
             {
                 id: 'responsible-persons',
-                label: 'RP Persons',
+                label: 'RP Coordinators',
                 path: '/admin/responsible-persons',
                 icon: UserStar,
                 allowedRoles: ['admin', 'owner']
